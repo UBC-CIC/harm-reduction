@@ -1,7 +1,7 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"; // ES Modules import
 // const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses"); // CommonJS import
 
-exports.handler = async(event) => {
+export const handler = async(event) => {
     const CHARSET = 'UTF-8'
     let   sender;
     let   recipient;
