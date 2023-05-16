@@ -3,14 +3,14 @@ import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses"; // ES Modules
 
 export const handler = async(event) => {
     const CHARSET       = 'UTF-8'
-    
+
     let   sender;
     let   recipient;
     let   content_text;
     let   content_html;
     let   subject;
 
-    const SESClient = new SESClient({
+    const ses = new SESClient({
         region: 'us-west-2'
     });
 
@@ -37,7 +37,7 @@ export const handler = async(event) => {
 
     try{
         const sendEmail = new SendEmailCommand(sendMailInput);
-        const sendMailResp = await SESClient.send(sendEmail);
+        const sendMailResp = await ses.send(sendEmail);
         console.log(sendMailResp);
 
         return{
