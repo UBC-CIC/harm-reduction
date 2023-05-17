@@ -1,0 +1,8 @@
+# in /cdk
+/cdk/*.js
+!/cdk/jest.config.js
+/cdk/*.d.ts
+/cdk/node_modules
+
+/cdk/cdk.staging
+/cdk/cdk.out
