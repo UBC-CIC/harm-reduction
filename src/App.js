@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from './ubclogo.png'; // Replace 'logo.png' with the actual path to your logo image
+import logo from './ubclogo.png';
 
 function App() {
   return (
