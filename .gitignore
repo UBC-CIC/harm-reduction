@@ -6,3 +6,6 @@
 
 /cdk/cdk.staging
 /cdk/cdk.out
+
+#root
+/node_modules
