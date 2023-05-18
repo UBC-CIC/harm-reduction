@@ -26,7 +26,11 @@
     background: transparent;
     margin-left: 20px;
     margin-right: 20px;
+    margin-top: auto;
+    margin-bottom: auto;
     border: none;
+    align-items: center;
+    text-decoration: none;
 }
 
 .navbutton:hover {

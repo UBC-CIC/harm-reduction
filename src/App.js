@@ -13,9 +13,9 @@ function App() {
         <img src={logo} alt="Logo" style={{ height: '160px' }} />
       </div>
       <div className="buttonBar">
-        <button className='navbutton'>Home</button>
-        <button className='navbutton'>View samples</button>
-        <button className='navbutton'>Track specific sample</button>
+        <Link to="/" className='navbutton'>Home</Link>
+        <Link to="/Public" className='navbutton'>View Samples</Link>
+        <Link to="/Track" className='navbutton'>Track Specific Sample</Link>
       </div>
       <Switch> 
         <Route exact path="/"/>
