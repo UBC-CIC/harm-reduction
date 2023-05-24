@@ -1,14 +1,11 @@
 import { AppBar, Box } from "@mui/material"
 import { Link } from 'react-router-dom'
-import logo from '../ubclogo.png'
+import '../css/navbar.css'
 
 function NavBar(){
     return(
         <Box>
             <AppBar position='static' classname='appbar'>
-                <div className="logoBackground">
-                    <img src={logo} alt="Logo" style={{ height: '160px' }} />
-                </div>
                 <div className="navBar">
                     <Link to="/" className='navbutton'>Home</Link>
                     <Link to="/Public" className='navbutton'>View Samples</Link>

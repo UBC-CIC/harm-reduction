@@ -1,15 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import { Box } from '@mui/material';
 import './App.css'; 
 
+import logo from './ubclogo.png'
 import NavBar from './components/navbar.js'
 import PublicTable from './pages/publictable.js';
 import TrackSample from './pages/tracksample.js';
 import Home from './pages/home.js';
 import Admin from './pages/admin.js';
-import DisplayContact from './pages/displaycontact.js';
-import EditContact from './pages/editcontact.js'
-import VerifyContact from './pages/verifycontact.js';
+import Contact from './pages/contact.js'
 import Sample from './pages/sample.js';
 import AdminSample from './pages/adminsample.js';
 import AdminTable from './pages/admintable.js';
@@ -17,23 +17,24 @@ import AdminTable from './pages/admintable.js';
 
 function App() {
   return (
-    <div>
+    <Box>
+      <div className="logoBackground">
+          <img src={logo} alt="Logo" style={{ height: '160px' }} />
+      </div>
       <Router>
         <NavBar />
         <Switch>
-          <Route path="/" element={<Home />}/>
-          <Route path="/Table" element={<PublicTable />}/>
-          <Route path="/Track" element={<TrackSample />}/>
-          <Route path="/Admin" element={<Admin />}/>
-          <Route path="/Contact/Display" element={<DisplayContact />}/>
-          <Route path="/Contact/Edit" element={<EditContact />}/>
-          <Route path="/Contact/Verify" element={<VerifyContact />}/>
-          <Route path="/Track/Sample" element={<Sample />}/>
-          <Route path="/Admin/Sample" element={<AdminSample />}/>
-          <Route path="/Admin/Table" element={<AdminTable />}/>
+          <Route path="/Track/Sample"><Sample /></Route>
+          <Route path="/Admin/Sample"><AdminSample /></Route>
+          <Route path="/Admin/Table"><AdminTable /></Route>
+          <Route path="/Home"><Home /></Route>
+          <Route path="/Table"><PublicTable /></Route>
+          <Route path="/Track"><TrackSample /></Route>
+          <Route path="/Admin"><Admin /></Route>
+          <Route path="/Contact"><Contact /></Route>
         </Switch>
       </Router>
-    </div>
+    </Box>
   );
 }
 
