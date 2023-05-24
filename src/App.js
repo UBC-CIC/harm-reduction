@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import { Box } from '@mui/material';
-import './App.css'; 
+import './app.css'; 
 
 import logo from './ubclogo.png'
 import NavBar from './components/navbar.js'
@@ -28,7 +28,7 @@ function App() {
           <Route path="/Admin/Sample"><AdminSample /></Route>
           <Route path="/Admin/Table"><AdminTable /></Route>
           <Route path="/Home"><Home /></Route>
-          <Route path="/Table"><PublicTable /></Route>
+          <Route path="/Public"><PublicTable /></Route>
           <Route path="/Track"><TrackSample /></Route>
           <Route path="/Admin"><Admin /></Route>
           <Route path="/Contact"><Contact /></Route>
