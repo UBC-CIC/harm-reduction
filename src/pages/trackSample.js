@@ -1,4 +1,5 @@
 import React from 'react';
+import {useState} from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -6,7 +7,45 @@ import Button from '@mui/material/Button';
 import '../css/tracksample.css'
 
 const TrackSample = () => {
-    let trackingID;
+    const [pageState, setPageState] = useState(0);
+    const pageStates = ["enterid", "showcontact", "updatecontact", "verifycontact"]
+    let   trackingID;
+
+    const trackSample = async () => {
+        console.log(`trackingID: ${trackingID}`);
+        //query database    
+        try{
+            const resp = await fetch('https://9gon1waa9a.execute-api.us-west-2.amazonaws.com/getitem');
+            // let contactinfo = resp.json(); //grab contact info from item
+            // load contact info
+            setPageState(1);
+        }catch(err){
+            // no response -> item doesn't exist
+            // load error page
+        }
+    }
+
+    const TrackingIDInput = () => {
+        return(
+        <TextField 
+            className="textbox" 
+            onChange={(event)=>{trackingID=event.target.value}}
+            id="trackinginput" 
+            label="Enter Tracking ID" 
+            variant="outlined" 
+            style={{ marginBottom: '20px' }}
+        />)
+    }
+
+    const TrackingButton = () => {
+        return(
+        <Button 
+            className="trackbutton" 
+            variant="contained" 
+            onClick={() => {trackSample(trackingID)}}
+        >Track
+        </Button>)
+    }
 
     return(
         <Box 
@@ -16,29 +55,12 @@ const TrackSample = () => {
             alignItems="center"
             minHeight="100vh"
         >
-            <TextField className="textbox" onChange={event=>{trackingID=event.target.value}}id="trackinginput" label="Enter Tracking ID" variant="outlined" style={{ marginBottom: '20px' }}/>    
-            <Button className="trackbutton" variant="contained" onClick={() => {trackSample(trackingID)}}>Track</Button>
+            {(pageState == 0) && <TrackingIDInput />}
+            {(pageState == 0) && <TrackingButton />}
+            {/* <TextField className="textbox" onChange={event=>{setTrackingID(event.target.value)}}id="trackinginput" label="Enter Tracking ID" variant="outlined" style={{ marginBottom: '20px' }}/>    
+            <Button className="trackbutton" variant="contained" onClick={() => {trackSample(trackingID)}}>Track</Button> */}
         </Box>
     )
-}
-
-async function trackSample(trackingID){
-    console.log(trackingID);
-    //query database
-
-    let contactInfo = {
-        email: '',
-        phone: ''
-    }
-    
-    try{
-        //call api for querying database
-    }catch(err){
-        
-    }
-
-    //if id exists -> grab contact info and display
-    //if id doesnt exist -> display error screen
 }
 
 export default TrackSample

@@ -28,15 +28,14 @@ function App() {
           <Route path="/Admin/Sample"><AdminSample /></Route>
           <Route path="/Admin/Table"><AdminTable /></Route>
           <Route path="/Home"><Home /></Route>
-          <Route path="/Public"><PublicTable /></Route>
+          <Route path="/Table"><PublicTable /></Route>
           <Route path="/Track"><TrackSample /></Route>
           <Route path="/Admin"><Admin /></Route>
-          <Route path="/Contact"><Contact /></Route>
+          {/* <Route path="/Contact"><Contact /></Route> */}
         </Switch>
       </Router>
     </Box>
   );
 }
-
 
 export default App;
