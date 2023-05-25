@@ -9,7 +9,6 @@ import PublicTable from './pages/publictable.js';
 import TrackSample from './pages/tracksample.js';
 import Home from './pages/home.js';
 import Admin from './pages/admin.js';
-import Contact from './pages/contact.js'
 import Sample from './pages/sample.js';
 import AdminSample from './pages/adminsample.js';
 import AdminTable from './pages/admintable.js';
@@ -31,7 +30,6 @@ function App() {
           <Route path="/Table"><PublicTable /></Route>
           <Route path="/Track"><TrackSample /></Route>
           <Route path="/Admin"><Admin /></Route>
-          {/* <Route path="/Contact"><Contact /></Route> */}
         </Switch>
       </Router>
     </Box>

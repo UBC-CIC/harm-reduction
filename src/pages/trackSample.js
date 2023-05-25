@@ -17,6 +17,7 @@ const TrackSample = () => {
     const [contactbyemail, setContactByEmail] = useState(true);
     const [contact, setContactState] = useState("N/A");
     let   trackingID;
+    let   newContact;
 
     const trackSample = async () => {
         console.log(`trackingID: ${trackingID}`);
@@ -127,6 +128,19 @@ const TrackSample = () => {
         )
     }
 
+    const ContactEdit = () => {
+        return(
+            <TextField 
+                className="textbox" 
+                onChange={(event)=>{newContact=event.target.value}}
+                id="contactInput" 
+                label= {contactbyemail ? "Enter Email" : "Enter Phone Number"} 
+                variant="outlined" 
+                style={{ marginBottom: '20px' }}
+            />
+        )
+    }
+
     return(
         <Box 
             display="flex"
@@ -138,8 +152,7 @@ const TrackSample = () => {
             {(pageState == 0) && <TrackingIDInput />}
             {(pageState == 0) && <TrackingButton />}
             {(pageState == 1) && <ContactDisplay />}
-            {/* <TextField className="textbox" onChange={event=>{setTrackingID(event.target.value)}}id="trackinginput" label="Enter Tracking ID" variant="outlined" style={{ marginBottom: '20px' }}/>    
-            <Button className="trackbutton" variant="contained" onClick={() => {trackSample(trackingID)}}>Track</Button> */}
+            {(pageState == 2) && <ContactEdit />}
         </Box>
     )
 }
