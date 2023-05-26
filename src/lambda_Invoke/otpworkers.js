@@ -1,17 +1,19 @@
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
-import config from 'config.json'
+// import config from 'config.json'
 
-const SMSSendOTP = async (recipient) => {
-    const SMSSENDOTPLAMBDA = config.SMSSENDOTP;
+export const SendOTP = async (recipient, contactbyemail) => {
+    const SMSSENDOTPLAMBDA  = ''; //config.SMSSENDOTP;
+    const EMAILSENDOTPLAMBDA = ''; // config
 
     const lambdaClient = new LambdaClient({
         region: 'us-west-2'
     });
 
     let referenceID = Math.random().toString(36).substring(2).toUpperCase();
+    let functionName = contactbyemail ? SMSSENDOTPLAMBDA : EMAILSENDOTPLAMBDA;
 
     const sendOTPCMD = new InvokeCommand({
-        FunctionName: SMSSENDOTPLAMBDA,
+        FunctionName: functionName,
         InvocationType: "RequestResponse",
         LogType: "Tail",
         Payload: {
@@ -37,9 +39,6 @@ const SMSSendOTP = async (recipient) => {
     
 }
 
-const EmailSendOTP = async () => {
-
+export const VerifyOTP = async (enteredOTP, referenceID, contactbyemail) => {
     
 }
-
-export default {SMSSendOTP, EmailSendOTP}
