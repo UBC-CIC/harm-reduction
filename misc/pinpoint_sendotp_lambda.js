@@ -5,6 +5,13 @@ export const handler = async(event) => {
   const MAX_ATTEMPTS = 3;
   const CODE_LENGTH = 6;
   const VALIDITY_PERIOD = 15;
+  const ORIGINATION = "+12363014807"; //process.env.ORIGINATION
+
+  let   recipient = '+17786808519';
+  let   referenceID = 'test-reference';
+
+  if(event.recipient)   recipient   = event.recipient;
+  if(event.referenceID) referenceID = event.referenceID;
 
   const ppClient = new PinpointClient({
     region: 'us-west-2'
@@ -17,9 +24,9 @@ export const handler = async(event) => {
       BrandName: "UBC HARM REDUCTION", 
       Channel: "SMS", 
       CodeLength: Number(CODE_LENGTH),
-      DestinationIdentity: "+17786808519", // required
-      OriginationIdentity: "+12363014807", // required
-      ReferenceId: "test-reference", // required
+      DestinationIdentity: recipient, // required
+      OriginationIdentity: ORIGINATION, // required
+      ReferenceId: referenceID, // required
       ValidityPeriod: Number(VALIDITY_PERIOD),}
   })
 

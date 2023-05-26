@@ -9,8 +9,8 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import EmailIcon from '@mui/icons-material/Email';
 import SmsIcon from '@mui/icons-material/Sms';
 
-
 import '../css/tracksample.css'
+import {EmailSendOTP, SMSSendOTP} from '../../misc/sendotp.js';
 
 const TrackSample = () => {
     const [pageState, setPageState] = useState(0); // pageStates = ["enterid", "showcontact", "updatecontact", "verifycontact"]
@@ -36,7 +36,7 @@ const TrackSample = () => {
     }
 
     const editContact = async () => {
-        
+        const OTPInfo = contactbyemail ? EmailSendOTP() : SMSSendOTP();
     }
 
     const loadSample = async () => {
@@ -46,7 +46,12 @@ const TrackSample = () => {
 
     const TrackingIDInput = () => {
         return(
-        <Box>
+        <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+        >
             <TextField 
                 className="textbox" 
                 onChange={(event)=>{trackingID=event.target.value}}
@@ -108,7 +113,12 @@ const TrackSample = () => {
                     <p>email: {contactbyemail ? `${contact}` : 'N/A'}</p>
                     <p>phone: {contactbyemail ? 'N/A' : `${contact}`}</p>
                 </Box>
-                <Box>
+                <Box
+                    display="flex"
+                    flexDirection="row"
+                    justifyContent="center"
+                    alignItems="center"
+                >
                     <Button 
                         className="outlinedbutton"
                         variant="outlined" 
@@ -130,7 +140,12 @@ const TrackSample = () => {
 
     const ContactEdit = () => {
         return(
-            <Box>
+            <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+            >
                 <TextField 
                     className="textbox" 
                     onChange={(event)=>{newContact=event.target.value}}
@@ -139,11 +154,16 @@ const TrackSample = () => {
                     variant="outlined" 
                     style={{ marginBottom: '20px' }}
                 />
-                <Box>
+                <Box
+                    display="flex"
+                    flexDirection="row"
+                    justifyContent="center"
+                    alignItems="center"
+                >
                     <Button 
                         className="containedbutton" 
                         variant="contained" 
-                        onClick={() => {}}
+                        onClick={() => {editContact()}}
                         style={{ marginLeft: "10px" , marginRight: "10px" }}
                     >Save
                     </Button>
