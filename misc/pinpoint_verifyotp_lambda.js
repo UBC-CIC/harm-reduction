@@ -7,6 +7,9 @@ export const handler = async(event) => {
     let   OtpCode   = '';
     let   RefId     = '';
 
+    if(event.Recipient) Recipient = event.Recipient;
+    if(event.OtpCode)   OtpCode   = event.OtpCode;
+    if(event.RefId)     RefId     = event.RefId;
 
     const ppClient = new PinpointClient({
         region: 'us-west-2'
