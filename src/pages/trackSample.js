@@ -36,7 +36,7 @@ const TrackSample = () => {
     }
 
     const editContact = async () => {
-
+        
     }
 
     const loadSample = async () => {
@@ -46,24 +46,22 @@ const TrackSample = () => {
 
     const TrackingIDInput = () => {
         return(
-        <TextField 
-            className="textbox" 
-            onChange={(event)=>{trackingID=event.target.value}}
-            id="trackinginput" 
-            label="Enter Tracking ID" 
-            variant="outlined" 
-            style={{ marginBottom: '20px' }}
-        />)
-    }
-
-    const TrackingButton = () => {
-        return(
-        <Button 
-            className="trackbutton" 
-            variant="contained" 
-            onClick={() => {trackSample(trackingID)}}
-        >Track
-        </Button>)
+        <Box>
+            <TextField 
+                className="textbox" 
+                onChange={(event)=>{trackingID=event.target.value}}
+                id="trackinginput" 
+                label="Enter Tracking ID" 
+                variant="outlined" 
+                style={{ marginBottom: '20px' }}
+            />
+            <Button 
+                className="containedbutton" 
+                variant="contained" 
+                onClick={() => {trackSample(trackingID)}}
+            >Track
+            </Button>
+        </Box>)
     }
 
     const ContactDisplay = () => {
@@ -112,12 +110,14 @@ const TrackSample = () => {
                 </Box>
                 <Box>
                     <Button 
+                        className="outlinedbutton"
                         variant="outlined" 
                         onClick={() => {setPageState(2)}}
                         style={{ marginLeft: "10px" , marginRight: "10px" }}
                     >Edit
                     </Button>
                     <Button 
+                        className="containedbutton"
                         variant="contained" 
                         onClick={() => {loadSample()}}
                         style={{ marginLeft: "10px" , marginRight: "10px" }}
@@ -130,14 +130,32 @@ const TrackSample = () => {
 
     const ContactEdit = () => {
         return(
-            <TextField 
-                className="textbox" 
-                onChange={(event)=>{newContact=event.target.value}}
-                id="contactInput" 
-                label= {contactbyemail ? "Enter Email" : "Enter Phone Number"} 
-                variant="outlined" 
-                style={{ marginBottom: '20px' }}
-            />
+            <Box>
+                <TextField 
+                    className="textbox" 
+                    onChange={(event)=>{newContact=event.target.value}}
+                    id="contactInput" 
+                    label= {contactbyemail ? "Enter Email" : "Enter Phone Number"} 
+                    variant="outlined" 
+                    style={{ marginBottom: '20px' }}
+                />
+                <Box>
+                    <Button 
+                        className="containedbutton" 
+                        variant="contained" 
+                        onClick={() => {}}
+                        style={{ marginLeft: "10px" , marginRight: "10px" }}
+                    >Save
+                    </Button>
+                    <Button 
+                        className="outlinedbutton"
+                        variant="outlined" 
+                        onClick={() => {setPageState(1)}}
+                        style={{ marginLeft: "10px" , marginRight: "10px" }}
+                    >Exit
+                    </Button>
+                </Box>
+            </Box>
         )
     }
 
@@ -150,7 +168,6 @@ const TrackSample = () => {
             minHeight="100vh"
         >
             {(pageState == 0) && <TrackingIDInput />}
-            {(pageState == 0) && <TrackingButton />}
             {(pageState == 1) && <ContactDisplay />}
             {(pageState == 2) && <ContactEdit />}
         </Box>

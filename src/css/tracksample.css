@@ -7,7 +7,11 @@
     font-family: 'Open Sans', sans-serif;
   } */
 
-.trackbutton {
+.containedbutton {
     background-color: #97D4E9;
     color: #002145
+}
+
+.outlinedbutton {
+    
 }
