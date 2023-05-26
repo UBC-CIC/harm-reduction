@@ -2,7 +2,7 @@ import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 // import config from 'config.json'
 
 export const SendOTP = async (recipient, contactbyemail) => {
-    const SMSSENDOTPLAMBDA  = ''; //config.SMSSENDOTP;
+    const SMSSENDOTPLAMBDA  = 'test-sendotp'; //config.SMSSENDOTP;
     const EMAILSENDOTPLAMBDA = ''; // config
 
     const lambdaClient = new LambdaClient({
@@ -10,7 +10,7 @@ export const SendOTP = async (recipient, contactbyemail) => {
     });
 
     let referenceID = Math.random().toString(36).substring(2).toUpperCase();
-    let functionName = contactbyemail ? SMSSENDOTPLAMBDA : EMAILSENDOTPLAMBDA;
+    let functionName = contactbyemail ? EMAILSENDOTPLAMBDA : SMSSENDOTPLAMBDA ;
 
     const sendOTPCMD = new InvokeCommand({
         FunctionName: functionName,
@@ -27,7 +27,6 @@ export const SendOTP = async (recipient, contactbyemail) => {
         console.log(resp);
 
         return{
-            OTP: '',
             referenceID: ''
         }
     }catch(err){
@@ -39,6 +38,35 @@ export const SendOTP = async (recipient, contactbyemail) => {
     
 }
 
-export const VerifyOTP = async (enteredOTP, referenceID, contactbyemail) => {
-    
+export const VerifyOTP = async (recipient, enteredOTP, referenceID, contactbyemail) => {
+    const SMSVERIFYOTPLAMBDA  = ''; //config.SMSSENDOTP;
+    const EMAILVERIFYOTPLAMBDA = ''; // config
+
+    const lambdaClient = new LambdaClient({
+        region: 'us-west-2'
+    });
+
+    let functionName = contactbyemail ? EMAILVERIFYOTPLAMBDA : SMSVERIFYOTPLAMBDA;
+
+    const verifyOTPCMD = new InvokeCommand({
+        FunctionName: functionName,
+        InvocationType: "RequestResponse",
+        LogType: "Tail",
+        Payload: {
+            Recipient: recipient,
+            OtpCode: enteredOTP,
+            RefId: referenceID
+        }
+    });
+
+    try{
+        const resp = await lambdaClient.send(verifyOTPCMD);
+        console.log(resp);
+        return{
+            valid: true // or false
+        }
+    }catch(err){
+        console.log(err);
+        // do something
+    }
 }

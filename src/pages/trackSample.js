@@ -28,8 +28,7 @@ const TrackSample = () => {
         //query database    
         try{
             console.log('try api')
-            const resp = await fetch('https://9gon1waa9a.execute-api.us-west-2.amazonaws.com/getitem');
-            console.log(resp);
+            // const resp = await fetch('https://9gon1waa9a.execute-api.us-west-2.amazonaws.com/getitem');
             // let contactinfo = resp.json(); //grab contact info from item
             setContactState('API_RESP');
             setPageState(1);
@@ -40,19 +39,19 @@ const TrackSample = () => {
     }
 
     const editContact = async () => {
-        const OTPInfo = SendOTP(newContact, contactbyemail);
-        setReferenceID('') // change this to use response from OTPInfo
+        const OTPInfo = await SendOTP(newContact, contactbyemail);
+        setReferenceID(OTPInfo.referenceID) // change this to use response from OTPInfo
         setPageState(3);
     }
 
     const verifyContact = async () => {
-        const verifyResp = VerifyOTP(enteredOTP, referenceID, contactbyemail);
+        const verifyResp = await VerifyOTP(enteredOTP, referenceID, contactbyemail);
         // if success
         if(!verifyResp) setDisplayError(true); //if OTP is incorrect
 
         try{
-            const updateItemResp = await fetch();
-            console.log(updateItemResp)
+            //const updateItemResp = await fetch();
+            //console.log(updateItemResp)
             setPageState(1);
         }catch(err){
             console.log(err);
@@ -245,7 +244,7 @@ const TrackSample = () => {
                         <Button
                             className="outlinedbutton"
                             variant="outlined" 
-                            onClick={() => {setPageState(1); enteredOTP=''}}
+                            onClick={() => {setPageState(1); enteredOTP=''; setDisplayError(false)}}
                             style={{ marginLeft: "10px" , marginRight: "10px"}}
                             color="error"
                         >Exit without saving  
