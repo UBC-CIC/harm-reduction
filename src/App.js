@@ -18,7 +18,7 @@ function App() {
   return (
     <Box>
       <div className="logoBackground">
-          <img src={logo} alt="Logo" style={{ height: '160px' }} />
+        <img src={logo} alt="Logo" style={{ height: '160px' }} />
       </div>
       <Router>
         <NavBar />
@@ -26,10 +26,10 @@ function App() {
           <Route path="/Track/Sample"><Sample /></Route>
           <Route path="/Admin/Sample"><AdminSample /></Route>
           <Route path="/Admin/Table"><AdminTable /></Route>
-          <Route path="/Home"><Home /></Route>
           <Route path="/Table"><PublicTable /></Route>
           <Route path="/Track"><TrackSample /></Route>
           <Route path="/Admin"><Admin /></Route>
+          <Route path="/"><Home /></Route>
         </Switch>
       </Router>
     </Box>

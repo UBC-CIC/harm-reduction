@@ -19,6 +19,7 @@ const TrackSample = () => {
     const [referenceID, setReferenceID] = useState('');
     const [displayError, setDisplayError] = useState(false);
     const [disableButton, setDisableButton] = useState(false);
+    const [displaySavedMsg, setDisplaySavedMsg] = useState(false);
     let   trackingID;
     let   newContact;
     let   enteredOTP;
@@ -39,15 +40,19 @@ const TrackSample = () => {
     }
 
     const editContact = async () => {
+        console.log(newContact);
+        console.log(contactbyemail);
         const OTPInfo = await SendOTP(newContact, contactbyemail);
         setReferenceID(OTPInfo.referenceID) // change this to use response from OTPInfo
+        setDisplayError(false);
         setPageState(3);
     }
 
     const verifyContact = async () => {
+        console.log(enteredOTP);
         const verifyResp = await VerifyOTP(enteredOTP, referenceID, contactbyemail);
         // if success
-        if(!verifyResp) setDisplayError(true); //if OTP is incorrect
+        // if(!verifyResp) setDisplayError(true); //if OTP is incorrect
 
         try{
             //const updateItemResp = await fetch();
@@ -170,7 +175,7 @@ const TrackSample = () => {
                     className="textbox" 
                     onChange={(event)=>{newContact=event.target.value}}
                     id="contactInput" 
-                    label= {contactbyemail ? "Enter Email" : "Enter Phone Number"} 
+                    label= {contactbyemail ? "New Email" : "New Phone Number"} 
                     variant="outlined" 
                     style={{ marginBottom: '20px' }}
                 />
@@ -185,7 +190,7 @@ const TrackSample = () => {
                         variant="contained" 
                         onClick={() => {editContact()}}
                         style={{ marginLeft: "10px" , marginRight: "10px" }}
-                    >Save
+                    >Verify
                     </Button>
                     <Button 
                         className="outlinedbutton"
@@ -235,7 +240,7 @@ const TrackSample = () => {
                     <Button 
                         className="outlinedbutton"
                         variant="outlined" 
-                        onClick={() => {verifyContact(); setDisableButton(true); setTimeout(() => {setDisableButton(false)}, 120000)}}
+                        onClick={() => {verifyContact(); setDisableButton(true); setTimeout(() => {setDisableButton(false)}, 60000)}}
                         style={{ marginLeft: "10px" , marginRight: "10px" }}
                         disabled={disableButton}
                     >Send Another Code

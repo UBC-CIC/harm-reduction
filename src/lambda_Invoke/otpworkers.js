@@ -1,12 +1,20 @@
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
-// import config from 'config.json'
+// import AwsCredentialIdentity from "@aws-sdk/types"
+import config from '../config.json'
+import { toUtf8 } from "@aws-sdk/util-utf8";
 
 export const SendOTP = async (recipient, contactbyemail) => {
     const SMSSENDOTPLAMBDA  = 'test-sendotp'; //config.SMSSENDOTP;
     const EMAILSENDOTPLAMBDA = ''; // config
 
+    const credentials = {
+        accessKeyId: config.ID,
+        secretAccessKey: config.Key
+    }
+
     const lambdaClient = new LambdaClient({
-        region: 'us-west-2'
+        region: 'us-west-2', 
+        credentials: credentials
     });
 
     let referenceID = Math.random().toString(36).substring(2).toUpperCase();
@@ -16,18 +24,20 @@ export const SendOTP = async (recipient, contactbyemail) => {
         FunctionName: functionName,
         InvocationType: "RequestResponse",
         LogType: "Tail",
-        Payload: {
+        Payload: JSON.stringify({
             recipient: recipient,
             referenceID: referenceID
-        }
+        })
     });
 
     try{
         const resp = await lambdaClient.send(sendOTPCMD);
-        console.log(resp);
+        let respPayload = JSON.parse(toUtf8(resp.Payload));
+        console.log(respPayload);
 
         return{
-            referenceID: ''
+            body: respPayload, 
+            referenceID: referenceID
         }
     }catch(err){
         console.log(err);
@@ -39,11 +49,17 @@ export const SendOTP = async (recipient, contactbyemail) => {
 }
 
 export const VerifyOTP = async (recipient, enteredOTP, referenceID, contactbyemail) => {
-    const SMSVERIFYOTPLAMBDA  = ''; //config.SMSSENDOTP;
+    const SMSVERIFYOTPLAMBDA  = 'node-verifyotp'; //config.SMSSENDOTP;
     const EMAILVERIFYOTPLAMBDA = ''; // config
 
+    const credentials = {
+        accessKeyId: config.ID,
+        secretAccessKey: config.Key
+    }
+
     const lambdaClient = new LambdaClient({
-        region: 'us-west-2'
+        region: 'us-west-2', 
+        credentials: credentials
     });
 
     let functionName = contactbyemail ? EMAILVERIFYOTPLAMBDA : SMSVERIFYOTPLAMBDA;
@@ -52,21 +68,25 @@ export const VerifyOTP = async (recipient, enteredOTP, referenceID, contactbyema
         FunctionName: functionName,
         InvocationType: "RequestResponse",
         LogType: "Tail",
-        Payload: {
+        Payload: JSON.stringify({
             Recipient: recipient,
             OtpCode: enteredOTP,
             RefId: referenceID
-        }
+        })
     });
 
     try{
         const resp = await lambdaClient.send(verifyOTPCMD);
-        console.log(resp);
+        let respPayload = JSON.parse(toUtf8(resp.Payload));
+        console.log(respPayload.body);
+        //let respPayload = JSON.parse(toUtf8(resp.Payload));
+        //console.log(respPayload);
         return{
-            valid: true // or false
+            body: 'placeholder'
         }
     }catch(err){
         console.log(err);
+        // console.log(err);
         // do something
     }
 }
