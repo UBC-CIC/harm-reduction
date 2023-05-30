@@ -1,5 +1,6 @@
 import React from 'react';
 import {useState} from 'react';
+import {flexbox} from '@mui/system'
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -11,9 +12,10 @@ import SmsIcon from '@mui/icons-material/Sms';
 
 import '../css/tracksample.css'
 import {SendOTP, VerifyOTP} from '../lambda_Invoke/otpworkers.js';
+import { Card, CardContent, Divider, LinearProgress, Typography } from '@mui/material';
 
 const TrackSample = () => {
-    const [pageState, setPageState] = useState(0); // pageStates = ["enterid", "showcontact", "updatecontact", "verifycontact"]
+    const [pageState, setPageState] = useState(0); // pageStates = ["enterid", "showsample", "showcontact", "updatecontact", "verifycontact"]
     const [contactbyemail, setContactByEmail] = useState(true);
     const [contact, setContactState] = useState("N/A");
     const [referenceID, setReferenceID] = useState('');
@@ -23,6 +25,7 @@ const TrackSample = () => {
     let   trackingID;
     let   newContact;
     let   enteredOTP;
+    let   sampleInfo;
 
     const trackSample = async () => {
         console.log(`trackingID: ${trackingID}`);
@@ -94,6 +97,165 @@ const TrackSample = () => {
         </Box>)
     }
 
+    const ShowSample = () => {
+
+        const SampleBlock = () => {
+            return(
+                <Box
+                    sx={{
+                        boxShadow: 3,
+                        width: 800,
+                        height: 800,
+                        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
+                        color: (theme) =>
+                            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+                        p: 1,
+                        m: 4,
+                        borderRadius: 2,
+                        textAlign: 'center',
+                    }}
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="flex-start"
+                    alignItems="center"
+                >
+                    <Box
+                        display="flex"
+                        flexDirection="row"
+                        justifyContent="space-between"
+                        alignItems="flex-start"
+                        sx={{width: 700}}
+                        marginTop= "20px"
+                    >
+                        <Box
+                            display="flex"
+                            flexDirection="column"
+                            align-items="flex-start"
+                        >
+                            <Typography sx={{m: 1}} style={{textAlign: "left"}}> Sample Name</Typography>
+                            <Typography sx={{m: 1}} style={{textAlign: "left"}}> 12345678 </Typography>
+                        </Box>
+                        <Box
+                            display="flex"
+                            flexDirection="column"
+                            align-items="flex-end"
+                        >
+                            <Typography sx={{m: 1}} style={{textAlign: "right"}}> status</Typography>
+                            <Typography sx={{m: 1}} style={{textAlign: "right"}}> 2023/05/30 </Typography>
+                        </Box>
+                    </Box>
+                    {/* <hr style={{border: 0, clear: "both", display: "block", width: "700px", backgroundColor: "back", height: "1px"}}></hr> 
+                    <Box
+                        sx={{
+                            width:"600px",
+                            height: "10px"
+                        }}
+                        display="flex"
+                        flexDirection="column"
+                        justifyContent="center"
+                        alignItems="flex-start"
+                    >
+                        <LinearProgress variant="determinate" value={100}/>
+                        <Typography>Status</Typography>
+                    </Box>
+                    <Box
+                        sx={{
+                            boxShadow: 3,
+                            width: 600,
+                            height: 200,
+                            bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
+                            color: (theme) =>
+                                theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+                            p: 1,
+                            m: 4,
+                            borderRadius: 2,
+                            textAlign: 'center',
+                        }}
+                        display="flex"
+                        flexDirection="column"
+                        justifyContent="flex-start"
+                        alignItems="center"
+                    >
+                    </Box> */}
+                    <Button
+                        className="outlinedbutton" 
+                        variant="outlined" 
+                        onClick={() => {setPageState(2)}}
+                    >Get updates for this sample
+                    </Button>
+                </Box>
+            )
+        }
+
+        const TrackOther = () => {
+            return(
+                <Box
+                    sx={{
+                        boxShadow: 3,
+                        width: 400,
+                        height: 200,
+                        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
+                        color: (theme) =>
+                            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+                        p: 1,
+                        m: 4,
+                        borderRadius: 2,
+                        textAlign: 'center',
+                    }}
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                </Box>
+            )
+        }
+
+        const ResourcesBlock = () => {
+            return(
+                <Box
+                    sx={{
+                        boxShadow: 3,
+                        width: 400,
+                        height: 300,
+                        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
+                        color: (theme) =>
+                            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+                        p: 1,
+                        m: 4,
+                        borderRadius: 2,
+                        textAlign: 'center',
+                    }}
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                </Box>
+            )
+        } 
+
+        return(
+            <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="center"
+                alignItems="flex-start"
+            >
+                <SampleBlock />
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="top"
+                    alignItems="flex-start"
+                >
+                    <TrackOther />
+                    <ResourcesBlock />
+                </Box>
+            </Box>
+        )
+    }
+
     const ContactDisplay = () => {
         return(
             <Box
@@ -147,14 +309,14 @@ const TrackSample = () => {
                     <Button 
                         className="outlinedbutton"
                         variant="outlined" 
-                        onClick={() => {setPageState(2)}}
+                        onClick={() => {setPageState(3)}}
                         style={{ marginLeft: "10px" , marginRight: "10px" }}
                     >Edit
                     </Button>
                     <Button 
                         className="containedbutton"
                         variant="contained" 
-                        onClick={() => {loadSample()}}
+                        onClick={() => {setPageState(1)}}
                         style={{ marginLeft: "10px" , marginRight: "10px" }}
                     >Track Sample
                     </Button>
@@ -269,9 +431,10 @@ const TrackSample = () => {
             minHeight="100vh"
         >
             {(pageState == 0) && <TrackingIDInput />}
-            {(pageState == 1) && <ContactDisplay />}
-            {(pageState == 2) && <ContactEdit />}
-            {(pageState == 3) && <ContactVerify />}
+            {(pageState == 1) && <ShowSample />}
+            {(pageState == 2) && <ContactDisplay />}
+            {(pageState == 3) && <ContactEdit />}
+            {(pageState == 4) && <ContactVerify />}
         </Box>
     )
 }
