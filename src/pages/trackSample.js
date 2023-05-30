@@ -31,7 +31,7 @@ const TrackSample = () => {
             console.log('try api')
             // const resp = await fetch('https://9gon1waa9a.execute-api.us-west-2.amazonaws.com/getitem');
             // let contactinfo = resp.json(); //grab contact info from item
-            setContactState('API_RESP');
+            setContactState('PLACEHOLDER_RESPONSEFROMDATABASE');
             setPageState(1);
         }catch(err){
             // no response -> item doesn't exist
@@ -50,7 +50,7 @@ const TrackSample = () => {
 
     const verifyContact = async () => {
         console.log(enteredOTP);
-        const verifyResp = await VerifyOTP(enteredOTP, referenceID, contactbyemail);
+        const verifyResp = await VerifyOTP(newContact, enteredOTP, referenceID, contactbyemail);
         // if success
         // if(!verifyResp) setDisplayError(true); //if OTP is incorrect
 
@@ -135,8 +135,8 @@ const TrackSample = () => {
                             <SmsIcon />
                         </ToggleButton>
                     </ToggleButtonGroup>
-                    <p>email: {contactbyemail ? `${contact}` : 'N/A'}</p>
-                    <p>phone: {contactbyemail ? 'N/A' : `${contact}`}</p>
+                    {contactbyemail && <p>email: {contact}</p>}
+                    {!contactbyemail && <p>phone: {contact}</p>}
                 </Box>
                 <Box
                     display="flex"
