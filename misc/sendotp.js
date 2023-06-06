@@ -9,8 +9,8 @@ export const handler = async(event) => {
     let   OTPCode        = Math.random().toString(36).substring(2, 8).toUpperCase(); 
     
     let   contactbyemail = false;
-    let   recipient      = '+17786808519';
-    let   refID          = 'testref';
+    let   recipient      = '';
+    let   refID          = '';
 
     if(event.contactbyemail) contactbyemail = event.contactbyemail;
     if(event.recipient)      recipient      = event.recipient;
