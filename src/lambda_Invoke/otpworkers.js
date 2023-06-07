@@ -61,6 +61,7 @@ export const VerifyOTP = async (recipient, enteredOTP, referenceID) => {
         credentials: credentials
     });
 
+    console.log("destination: " + recipient);
     const verifyOTPCMD = new InvokeCommand({
         FunctionName: VERIFYOTPLAMBDA,
         InvocationType: "RequestResponse",
@@ -75,14 +76,10 @@ export const VerifyOTP = async (recipient, enteredOTP, referenceID) => {
 
     try{
         const resp = await lambdaClient.send(verifyOTPCMD);
-        console.log('lambda resp: ');
-        console.log(resp);
-        //let respPayload = JSON.parse(toUtf8(resp.Payload));
-        //console.log(respPayload.body);
-        //let respPayload = JSON.parse(toUtf8(resp.Payload));
-        //console.log(respPayload);
+        let respPayload = JSON.parse(toUtf8(resp.Payload));
+        console.log(respPayload);
         return{
-            body: 'placeholder'
+            valid: respPayload.valid
         }
     }catch(err){
         console.log(err);

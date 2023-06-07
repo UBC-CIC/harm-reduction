@@ -1,6 +1,6 @@
 import React from 'react';
-import {useState} from 'react';
-import {flexbox} from '@mui/system'
+import { useState } from 'react';
+import { flexbox } from '@mui/system'
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -11,8 +11,8 @@ import EmailIcon from '@mui/icons-material/Email';
 import SmsIcon from '@mui/icons-material/Sms';
 
 import '../css/tracksample.css'
-import {SendOTP, VerifyOTP} from '../lambda_Invoke/otpworkers.js';
-import { Card, CardContent, Divider, LinearProgress, Typography } from '@mui/material';
+import { SendOTP, VerifyOTP } from '../lambda_Invoke/otpworkers.js';
+import { Alert, Card, CardContent, Divider, LinearProgress, Typography } from '@mui/material';
 
 const TrackSample = () => {
     const [pageState, setPageState] = useState(0); // pageStates = ["enterid", "showsample", "showcontact", "updatecontact", "verifycontact"]
@@ -22,8 +22,9 @@ const TrackSample = () => {
     const [displayError, setDisplayError] = useState(false);
     const [disableButton, setDisableButton] = useState(false);
     const [displaySavedMsg, setDisplaySavedMsg] = useState(false);
+    const [newContact, setNewContact] = useState('');
     let   trackingID;
-    let   newContact;
+    let   contactField;
     let   enteredOTP;
     let   sampleInfo;
 
@@ -43,32 +44,32 @@ const TrackSample = () => {
     }
 
     const editContact = async () => {
-        console.log('contact ' + newContact);
+        console.log(`contactfield: ${contactField}`);
         console.log('email? ' + contactbyemail);
-        const OTPInfo = await SendOTP(newContact, contactbyemail);
+        const OTPInfo = await SendOTP(contactField, contactbyemail);
+        setNewContact(contactField);
         setReferenceID(OTPInfo.referenceID) // change this to use response from OTPInfo
         setDisplayError(false);
+        contactField = '';
         setPageState(4);
     }
 
     const verifyContact = async () => {
-        console.log(enteredOTP);
+        console.log(`entered OTP: ${enteredOTP}`);
         const verifyResp = await VerifyOTP(newContact, enteredOTP, referenceID);
-        console.log(verifyResp);
+
+        if(!verifyResp.valid) console.log('verification fail path');
 
         try{
             //const updateItemResp = await fetch();
             //console.log(updateItemResp)
-            setPageState(1);
+            setNewContact('');
+            setDisplaySavedMsg(true);
+            setPageState(3);
         }catch(err){
             console.log(err);
             // should try again or do some thing to fix issue, probably do not want user to know this part went wrong
         }
-    }
-
-    const loadSample = async () => {
-        // loads the sample page
-        // im not sure how to bring the sample information from this page to the next page
     }
 
     const TrackingIDInput = () => {
@@ -332,13 +333,14 @@ const TrackSample = () => {
                 justifyContent="center"
                 alignItems="center"
             >
+                {displaySavedMsg && (<Alert severity="success">New contact info has been saved</Alert>)}
                 <TextField 
                     className="textbox" 
-                    onChange={(event)=>{newContact=event.target.value}}
+                    onChange={(event)=>{contactField=event.target.value}}
                     id="contactInput" 
                     label= {contactbyemail ? "New Email" : "New Phone Number"} 
                     variant="outlined" 
-                    style={{ marginBottom: '20px' }}
+                    style={{ marginTop: "20px", marginBottom: '20px' }}
                 />
                 <Box
                     display="flex"
@@ -356,7 +358,7 @@ const TrackSample = () => {
                     <Button 
                         className="outlinedbutton"
                         variant="outlined" 
-                        onClick={() => {setPageState(1); newContact=''}}
+                        onClick={() => {setPageState(1); contactField=''; setDisplaySavedMsg(false)}}
                         style={{ marginLeft: "10px" , marginRight: "10px" }}
                     >Exit
                     </Button>
@@ -382,9 +384,7 @@ const TrackSample = () => {
                     variant="outlined" 
                     style={{ marginBottom: '20px' }}
                 />
-                {displayError && (
-                    <p color="error">The OTP you entered was incorrect</p>
-                )}
+                {displayError && (<Alert severity="error">The OTP you entered was incorrect</Alert>)}
                 <Box
                     display="flex"
                     flexDirection="row"
