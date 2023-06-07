@@ -207,6 +207,8 @@ const TrackSample = () => {
                     justifyContent="center"
                     alignItems="center"
                 >
+                    <TextField></TextField>
+                    <Button></Button>
                 </Box>
             )
         }

@@ -1,6 +1,6 @@
 import {useState} from 'react';
 
-import { Box } from "@mui/material"
+import { Box, Alert } from "@mui/material"
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
@@ -9,10 +9,13 @@ import '@aws-amplify/ui-react/styles.css';
 
 const Admin = () => {
     const [showError, setShowError] = useState(false);
+    const [loginStatus, setLoginStatus] = useState(false);
     let   username;
     let   password;
 
     const adminSignin = async () => {
+        console.log(`username: ${username}`);
+
         
     }
 
@@ -44,7 +47,7 @@ const Admin = () => {
         >
         </TextField>
         {showError && (
-            <p color="error">Your username or password are incorrect, please contact the system admin to reset your password</p>
+            <Alert severity="error">Your username or password are incorrect, please contact the system admin to reset your password</Alert>
         )}
         <Button 
             className="containedbutton"
