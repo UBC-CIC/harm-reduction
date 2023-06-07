@@ -43,19 +43,18 @@ const TrackSample = () => {
     }
 
     const editContact = async () => {
-        console.log(newContact);
-        console.log(contactbyemail);
+        console.log('contact ' + newContact);
+        console.log('email? ' + contactbyemail);
         const OTPInfo = await SendOTP(newContact, contactbyemail);
         setReferenceID(OTPInfo.referenceID) // change this to use response from OTPInfo
         setDisplayError(false);
-        setPageState(3);
+        setPageState(4);
     }
 
     const verifyContact = async () => {
         console.log(enteredOTP);
-        const verifyResp = await VerifyOTP(newContact, enteredOTP, referenceID, contactbyemail);
-        // if success
-        // if(!verifyResp) setDisplayError(true); //if OTP is incorrect
+        const verifyResp = await VerifyOTP(newContact, enteredOTP, referenceID);
+        console.log(verifyResp);
 
         try{
             //const updateItemResp = await fetch();

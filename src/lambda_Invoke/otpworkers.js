@@ -4,8 +4,7 @@ import config from '../config.json'
 import { toUtf8 } from "@aws-sdk/util-utf8";
 
 export const SendOTP = async (recipient, contactbyemail) => {
-    const SMSSENDOTPLAMBDA  = 'test-sendotp'; //config.SMSSENDOTP;
-    const EMAILSENDOTPLAMBDA = ''; // config
+    const SENDOTPLAMBDA = 'generateandsendOTP';
 
     const credentials = {
         accessKeyId: config.ID,
@@ -17,18 +16,19 @@ export const SendOTP = async (recipient, contactbyemail) => {
         credentials: credentials
     });
 
-    let referenceID = Math.random().toString(36).substring(2).toUpperCase();
-    let functionName = contactbyemail ? EMAILSENDOTPLAMBDA : SMSSENDOTPLAMBDA ;
+    let referenceID = new String(new Date().getTime());
 
     const sendOTPCMD = new InvokeCommand({
-        FunctionName: functionName,
+        FunctionName: SENDOTPLAMBDA,
         InvocationType: "RequestResponse",
         LogType: "Tail",
         Payload: JSON.stringify({
+            contactbyemail: contactbyemail,
             recipient: recipient,
-            referenceID: referenceID
+            refID: referenceID
         })
     });
+    console.log(sendOTPCMD);
 
     try{
         const resp = await lambdaClient.send(sendOTPCMD);
@@ -48,9 +48,8 @@ export const SendOTP = async (recipient, contactbyemail) => {
     
 }
 
-export const VerifyOTP = async (recipient, enteredOTP, referenceID, contactbyemail) => {
-    const SMSVERIFYOTPLAMBDA  = 'node-verifyotp'; //config.SMSSENDOTP;
-    const EMAILVERIFYOTPLAMBDA = ''; // config
+export const VerifyOTP = async (recipient, enteredOTP, referenceID) => {
+    const VERIFYOTPLAMBDA = 'verifyOTP';
 
     const credentials = {
         accessKeyId: config.ID,
@@ -62,23 +61,24 @@ export const VerifyOTP = async (recipient, enteredOTP, referenceID, contactbyema
         credentials: credentials
     });
 
-    let functionName = contactbyemail ? EMAILVERIFYOTPLAMBDA : SMSVERIFYOTPLAMBDA;
-
     const verifyOTPCMD = new InvokeCommand({
-        FunctionName: functionName,
+        FunctionName: VERIFYOTPLAMBDA,
         InvocationType: "RequestResponse",
         LogType: "Tail",
         Payload: JSON.stringify({
-            Recipient: recipient,
-            OtpCode: enteredOTP,
-            RefId: referenceID
+            recipient: recipient,
+            userOTP: enteredOTP,
+            userRefID: referenceID
         })
     });
+    console.log(verifyOTPCMD);
 
     try{
         const resp = await lambdaClient.send(verifyOTPCMD);
-        let respPayload = JSON.parse(toUtf8(resp.Payload));
-        console.log(respPayload.body);
+        console.log('lambda resp: ');
+        console.log(resp);
+        //let respPayload = JSON.parse(toUtf8(resp.Payload));
+        //console.log(respPayload.body);
         //let respPayload = JSON.parse(toUtf8(resp.Payload));
         //console.log(respPayload);
         return{
