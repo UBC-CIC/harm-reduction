@@ -8,9 +8,10 @@ export default function Home() {
       <Image
         src="/ubclogo.png"
         alt="ubc logo"
+        width={100}
+        height={20}
       >
       </Image>
-      <NavBar />
     </main>
   )
 }
