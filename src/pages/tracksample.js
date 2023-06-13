@@ -74,7 +74,7 @@ const TrackSample = () => {
             //console.log(updateItemResp)
             setNewContact('');
             setDisplaySavedMsg(true);
-            setPageState(2);
+            setPageState(1);
         }catch(err){
             console.log(err);
             // should try again or do some thing to fix issue, probably do not want user to know this part went wrong
@@ -153,6 +153,9 @@ const TrackSample = () => {
                             <Typography sx={{m: 1}} style={{textAlign: "right"}}> 2023/05/30 </Typography>
                         </Box>
                     </Box>
+                    {displaySavedMsg && (
+                        <Alert severity="success">Your contact information has been saved successfully</Alert>
+                    )}
                     {/* <hr style={{border: 0, clear: "both", display: "block", width: "700px", backgroundColor: "back", height: "1px"}}></hr> 
                     <Box
                         sx={{
@@ -225,6 +228,13 @@ const TrackSample = () => {
                                 onChange={() => {}}
                                 inputProps={{ 'aria-label': 'controlled' }}
                             />
+                            <Button
+                                className="outlinedbutton" 
+                                variant="outlined" 
+                                onClick={() => {}}
+                                style={{marginLeft: '10px'}}
+                            >Save Information
+                            </Button>
                         </Box>
                     </Box>
                     <Button
@@ -331,7 +341,7 @@ const TrackSample = () => {
                 alignItems="center"
                 minHeight="100vh"
             >
-                <Typography>Update the contact information below to also receive updates via either SMS or email</Typography>
+                <Typography>Enter your contact info below and receive notifications on the status of your sample</Typography>
                 <Box
                     sx={{
                         boxShadow: 3,
@@ -353,7 +363,7 @@ const TrackSample = () => {
                     <ToggleButtonGroup
                         value={contactMethod}
                         exclusive
-                        onChange={handleContactMethod}
+                        onChange={(event, newContactMethod) => {setContactMethod(newContactMethod)}}
                         aria-label="text alignment"
                         style={{margin: '20px'}}
                         >
