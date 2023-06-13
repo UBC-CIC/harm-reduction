@@ -11,7 +11,6 @@ import EmailIcon from '@mui/icons-material/Email';
 import SmsIcon from '@mui/icons-material/Sms';
 
 import { SendOTP, VerifyOTP } from '../utils/otpworkers.js';
-// import { NavBar } from '../layout/navbar.js'
 import { Alert, Card, CardContent, Divider, LinearProgress, Typography } from '@mui/material';
 
 const TrackSample = () => {
@@ -98,6 +97,31 @@ const TrackSample = () => {
             >Track
             </Button>
         </Box>)
+    }
+
+    const GetMetadata = () => {
+        return(
+            <Box
+                sx={{
+                    boxShadow: 3,
+                    width: 800,
+                    height: 800,
+                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
+                    color: (theme) =>
+                        theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+                    p: 1,
+                    m: 4,
+                    borderRadius: 2,
+                    textAlign: 'center',
+                }}
+                display="flex"
+                flexDirection="column"
+                justifyContent="flex-start"
+                alignItems="center"
+            >
+
+            </Box>
+        )
     }
 
     const ShowSample = () => {
@@ -436,6 +460,7 @@ const TrackSample = () => {
         >
             {/*<NavBar />*/}
             {(pageState == 0) && <TrackingIDInput />}
+            {(pageState == 1) && <GetMetadata/>}
             {(pageState == 1) && <ShowSample />}
             {(pageState == 2) && <ContactDisplay />}
             {(pageState == 3) && <ContactEdit />}
