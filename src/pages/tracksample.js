@@ -12,7 +12,7 @@ import SmsIcon from '@mui/icons-material/Sms';
 
 import '../css/tracksample.css'
 import { SendOTP, VerifyOTP } from '../lambda_Invoke/otpworkers.js';
-import { Alert, Card, CardContent, Divider, LinearProgress, Typography } from '@mui/material';
+import { Switch, Alert, Card, CardContent, Divider, LinearProgress, Typography } from '@mui/material';
 
 const TrackSample = () => {
     const [pageState, setPageState] = useState(0); // pageStates = ["enterid", "showsample", "showcontact", "updatecontact", "verifycontact"]
@@ -65,7 +65,7 @@ const TrackSample = () => {
             //console.log(updateItemResp)
             setNewContact('');
             setDisplaySavedMsg(true);
-            setPageState(3);
+            setPageState(4);
         }catch(err){
             console.log(err);
             // should try again or do some thing to fix issue, probably do not want user to know this part went wrong
@@ -177,11 +177,52 @@ const TrackSample = () => {
                         alignItems="center"
                     >
                     </Box> */}
+                    <Box
+                        sx={{
+                            boxShadow: 3,
+                            width: 700,
+                            height: 200,
+                            bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
+                            color: (theme) =>
+                                theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+                            p: 1,
+                            m: 4,
+                            borderRadius: 2,
+                            textAlign: 'center',
+                        }}
+                        display="flex"
+                        flexDirection="column"
+                        justifyContent="flex-start"
+                        alignItems="flex-start"
+                    >   
+                        <Typography style={{marginTop: '10px', marginLeft: '20px'}}>Information about your sample</Typography>
+                        <TextField 
+                            className="textbox" 
+                            onChange={(event)=>{trackingID=event.target.value}}
+                            id="trackinginput" 
+                            label="Contents of the sample" 
+                            variant="outlined" 
+                            style={{ margin: '20px', width: "600px" }}
+                        />
+                        <Box
+                            display="flex"
+                            flexDirection="row"
+                            justifyContent="flex-start"
+                            alignItems="center"
+                        >
+                            <Typography style={{marginLeft: '20px'}}>Did you use this substance</Typography>
+                            <Switch
+                                defaultChecked
+                                onChange={() => {}}
+                                inputProps={{ 'aria-label': 'controlled' }}
+                            />
+                        </Box>
+                    </Box>
                     <Button
                         className="outlinedbutton" 
                         variant="outlined" 
                         onClick={() => {setPageState(2)}}
-                    >Get updates for this sample
+                    >Opt in to recieve updates via email/sms
                     </Button>
                 </Box>
             )
@@ -205,10 +246,24 @@ const TrackSample = () => {
                     display="flex"
                     flexDirection="column"
                     justifyContent="center"
-                    alignItems="center"
+                    alignItems="flex-start"
                 >
-                    <TextField></TextField>
-                    <Button></Button>
+                    <Typography style={{ marginLeft: '20px', marginBottom: '10px' }}>Track another sample</Typography>
+                    <TextField 
+                        className="textbox" 
+                        onChange={(event)=>{trackingID=event.target.value}}
+                        id="trackinginput" 
+                        label="Enter Tracking ID" 
+                        variant="outlined" 
+                        style={{ marginLeft: '20px', marginBottom: '10px' }}
+                    />
+                    <Button
+                        className="containedbutton" 
+                        variant="contained" 
+                        onClick={() => {setPageState(2)}}
+                        style={{ marginLeft: '20px', marginBottom: '10px' }}
+                    >Track
+                    </Button>
                 </Box>
             )
         }
@@ -267,13 +322,12 @@ const TrackSample = () => {
                 alignItems="center"
                 minHeight="100vh"
             >
-                <p>The status of your sample is available on this website.</p>
-                <p>Update the contact information below to also receive updates via either SMS or email</p>
+                <Typography>Update the contact information below to also receive updates via either SMS or email</Typography>
                 <Box
                     sx={{
                         boxShadow: 3,
                         width: '600px',
-                        height: '200px',
+                        height: '250px',
                         bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
                         color: (theme) =>
                             theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
@@ -284,23 +338,38 @@ const TrackSample = () => {
                     }}
                     display="flex"
                     flexDirection="column"
-                    justifyContent="center"
+                    justifyContent="flex-start"
                     alignItems="center"
                 >
                     <ToggleButtonGroup
                     value={contactbyemail}
                     exclusive
                     aria-label="contactmethod"
+                    style={{marginTop: "20px", marginBottom: "20px"}}
                     >
                         <ToggleButton value="email" aria-label="email" onClick={() => setContactByEmail(true)}>
-                            <EmailIcon />
+                            Email <EmailIcon />
                         </ToggleButton>
                         <ToggleButton value="phone" aria-label="phone" onClick={() => setContactByEmail(false)}>
-                            <SmsIcon />
+                            <SmsIcon /> SMS
                         </ToggleButton>
                     </ToggleButtonGroup>
-                    {contactbyemail && <p>email: {contact}</p>}
-                    {!contactbyemail && <p>phone: {contact}</p>}
+                    <TextField 
+                        className="textbox" 
+                        onChange={(event)=>{trackingID=event.target.value}}
+                        id="trackinginput" 
+                        label="Enter new email" 
+                        variant="outlined" 
+                        style={{ marginBottom: '20px', width: "400px"}}
+                    />
+                    <TextField 
+                        className="textbox" 
+                        onChange={(event)=>{trackingID=event.target.value}}
+                        id="trackinginput" 
+                        label="Enter new phone number" 
+                        variant="outlined" 
+                        style={{ marginBottom: '20px', width: "400px" }}
+                    />
                 </Box>
                 <Box
                     display="flex"
@@ -309,18 +378,18 @@ const TrackSample = () => {
                     alignItems="center"
                 >
                     <Button 
-                        className="outlinedbutton"
-                        variant="outlined" 
-                        onClick={() => {setPageState(3)}}
-                        style={{ marginLeft: "10px" , marginRight: "10px" }}
-                    >Edit
-                    </Button>
-                    <Button 
                         className="containedbutton"
                         variant="contained" 
+                        onClick={() => {setPageState(3)}}
+                        style={{ marginLeft: "10px" , marginRight: "10px" }}
+                    >Save
+                    </Button>
+                    <Button 
+                        className="outlinedbutton"
+                        variant="outlined" 
                         onClick={() => {setPageState(1)}}
                         style={{ marginLeft: "10px" , marginRight: "10px" }}
-                    >Track Sample
+                    >Exit without saving
                     </Button>
                 </Box>
             </Box>
