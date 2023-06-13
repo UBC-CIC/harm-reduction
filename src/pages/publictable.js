@@ -2,15 +2,16 @@
 
 import React, { useState } from 'react';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TextField,
-  Button,
+    Box,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    TextField,
+    Button,
 } from '@mui/material';
 
 // const useStyles = makeStyles({
@@ -120,7 +121,7 @@ const PublicTable = () => {
   };
 
   return (
-    <div
+    <Box
         style={{
             display: 'flex',
             flexDirection: 'column',
@@ -129,7 +130,6 @@ const PublicTable = () => {
             backgroundColor: 'white', 
             height: '100vh', 
             width: '100vw', 
-            margin: 0, 
             marginTop: '20px',
             padding: 0, 
         }}
@@ -181,7 +181,7 @@ const PublicTable = () => {
           </Button>
         ))}
       </div>
-    </div>
+    </Box>
   );
 };
 

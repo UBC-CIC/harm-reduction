@@ -95,7 +95,7 @@ const TrackSample = () => {
                 id="trackinginput" 
                 label="Enter Tracking ID" 
                 variant="outlined" 
-                style={{ marginBottom: '20px' }}
+                style={{ marginBottom: '20px', width: '400px' }}
             />
             <Button 
                 className="containedbutton" 
