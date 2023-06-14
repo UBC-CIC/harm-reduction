@@ -9,7 +9,7 @@ function NavBar(){
                 <div className="navBar">
                     <Link to="/" className='navbutton'>Home</Link>
                     <Link to="/Table" className='navbutton'>View Samples</Link>
-                    <Link to="/Track" className='navbutton'>Track Specific Sample</Link>
+                    <Link to="/Track" className='navbutton'>Search via Sample ID</Link>
                 </div>
             </AppBar>
         </Box>

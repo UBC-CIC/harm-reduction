@@ -12,7 +12,12 @@ import SmsIcon from '@mui/icons-material/Sms';
 
 import '../css/tracksample.css'
 import { SendOTP, VerifyOTP } from '../lambda_Invoke/otpworkers.js';
-import { Switch, Alert, Card, CardContent, Divider, LinearProgress, Typography } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Switch, Alert, Typography } from '@mui/material';
+
+const rows = [
+    {name: 'Stuff1', percentage: '95', mass: '95.0'},
+    {name: 'Stuff2', percentage: '5', mass: '5.0'}
+];
 
 const TrackSample = () => {
     const [pageState, setPageState] = useState(0); // pageStates = ["enterid", "showsample", "showcontact", "updatecontact", "verifycontact"]
@@ -22,17 +27,11 @@ const TrackSample = () => {
     const [disableButton, setDisableButton] = useState(false);
     const [displaySavedMsg, setDisplaySavedMsg] = useState(false);
     const [newContact, setNewContact] = useState('');
+    const [contactMethod, setContactMethod] = useState('email')
     let   trackingID;
     let   contactField;
     let   enteredOTP;
     let   sampleInfo;
-
-    const [contactMethod, setContactMethod] = useState('email')
-    const handleContactMethod = (event, newContactMethod) => {
-        console.log(newContactMethod);
-        setContactMethod(newContactMethod);
-    };
-
 
     const trackSample = async () => {
         console.log(`trackingID: ${trackingID}`);
@@ -141,54 +140,21 @@ const TrackSample = () => {
                             flexDirection="column"
                             align-items="flex-start"
                         >
-                            <Typography sx={{m: 1}} style={{textAlign: "left"}}> Sample Name</Typography>
-                            <Typography sx={{m: 1}} style={{textAlign: "left"}}> 12345678 </Typography>
+                            <Typography sx={{m: 1}} style={{textAlign: "left"}}> </Typography>
+                            <Typography sx={{m: 1}} style={{textAlign: "left"}}> 1234 </Typography>
                         </Box>
                         <Box
                             display="flex"
                             flexDirection="column"
                             align-items="flex-end"
                         >
-                            <Typography sx={{m: 1}} style={{textAlign: "right"}}> status</Typography>
+                            <Typography sx={{m: 1}} style={{textAlign: "right"}}> IN PROGRESS</Typography>
                             <Typography sx={{m: 1}} style={{textAlign: "right"}}> 2023/05/30 </Typography>
                         </Box>
                     </Box>
                     {displaySavedMsg && (
                         <Alert severity="success">Your contact information has been saved successfully</Alert>
                     )}
-                    {/* <hr style={{border: 0, clear: "both", display: "block", width: "700px", backgroundColor: "back", height: "1px"}}></hr> 
-                    <Box
-                        sx={{
-                            width:"600px",
-                            height: "10px"
-                        }}
-                        display="flex"
-                        flexDirection="column"
-                        justifyContent="center"
-                        alignItems="flex-start"
-                    >
-                        <LinearProgress variant="determinate" value={100}/>
-                        <Typography>Status</Typography>
-                    </Box>
-                    <Box
-                        sx={{
-                            boxShadow: 3,
-                            width: 600,
-                            height: 200,
-                            bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
-                            color: (theme) =>
-                                theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
-                            p: 1,
-                            m: 4,
-                            borderRadius: 2,
-                            textAlign: 'center',
-                        }}
-                        display="flex"
-                        flexDirection="column"
-                        justifyContent="flex-start"
-                        alignItems="center"
-                    >
-                    </Box> */}
                     <Box
                         sx={{
                             boxShadow: 3,
@@ -207,27 +173,35 @@ const TrackSample = () => {
                         justifyContent="flex-start"
                         alignItems="flex-start"
                     >   
-                        <Typography style={{marginTop: '10px', marginLeft: '20px'}}>Information about your sample</Typography>
+                        <Typography style={{marginTop: '10px', marginLeft: '20px'}}>Submit information about your sample</Typography>
                         <TextField 
                             className="textbox" 
                             onChange={(event)=>{trackingID=event.target.value}}
                             id="trackinginput" 
                             label="Contents of the sample" 
                             variant="outlined" 
-                            style={{ margin: '20px', width: "600px" }}
+                            style={{ margin: '20px', width: "630px" }}
                         />
                         <Box
                             display="flex"
                             flexDirection="row"
-                            justifyContent="flex-start"
+                            justifyContent="space-between"
                             alignItems="center"
+                            sx={{width: 650}}
                         >
-                            <Typography style={{marginLeft: '20px'}}>Did you use this substance</Typography>
-                            <Switch
-                                defaultChecked
-                                onChange={() => {}}
-                                inputProps={{ 'aria-label': 'controlled' }}
-                            />
+                            <Box
+                                display="flex"
+                                flexDirection="row"
+                                justifyContent="flex-start"
+                                alignItems="center"
+                            >
+                                <Typography style={{marginLeft: '20px'}}>Did you use this substance</Typography>
+                                <Switch
+                                    defaultChecked
+                                    onChange={() => {}}
+                                    inputProps={{ 'aria-label': 'controlled' }}
+                                />
+                            </Box>
                             <Button
                                 className="outlinedbutton" 
                                 variant="outlined" 
@@ -237,10 +211,12 @@ const TrackSample = () => {
                             </Button>
                         </Box>
                     </Box>
+                    <SampleTable />
                     <Button
                         className="outlinedbutton" 
                         variant="outlined" 
                         onClick={() => {setPageState(2)}}
+                        sx={{marginTop: '10px'}}
                     >Opt in to recieve updates via email/sms
                     </Button>
                 </Box>
@@ -304,12 +280,43 @@ const TrackSample = () => {
                     }}
                     display="flex"
                     flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
+                    justifyContent="flex-start"
+                    alignItems="flex-start"
                 >
+                    <Typography style={{margin: '20px'}}>Resources</Typography>
                 </Box>
             )
         } 
+
+        const SampleTable = () => {
+            return(
+                <TableContainer component={Paper} sx={{width: 700, m: 2}}>
+                    <Table sx={{ width: 650, marginBottom: 2 }} aria-label="simple table">
+                        <TableHead>
+                        <TableRow>
+                            <TableCell>Chemical component</TableCell>
+                            <TableCell align="right">Percentage (%)</TableCell>
+                            <TableCell align="right">Mass (mg)</TableCell>
+                        </TableRow>
+                        </TableHead>
+                        <TableBody>
+                        {rows.map((row) => (
+                            <TableRow
+                            key={row.name}
+                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                            <TableCell component="th" scope="row">
+                                {row.name}
+                            </TableCell>
+                            <TableCell align="right">{`${row.percentage}%`}</TableCell>
+                            <TableCell align="right">{`${row.mass} mg`}</TableCell>
+                            </TableRow>
+                        ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            )
+        }
 
         return(
             <Box
