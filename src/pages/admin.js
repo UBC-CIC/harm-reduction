@@ -4,6 +4,7 @@ import { Box, Alert } from "@mui/material"
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
+import { authUser } from '../lambda_Invoke/loginworker.js'
 import AdminTable from '../components/admintable.js'
 
 // import { Authenticator } from '@aws-amplify/ui-react';
@@ -18,7 +19,12 @@ const Admin = () => {
 
     const adminSignin = async () => {
         console.log(`username: ${username}`);
+        const authResp = await authUser(username, password);
 
+        if(authResp != 'done'){
+            setShowError(true);
+            return;
+        } 
         setLoginStatus(true);
     }
 
@@ -57,7 +63,7 @@ const Admin = () => {
                     className="containedbutton"
                     variant="contained" 
                     onClick={() => {adminSignin()}}
-                    style={{ marginLeft: "10px" , marginRight: "10px" }}
+                    style={{ marginTop: '10px', marginLeft: "10px" , marginRight: "10px" }}
                 >Login
                 </Button>
             </Box>

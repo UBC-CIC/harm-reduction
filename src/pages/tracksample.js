@@ -195,7 +195,7 @@ const TrackSample = () => {
                                 justifyContent="flex-start"
                                 alignItems="center"
                             >
-                                <Typography style={{marginLeft: '20px'}}>Did you use this substance</Typography>
+                                <Typography style={{marginLeft: '20px'}}>Has this sample been used?</Typography>
                                 <Switch
                                     defaultChecked
                                     onChange={() => {}}
