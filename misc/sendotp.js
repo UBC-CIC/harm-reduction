@@ -1,6 +1,6 @@
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
-import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
+import { SNSClient, PublishCommand, VerifySMSSandboxPhoneNumberCommand } from "@aws-sdk/client-sns";
 
 export const handler = async(event) => {
     const TABLE          = 'OTPTestTable';
@@ -36,7 +36,7 @@ export const handler = async(event) => {
         
         console.log('sending message')
         let sendMsgResp;
-        if(contactbyemail) sendMsgResp = await sendSES(recipient, SUBJECT, OTPMessage);
+        if(contactbyemail) sendMsgResp = await sendSES(recipient, OTPCode);
         else               sendMsgResp = await sendSNS(recipient, SUBJECT, OTPMessage);
         console.log(sendMsgResp);
 
@@ -81,17 +81,21 @@ async function sendSES(recipient, subject, message){
     }
 }
 
-async function sendSNS(recipient, subject, message){
+async function sendSNS(recipient, OTPCode){
     const snsClient = new SNSClient({region: 'us-west-2'});
-    const sendTextCMD = new PublishCommand({
+    const verifySandboxNumCMD = new VerifySMSSandboxPhoneNumberCommand({
         PhoneNumber: recipient,
-        Message: message,
-        Subject: subject,
+        OneTimePassword: OTPCode, 
     })
+    // const sendTextCMD = new PublishCommand({
+    //     PhoneNumber: recipient,
+    //     Message: message,
+    //     Subject: subject,
+    // })
 
     try{
-        const sendTextResp = await snsClient.send(sendTextCMD);
-        console.log(sendTextResp);
+        const verifyNumResp = await snsClient.send(verifySandboxNumCMD);
+        console.log(verifyNumResp);
         return true
     }catch(err){
         return false
