@@ -113,7 +113,7 @@ const TrackSample = () => {
                     sx={{
                         boxShadow: 3,
                         width: 800,
-                        height: 800,
+                        height: 'auto',
                         bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
                         color: (theme) =>
                             theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
@@ -155,11 +155,18 @@ const TrackSample = () => {
                     {displaySavedMsg && (
                         <Alert severity="success">Your contact information has been saved successfully</Alert>
                     )}
+                    <Button
+                        className="outlinedbutton" 
+                        variant="outlined" 
+                        onClick={() => {setPageState(2)}}
+                        sx={{marginTop: '10px'}}
+                    >Opt in to recieve updates via email/sms
+                    </Button>
                     <Box
                         sx={{
                             boxShadow: 3,
                             width: 700,
-                            height: 200,
+                            height: 'auto',
                             bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
                             color: (theme) =>
                                 theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
@@ -170,24 +177,24 @@ const TrackSample = () => {
                         }}
                         display="flex"
                         flexDirection="column"
-                        justifyContent="flex-start"
+                        justifyContent="space-between"
                         alignItems="flex-start"
                     >   
-                        <Typography style={{marginTop: '10px', marginLeft: '20px'}}>Submit information about your sample</Typography>
+                        <Typography style={{margin: '10px'}}>Submit information about your sample</Typography>
                         <TextField 
                             className="textbox" 
                             onChange={(event)=>{trackingID=event.target.value}}
                             id="trackinginput" 
                             label="Contents of the sample" 
                             variant="outlined" 
-                            style={{ margin: '20px', width: "630px" }}
+                            style={{ margin: '10px', width: "660px" }}
                         />
                         <Box
                             display="flex"
                             flexDirection="row"
                             justifyContent="space-between"
                             alignItems="center"
-                            sx={{width: 650}}
+                            sx={{width: 680}}
                         >
                             <Box
                                 display="flex"
@@ -195,7 +202,7 @@ const TrackSample = () => {
                                 justifyContent="flex-start"
                                 alignItems="center"
                             >
-                                <Typography style={{marginLeft: '20px'}}>Has this sample been used?</Typography>
+                                <Typography style={{margin: '10px'}}>Has this sample been used?</Typography>
                                 <Switch
                                     defaultChecked
                                     onChange={() => {}}
@@ -206,19 +213,12 @@ const TrackSample = () => {
                                 className="outlinedbutton" 
                                 variant="outlined" 
                                 onClick={() => {}}
-                                style={{marginLeft: '10px'}}
+                                style={{margin: '10px'}}
                             >Save Information
                             </Button>
                         </Box>
                     </Box>
                     <SampleTable />
-                    <Button
-                        className="outlinedbutton" 
-                        variant="outlined" 
-                        onClick={() => {setPageState(2)}}
-                        sx={{marginTop: '10px'}}
-                    >Opt in to recieve updates via email/sms
-                    </Button>
                 </Box>
             )
         }
@@ -243,22 +243,30 @@ const TrackSample = () => {
                     justifyContent="center"
                     alignItems="flex-start"
                 >
-                    <Typography style={{ marginLeft: '20px', marginBottom: '10px' }}>Track another sample</Typography>
-                    <TextField 
-                        className="textbox" 
-                        onChange={(event)=>{trackingID=event.target.value}}
-                        id="trackinginput" 
-                        label="Enter Tracking ID" 
-                        variant="outlined" 
-                        style={{ marginLeft: '20px', marginBottom: '10px' }}
-                    />
-                    <Button
-                        className="containedbutton" 
-                        variant="contained" 
-                        onClick={() => {setPageState(2)}}
-                        style={{ marginLeft: '20px', marginBottom: '10px' }}
-                    >Track
-                    </Button>
+                    <Typography style={{ margin: '10px' }}>Track another sample</Typography>
+                    <Box
+                        sx={{width: 400}}
+                        display="flex"
+                        flexDirection="column"
+                        justifyContent="center"
+                        alignItems="space-between"
+                    >
+                        <TextField 
+                            className="textbox" 
+                            onChange={(event)=>{trackingID=event.target.value}}
+                            id="trackinginput" 
+                            label="Enter Tracking ID" 
+                            variant="outlined" 
+                            style={{ margin: '10px' }}
+                        />
+                        <Button
+                            className="containedbutton" 
+                            variant="contained" 
+                            onClick={() => {trackSample()}}
+                            style={{ margin: '10px' }}
+                        >Track
+                        </Button>
+                    </Box>
                 </Box>
             )
         }
@@ -290,7 +298,7 @@ const TrackSample = () => {
 
         const SampleTable = () => {
             return(
-                <TableContainer component={Paper} sx={{width: 700, m: 2}}>
+                <TableContainer component={Paper} sx={{width: 700, m: 2, marginBottom: '40px'}}>
                     <Table sx={{ width: 650, marginBottom: 2 }} aria-label="simple table">
                         <TableHead>
                         <TableRow>
@@ -482,7 +490,7 @@ const TrackSample = () => {
                     id="OTPInput" 
                     label= "Enter verification code"
                     variant="outlined" 
-                    style={{ marginBottom: '20px' }}
+                    style={{ marginBottom: '20px'}}
                 />
                 {displayError && (<Alert style={{marginBottom: '20px'}} severity="error">The OTP you entered was incorrect</Alert>)}
                 <Box

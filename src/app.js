@@ -4,31 +4,29 @@ import { Box } from '@mui/material';
 import './app.css'; 
 
 import logo from './ubclogo.png'
-import NavBar from './components/navbar.js'
+import { NavBar, MobileNavBar } from './components/navbar.js'
 import PublicTable from './pages/publictable.js';
 import TrackSample from './pages/tracksample.js';
 import Home from './pages/home.js';
 import Admin from './pages/admin.js';
-import Sample from './pages/sample.js';
-import AdminSample from './pages/adminsample.js';
-import AdminTable from './pages/admintable.js';
+import About from './pages/about.js';
 
+// import { isMobile } from 'react-device-detect'
 
 function App() {
+  const isMobile = true;
   return (
     <Box>
-      <div className="logoBackground">
+      {!isMobile && (<div className="logoBackground">
         <img src={logo} alt="Logo" style={{ height: '160px' }} />
-      </div>
+      </div>)}
       <Router>
-        <NavBar />
+        {isMobile ? <MobileNavBar /> : <NavBar />}
         <Switch>
-          <Route path="/Track/Sample"><Sample /></Route>
-          <Route path="/Admin/Sample"><AdminSample /></Route>
-          <Route path="/Admin/Table"><AdminTable /></Route>
           <Route path="/Table"><PublicTable /></Route>
           <Route path="/Track"><TrackSample /></Route>
           <Route path="/Admin"><Admin /></Route>
+          <Route path="/About"><About /></Route>
           <Route path="/"><Home /></Route>
         </Switch>
       </Router>
