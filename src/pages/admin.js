@@ -21,10 +21,11 @@ const Admin = () => {
         console.log(`username: ${username}`);
         const authResp = await authUser(username, password);
 
-        if(authResp != 'done'){
+        if(!authResp.AccessToken){
             setShowError(true);
             return;
         } 
+        console.log('successfully authenticated');
         setLoginStatus(true);
     }
 

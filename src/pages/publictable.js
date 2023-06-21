@@ -129,8 +129,7 @@ const PublicTable = () => {
             marginTop: '2rem',
             backgroundColor: 'white', 
             height: '100vh', 
-            width: '100vw', 
-            marginTop: '20px',
+            width: '100vw',
             padding: 0, 
         }}
     >
