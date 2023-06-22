@@ -28,15 +28,19 @@ const isMobile = false;
 const TrackSample = () => {
     const [pageState, setPageState] = useState(0); // pageStates = ["enterid", "showsample", "showcontact", "updatecontact", "verifycontact"]
     const [referenceID, setReferenceID] = useState('');
+    const [newContact, setNewContact] = useState('');
+    const [contactMethod, setContactMethod] = useState('email')
+    
     const [displayError, setDisplayError] = useState(false);
     const [disableButton, setDisableButton] = useState(false);
     const [displaySavedMsg, setDisplaySavedMsg] = useState(false);
-    const [newContact, setNewContact] = useState('');
-    const [contactMethod, setContactMethod] = useState('email')
+    const [displayContactEdit, setDisplayContactEdit] = useState(false);
+    const [displayContactVerify, setDisplayContactVerify] = useState(false);
+    
     const [sampleID, setSampleID] = useState('');
     const [sampleStatus, setSampleStatus] = useState('');
     const [sampleDate, setSampleDate] = useState('');
-
+    
     let   trackingID;
     let   contactField;
     let   enteredOTP;
@@ -63,10 +67,11 @@ const TrackSample = () => {
         console.log('email? ' + contactMethod);
         const OTPInfo = await SendOTP(contactField, (contactMethod == 'email'));
         setNewContact(contactField);
-        setReferenceID(OTPInfo.referenceID) // change this to use response from OTPInfo
+        setReferenceID(OTPInfo.referenceID)
         setDisplayError(false);
         contactField = '';
-        setPageState(3);
+        setDisplayContactEdit(false);
+        setDisplayContactVerify(true);
     }
 
     const verifyContact = async () => {
@@ -79,11 +84,15 @@ const TrackSample = () => {
         }
 
         try{
-            //const updateItemResp = await fetch();
-            //console.log(updateItemResp)
+            const updateContactResp = await axios.put(`https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/users?tableName=users`, {
+                "sample-id": sampleID,
+                "contact": newContact,
+            });
+            console.log(updateContactResp);
+
             setNewContact('');
             setDisplaySavedMsg(true);
-            setPageState(1);
+            setDisplayContactVerify(false);
         }catch(err){
             console.log(err);
             // should try again or do some thing to fix issue, probably do not want user to know this part went wrong
@@ -150,7 +159,6 @@ const TrackSample = () => {
                             flexDirection="column"
                             align-items="flex-start"
                         >
-                            <Typography sx={{m: 1}} style={{textAlign: "left"}}> </Typography>
                             <Typography sx={{m: 1}} style={{textAlign: "left"}}> {`${sampleID}`} </Typography>
                         </Box>
                         <Box
@@ -165,13 +173,15 @@ const TrackSample = () => {
                     {displaySavedMsg && (
                         <Alert severity="success">Your contact information has been saved successfully</Alert>
                     )}
-                    <Button
+                    {!displayContactEdit && <Button
                         className="outlinedbutton" 
                         variant="outlined" 
-                        onClick={() => {setPageState(2)}}
+                        onClick={() => {setDisplayContactEdit(true)}}
                         sx={{marginTop: '10px'}}
-                    >Opt in to recieve updates via email/sms
-                    </Button>
+                    >Recieve updates via email/sms
+                    </Button>}
+                    {displayContactEdit && <ContactDisplay />}
+                    {displayContactVerify && <ContactVerify />}
                     <Box
                         sx={{
                             boxShadow: 3,
@@ -195,7 +205,7 @@ const TrackSample = () => {
                             className="textbox" 
                             onChange={(event)=>{trackingID=event.target.value}}
                             id="trackinginput" 
-                            label="Contents of the sample" 
+                            label="Expected contents" 
                             variant="outlined" 
                             style={{ margin: '10px', width: "660px" }}
                         />
@@ -228,7 +238,8 @@ const TrackSample = () => {
                             </Button>
                         </Box>
                     </Box>
-                    <SampleTable />
+                    {(sampleStatus == 'Complete') && <SampleTable />}
+                    {(sampleStatus == 'Inconclusive') && <Alert severity='warning' sx={{mb:2}}>Your sample is currently undergoing further analysis due to inconclusive test results</Alert>}
                 </Box>
             )
         }
@@ -568,69 +579,62 @@ const TrackSample = () => {
     const ContactDisplay = () => {
         return(
             <Box
+                sx={{
+                    boxShadow: 3,
+                    width: '700px',
+                    height: 'auto',
+                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
+                    color: (theme) =>
+                        theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+                    p: 1,
+                    m: 2,
+                    borderRadius: 2,
+                    textAlign: 'center',
+                }}
                 display="flex"
                 flexDirection="column"
-                justifyContent="center"
+                justifyContent="flex-start"
                 alignItems="center"
-                minHeight="100vh"
             >
-                <Typography>Enter your contact info below and receive notifications on the status of your sample</Typography>
-                <Box
-                    sx={{
-                        boxShadow: 3,
-                        width: '600px',
-                        height: '250px',
-                        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
-                        color: (theme) =>
-                            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
-                        p: 1,
-                        m: 4,
-                        borderRadius: 2,
-                        textAlign: 'center',
-                    }}
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="flex-start"
-                    alignItems="center"
-                >
-                    <ToggleButtonGroup
-                        value={contactMethod}
-                        exclusive
-                        onChange={(event, newContactMethod) => {setContactMethod(newContactMethod)}}
-                        aria-label="text alignment"
-                        style={{margin: '20px'}}
-                        >
-                        <ToggleButton value="email" aria-label="email">
-                            Email <EmailIcon/>
-                        </ToggleButton>
-                        <ToggleButton value="sms" aria-label="sms">
-                            <SmsIcon /> SMS
-                        </ToggleButton>
-                    </ToggleButtonGroup>
-                    <TextField 
-                        className="textbox" 
-                        onChange={(event)=>{contactField=event.target.value}}
-                        id="trackinginput" 
-                        label="Enter new email" 
-                        variant="outlined" 
-                        style={{ marginBottom: '20px', width: "400px"}}
-                        disabled={contactMethod=='sms'}
-                    />
-                    <TextField 
-                        className="textbox" 
-                        onChange={(event)=>{contactField=event.target.value}}
-                        id="trackinginput" 
-                        label="Enter new phone number" 
-                        variant="outlined" 
-                        style={{ marginBottom: '20px', width: "400px" }}
-                        disabled={contactMethod=='email'}
-                    />
-                </Box>
+                <Typography sx={{m:2}}>Enter your contact info below and receive notifications on the status of this sample</Typography>
+                <ToggleButtonGroup
+                    value={contactMethod}
+                    exclusive
+                    onChange={(event, newContactMethod) => {setContactMethod(newContactMethod)}}
+                    aria-label="text alignment"
+                    sx={{m:2, mt: 0}}
+                    >
+                    <ToggleButton value="email" aria-label="email">
+                        Email <EmailIcon/>
+                    </ToggleButton>
+                    <ToggleButton value="sms" aria-label="sms">
+                        <SmsIcon /> SMS
+                    </ToggleButton>
+                </ToggleButtonGroup>
+                <TextField 
+                    className="textbox" 
+                    onChange={(event)=>{contactField=event.target.value}}
+                    id="trackinginput" 
+                    label="Enter new email" 
+                    variant="outlined" 
+                    style={{ marginBottom: '20px', width: "400px"}}
+                    disabled={contactMethod=='sms'}
+                />
+                <TextField 
+                    className="textbox" 
+                    onChange={(event)=>{contactField=event.target.value}}
+                    id="trackinginput" 
+                    label="Enter new phone number" 
+                    variant="outlined" 
+                    style={{ marginBottom: '20px', width: "400px" }}
+                    disabled={contactMethod=='email'}
+                />
                 <Box
                     display="flex"
                     flexDirection="row"
                     justifyContent="center"
                     alignItems="center"
+                    sx={{mb:2}}
                 >
                     <Button 
                         className="containedbutton"
@@ -642,75 +646,45 @@ const TrackSample = () => {
                     <Button 
                         className="outlinedbutton"
                         variant="outlined" 
-                        onClick={() => {setPageState(1)}}
+                        onClick={() => {setDisplayContactEdit(false)}}
                         style={{ marginLeft: "10px" , marginRight: "10px" }}
-                    >Exit without saving
+                    >Close without saving
                     </Button>
                 </Box>
             </Box>
         )
     }
 
-    // const ContactEdit = () => {
-    //     return(
-    //         <Box
-    //             display="flex"
-    //             flexDirection="column"
-    //             justifyContent="center"
-    //             alignItems="center"
-    //         >
-    //             {displaySavedMsg && (<Alert severity="success">New contact info has been saved</Alert>)}
-    //             <TextField 
-    //                 className="textbox" 
-    //                 onChange={(event)=>{contactField=event.target.value}}
-    //                 id="contactInput" 
-    //                 label= {(contactMethod == 'email') ? "New Email" : "New Phone Number"} 
-    //                 variant="outlined" 
-    //                 style={{ marginTop: "20px", marginBottom: '20px' }}
-    //             />
-    //             <Box
-    //                 display="flex"
-    //                 flexDirection="row"
-    //                 justifyContent="center"
-    //                 alignItems="center"
-    //             >
-    //                 <Button 
-    //                     className="containedbutton" 
-    //                     variant="contained" 
-    //                     onClick={() => {editContact()}}
-    //                     style={{ marginLeft: "10px" , marginRight: "10px" }}
-    //                 >Verify
-    //                 </Button>
-    //                 <Button 
-    //                     className="outlinedbutton"
-    //                     variant="outlined" 
-    //                     onClick={() => {setPageState(1); contactField=''; setDisplaySavedMsg(false)}}
-    //                     style={{ marginLeft: "10px" , marginRight: "10px" }}
-    //                 >Exit
-    //                 </Button>
-    //             </Box>
-    //         </Box>
-    //     )
-    // }
-
     const ContactVerify = () => {
         return(
             <Box
+                sx={{
+                    boxShadow: 3,
+                    width: '700px',
+                    height: 'auto',
+                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
+                    color: (theme) =>
+                        theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+                    p: 1,
+                    m: 2,
+                    borderRadius: 2,
+                    textAlign: 'center',
+                }}
                 display="flex"
                 flexDirection="column"
                 justifyContent="center"
                 alignItems="center"
             >
-                <p>An OTP (one time password) has been sent to your {(contactMethod == 'email') ? "email" : "phone number"}, enter it in the box below to verify your contact info</p>
+                <Typography sx={{m:2, mb:1}}>An OTP (one time password) has been sent to your {(contactMethod == 'email') ? "email" : "phone number"}, enter it in the box below to verify your contact info</Typography>
                 <TextField 
                     className="textbox" 
                     onChange={(event)=>{enteredOTP=event.target.value}}
                     id="OTPInput" 
                     label= "Enter verification code"
                     variant="outlined" 
-                    style={{ marginBottom: '20px'}}
+                    sx={{m:2, mb: 1, width: '400px'}}
                 />
-                {displayError && (<Alert style={{marginBottom: '20px'}} severity="error">The OTP you entered was incorrect</Alert>)}
+                {displayError && (<Alert sx={{m:1}} severity="error">The OTP you entered was incorrect</Alert>)}
                 <Box
                     display="flex"
                     flexDirection="row"
@@ -721,14 +695,14 @@ const TrackSample = () => {
                         className="containedbutton" 
                         variant="contained" 
                         onClick={() => {verifyContact()}}
-                        style={{ marginLeft: "10px" , marginRight: "10px" }}
+                        sx={{ m: 1, mb: 2 }}
                     >Confirm
                     </Button>
                     <Button 
                         className="outlinedbutton"
                         variant="outlined" 
                         onClick={() => {editContact(); setDisableButton(true); setTimeout(() => {setDisableButton(false)}, 60000)}}
-                        style={{ marginLeft: "10px" , marginRight: "10px" }}
+                        sx={{ m: 1, mb: 2 }}
                         disabled={disableButton}
                     >Send Another Code
                     </Button>
@@ -736,8 +710,8 @@ const TrackSample = () => {
                         <Button
                             className="outlinedbutton"
                             variant="outlined" 
-                            onClick={() => {setPageState(1); enteredOTP=''; setDisplayError(false)}}
-                            style={{ marginLeft: "10px" , marginRight: "10px"}}
+                            onClick={() => {setDisplayContactVerify(false); enteredOTP=''; setDisplayError(false)}}
+                            sx={{m: 1, mb: 2}}
                             color="error"
                         >Exit without saving  
                         </Button>
