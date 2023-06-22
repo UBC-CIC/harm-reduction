@@ -43,7 +43,6 @@ const TrackSample = () => {
     const [sampleDate, setSampleDate] = useState('');
 
     const [sampleUsed, setSampleUsed] = useState(false);
-    const [expectedContents, setExpectedContents] = useState('');
     
     let   trackingID;
     let   contactField;
@@ -68,16 +67,30 @@ const TrackSample = () => {
     }
 
     const saveMetadata = async () => {
-        setExpectedContents(expectedContentsField);
-        expectedContentsField='';
+        console.log('expected-field: ' + expectedContentsField);
+        console.log('used?: ' + sampleUsed);
         setDisplayGetMetadata(false);
 
         try{
+            const getresp = await axios.get(`https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples&sample-id=${sampleID}`);
+            const item = getresp.data;
             const resp = await axios.put(`https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples`,{
-                
+                "sample-id": item["sample-id"],
+                "vial-id": item["vial-id"],
+                "date-received": item["date-received"],
+                "expected-content": expectedContentsField,
+                "is-used": String(sampleUsed),
+                "test-results": item["test-results"],
+                "location": item["location"],
+                "notes": item["notes"],
+                "color": item["color"],
+                "testing-method": item["testing-method"],
             })
+            console.log(resp);
+            expectedContentsField='';
+            setSampleUsed(false);
         }catch(err){
-
+            console.log(err);
         }
 
     }
@@ -138,7 +151,7 @@ const TrackSample = () => {
             <Button 
                 className="containedbutton" 
                 variant="contained" 
-                onClick={() => {trackSample(trackingID)}}
+                onClick={() => {trackSample()}}
             >Track
             </Button>
         </Box>)
@@ -560,7 +573,7 @@ const TrackSample = () => {
                 <Typography style={{margin: '10px'}}>Submit additional information about this sample</Typography>
                 <TextField 
                     className="textbox" 
-                    onChange={(event)=>{expectedContents=event.target.value}}
+                    onChange={(event)=>{expectedContentsField=event.target.value}}
                     id="trackinginput" 
                     label="Expected contents of this sample" 
                     variant="outlined" 
@@ -574,7 +587,7 @@ const TrackSample = () => {
                     sx={{width: 660}}
                 >
                     <Typography style={{margin: '10px'}}>Has this sample been used?</Typography>
-                    <Checkbox onChange={(event) => {setSampleUsed(event.target.checked)}}/>
+                    <Checkbox onClick={(event) => {setSampleUsed(event.target.checked)}}/>
                 </Box>
                 <Box
                     display="flex"
