@@ -133,6 +133,7 @@ const TrackSample = () => {
     }
 
     const TrackingIDInput = () => {
+        const WIDTH = isMobile ? 400 : 800;
         return(
         <Box
             display="flex"
@@ -141,19 +142,21 @@ const TrackSample = () => {
             alignItems="center"
             sx={{mt:4}}
         >
+            <Typography variant='h6' align='center' sx={{m:1, width: WIDTH}}>Enter the sample ID provided on the pacakge in the box below</Typography>
             <TextField 
                 className="textbox" 
                 onChange={(event)=>{trackingID=event.target.value}}
                 id="trackinginput" 
-                label="Enter Tracking ID" 
+                label="Enter Sample ID" 
                 variant="outlined" 
-                style={{ marginBottom: '20px', width: 'auto' }}
+                sx={{ m:1, width: WIDTH }}
             />
             <Button 
                 className="containedbutton" 
                 variant="contained" 
                 onClick={() => {trackSample()}}
-            >Track
+                sx={{m:1,width: WIDTH}}
+            >Search
             </Button>
         </Box>)
     }
@@ -256,7 +259,7 @@ const TrackSample = () => {
                     justifyContent="center"
                     alignItems="flex-start"
                 >
-                    <Typography style={{ margin: '10px' }}>Track another sample</Typography>
+                    <Typography style={{ margin: '10px' }}>Search for another sample</Typography>
                     <Box
                         sx={{width: 400}}
                         display="flex"
@@ -268,7 +271,7 @@ const TrackSample = () => {
                             className="textbox" 
                             onChange={(event)=>{trackingID=event.target.value}}
                             id="trackinginput" 
-                            label="Enter Tracking ID" 
+                            label="Enter Sample ID" 
                             variant="outlined" 
                             style={{ margin: '10px' }}
                         />
@@ -277,7 +280,7 @@ const TrackSample = () => {
                             variant="contained" 
                             onClick={() => {trackSample()}}
                             style={{ margin: '10px' }}
-                        >Track
+                        >Search
                         </Button>
                     </Box>
                 </Box>
@@ -403,7 +406,7 @@ const TrackSample = () => {
                 </Box>
                 <Box
                     display="flex"
-                    flexDirection="row"
+                    flexDirection={isMobile ? "column" : "row"}
                     justifyContent="center"
                     alignItems="center"
                     sx={{width: WIDTH - 100}}
