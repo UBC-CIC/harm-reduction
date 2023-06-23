@@ -139,6 +139,7 @@ const TrackSample = () => {
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
+            sx={{mt:4}}
         >
             <TextField 
                 className="textbox" 
@@ -158,13 +159,15 @@ const TrackSample = () => {
     }
 
     const ShowSample = () => {
-
+        const WIDTH = isMobile ? 400 : 800;
+        const INNERWIDTH = isMobile ? 400 : 700;
+        const OUTERBOXSHADOW = isMobile ? 0 : 3;
         const SampleBlock = () => {
             return(
                 <Box
                     sx={{
-                        boxShadow: 3,
-                        width: 800,
+                        boxShadow: OUTERBOXSHADOW,
+                        width: WIDTH,
                         height: 'auto',
                         bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
                         color: (theme) =>
@@ -184,7 +187,7 @@ const TrackSample = () => {
                         flexDirection="column"
                         justifyContent="center "
                         alignItems="flex-start"
-                        sx={{width: 700, m: 1, mt: 2}}
+                        sx={{width: INNERWIDTH, m: 1, mt: 2}}
                     >
                         <Typography sx={{m: 1}} style={{textAlign: "left"}}> {`${sampleID}`} </Typography>                    
                         <Typography sx={{m: 1}} style={{textAlign: "right"}}> {`${sampleStatus}`}</Typography>
@@ -198,7 +201,7 @@ const TrackSample = () => {
                         className="outlinedbutton" 
                         variant="outlined" 
                         onClick={() => {setDisplayContactEdit(true)}}
-                        sx={{m: 1}}
+                        sx={{m: 1, width: INNERWIDTH}}
                     >Recieve updates via email/sms
                     </Button>}
                     {displayContactEdit && <ContactDisplay />}
@@ -208,12 +211,27 @@ const TrackSample = () => {
                         className="outlinedbutton" 
                         variant="outlined" 
                         onClick={() => {setDisplayGetMetadata(true)}}
-                        sx={{m: 1}}
+                        sx={{m: 1, mb: 2, width: INNERWIDTH}}
                     >Provide additional information about this sample
                     </Button>}
                     {displayGetMetadata && <GetMetadata />}
                     {(sampleStatus == 'Complete') && <SampleTable />}
                     {(sampleStatus == 'Inconclusive') && <Alert severity='warning' sx={{m:1,mb:2}}>Your sample is currently undergoing further analysis due to inconclusive test results</Alert>}
+                    {isMobile && 
+                    <Button
+                        className="outlinedbutton" 
+                        variant="outlined" 
+                        onClick={() => {
+                            setPageState(0); 
+                            setDisplayContactEdit(false); 
+                            setDisplayContactVerify(false); 
+                            setDisplayGetMetadata(false); 
+                            setDisplayError(false); 
+                            setDisplaySavedMsg(false)
+                        }}
+                        sx={{m:1,mb:2, mt: 0,width: INNERWIDTH}}
+                    >Search for another sample
+                    </Button>}
                 </Box>
             )
         }
@@ -292,9 +310,10 @@ const TrackSample = () => {
         } 
 
         const SampleTable = () => {
+            const WIDTH = isMobile ? 400 : 700;
             return(
-                <TableContainer component={Paper} sx={{width: 700, m: 2, marginBottom: '40px'}}>
-                    <Table sx={{ width: 650, marginBottom: 2 }} aria-label="simple table">
+                <TableContainer component={Paper} sx={{width: WIDTH, m: 2, marginBottom: '40px'}}>
+                    <Table sx={{ width: WIDTH - 50, marginBottom: 2 }} aria-label="simple table">
                         <TableHead>
                         <TableRow>
                             <TableCell>Chemical component</TableCell>
@@ -325,237 +344,30 @@ const TrackSample = () => {
             <Box
                 display="flex"
                 flexDirection="row"
-                justifyContent="center"
+                justifyContent="flex-start"
                 alignItems="flex-start"
             >
                 <SampleBlock />
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="top"
-                    alignItems="flex-start"
-                >
-                    <TrackOther />
-                    <ResourcesBlock />
-                </Box>
-            </Box>
-        )
-    }
-
-    const MobileShowSample = () => {
-        const SampleBlock = () => {
-            return(
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                >
-                    <Box
-                        display="flex"
-                        flexDirection="column"
-                        justifyContent="flex-start"
-                        alignItems="flex-start"
-                        sx={{width: 300, mb: 1, mt: 2}}
-                    >
-                        <Typography sx={{m: 1}} style={{textAlign: "left"}}> </Typography>
-                        <Typography sx={{m: 1}} style={{textAlign: "left"}}> 1234 </Typography>
-                        <Typography sx={{m: 1}} style={{textAlign: "left"}}> IN PROGRESS</Typography>
-                        <Typography sx={{m: 1}} style={{textAlign: "left"}}> 2023/05/30 </Typography>
-                    </Box>
-                    {displaySavedMsg && (
-                        <Alert severity="success">Your contact information has been saved successfully</Alert>
-                    )}
-                    <Button
-                        className="outlinedbutton" 
-                        variant="outlined" 
-                        onClick={() => {setPageState(2)}}
-                        sx={{marginTop: '10px'}}
-                    >Recieve updates via email/sms
-                    </Button>
-                    <Box
-                        sx={{
-                            boxShadow: 3,
-                            width: 300,
-                            height: 'auto',
-                            bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
-                            color: (theme) =>
-                                theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
-                            p: 1,
-                            m: 4,
-                            borderRadius: 2,
-                            textAlign: 'center',
-                        }}
-                        display="flex"
-                        flexDirection="column"
-                        justifyContent="space-between"
-                        alignItems="flex-start"
-                    >   
-                        <Typography sx={{m: 1}}>Submit information about your sample</Typography>
-                        <TextField 
-                            className="textbox" 
-                            onChange={(event)=>{trackingID=event.target.value}}
-                            id="trackinginput" 
-                            label="Contents of the sample" 
-                            variant="outlined" 
-                            sx={{ m: 1 }}
-                        />
-                        <Box
-                            display="flex"
-                            flexDirection="row"
-                            justifyContent="flex-start"
-                            alignItems="center"
-                        >
-                            <Typography style={{margin: '10px'}}>Has this sample been used?</Typography>
-                            <Switch
-                                defaultChecked
-                                onChange={() => {}}
-                                inputProps={{ 'aria-label': 'controlled' }}
-                            />
-                        </Box>
-                        <Button
-                            className="outlinedbutton" 
-                            variant="outlined" 
-                            onClick={() => {}}
-                            style={{margin: '10px'}}
-                        >Save Information
-                        </Button>
-                    </Box>
-                    <SampleTable />
-                </Box>
-            )
-        }
-
-        const TrackOther = () => {
-            return(
-                <Box
-                    sx={{
-                        boxShadow: 3,
-                        width: 300,
-                        height: 200,
-                        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
-                        color: (theme) =>
-                            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
-                        p: 1,
-                        m: 2,
-                        borderRadius: 2,
-                        textAlign: 'center',
-                    }}
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="flex-start"
-                >
-                    <Typography style={{ margin: '10px' }}>Track another sample</Typography>
-                    <Box
-                        sx={{width: 300}}
-                        display="flex"
-                        flexDirection="column"
-                        justifyContent="center"
-                        alignItems="space-between"
-                    >
-                        <TextField 
-                            className="textbox" 
-                            onChange={(event)=>{trackingID=event.target.value}}
-                            id="trackinginput" 
-                            label="Enter Tracking ID" 
-                            variant="outlined" 
-                            sx={{ m: 1 }}
-                        />
-                        <Button
-                            className="containedbutton" 
-                            variant="contained" 
-                            onClick={() => {trackSample()}}
-                            sx={{ m: 1 }}
-                        >Track
-                        </Button>
-                    </Box>
-                </Box>
-            )
-        }
-
-        const ResourcesBlock = () => {
-            return(
-                <Box
-                    sx={{
-                        boxShadow: 3,
-                        width: 300,
-                        height: 300,
-                        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
-                        color: (theme) =>
-                            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
-                        p: 1,
-                        m: 2,
-                        borderRadius: 2,
-                        textAlign: 'center',
-                    }}
+                {!isMobile && <Box
                     display="flex"
                     flexDirection="column"
                     justifyContent="flex-start"
                     alignItems="flex-start"
                 >
-                    <Typography style={{margin: '20px'}}>Resources</Typography>
-                </Box>
-            )
-        } 
-
-        const SampleTable = () => {
-            return(
-                <TableContainer component={Paper} sx={{width: 300, m: 2, marginBottom: '40px'}}>
-                    <Table sx={{ width: 300, marginBottom: 2 }} aria-label="simple table">
-                        <TableHead>
-                        <TableRow>
-                            <TableCell>Chemical component</TableCell>
-                            <TableCell align="right">Percentage (%)</TableCell>
-                            <TableCell align="right">Mass (mg)</TableCell>
-                        </TableRow>
-                        </TableHead>
-                        <TableBody>
-                        {rows.map((row) => (
-                            <TableRow
-                            key={row.name}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                            <TableCell component="th" scope="row">
-                                {row.name}
-                            </TableCell>
-                            <TableCell align="right">{`${row.percentage}%`}</TableCell>
-                            <TableCell align="right">{`${row.mass} mg`}</TableCell>
-                            </TableRow>
-                        ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            )
-        }
-
-        return(
-            <Box
-                display="flex"
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
-            >
-                <SampleBlock />
-                <Button
-                    className="outlinedbutton" 
-                    variant="outlined" 
-                    onClick={() => {}}
-                    sx={{mb:1}}
-                >Search for another sample
-                </Button>
-                {/* <TrackOther />
-                <ResourcesBlock /> */}
+                    <TrackOther />
+                    <ResourcesBlock />
+                </Box>}
             </Box>
         )
     }
 
     const GetMetadata = () => {
+        const WIDTH = isMobile ? 400 : 700;
         return(
             <Box
                 sx={{
                     boxShadow: 3,
-                    width: 700,
+                    width: WIDTH,
                     height: 'auto',
                     bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
                     color: (theme) =>
@@ -577,14 +389,14 @@ const TrackSample = () => {
                     id="trackinginput" 
                     label="Expected contents of this sample" 
                     variant="outlined" 
-                    sx={{m:1, mb:2, width: 660}}
+                    sx={{m:1, mb:2, width: WIDTH - 100}}
                 />
                 <Box
                     display="flex"
                     flexDirection="row"
                     justifyContent="flex-start"
                     alignItems="center"
-                    sx={{width: 660}}
+                    sx={{width: WIDTH - 100}}
                 >
                     <Typography style={{margin: '10px'}}>Has this sample been used?</Typography>
                     <Checkbox onClick={(event) => {setSampleUsed(event.target.checked)}}/>
@@ -594,7 +406,7 @@ const TrackSample = () => {
                     flexDirection="row"
                     justifyContent="center"
                     alignItems="center"
-                    sx={{width: 660}}
+                    sx={{width: WIDTH - 100}}
                 >
                     <Button
                         className="containedbutton" 
@@ -616,11 +428,12 @@ const TrackSample = () => {
     }
 
     const ContactDisplay = () => {
+        const WIDTH = isMobile ? 400 : 700;
         return(
             <Box
                 sx={{
                     boxShadow: 3,
-                    width: '700px',
+                    width: WIDTH,
                     height: 'auto',
                     bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
                     color: (theme) =>
@@ -656,7 +469,7 @@ const TrackSample = () => {
                     id="trackinginput" 
                     label="Enter new email" 
                     variant="outlined" 
-                    style={{ marginBottom: '20px', width: "400px"}}
+                    style={{ marginBottom: '20px', width: WIDTH - 100}}
                     disabled={contactMethod=='sms'}
                 />
                 <TextField 
@@ -665,7 +478,7 @@ const TrackSample = () => {
                     id="trackinginput" 
                     label="Enter new phone number" 
                     variant="outlined" 
-                    style={{ marginBottom: '20px', width: "400px" }}
+                    style={{ marginBottom: '20px', width: WIDTH - 100 }}
                     disabled={contactMethod=='email'}
                 />
                 <Box
@@ -695,11 +508,12 @@ const TrackSample = () => {
     }
 
     const ContactVerify = () => {
+        const WIDTH = isMobile ? 400 : 700;
         return(
             <Box
                 sx={{
                     boxShadow: 3,
-                    width: '700px',
+                    width: WIDTH,
                     height: 'auto',
                     bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
                     color: (theme) =>
@@ -721,12 +535,12 @@ const TrackSample = () => {
                     id="OTPInput" 
                     label= "Enter verification code"
                     variant="outlined" 
-                    sx={{m:2, mb: 1, width: '400px'}}
+                    sx={{m:2, mb: 1, width: WIDTH - 100}}
                 />
                 {displayError && (<Alert sx={{m:1}} severity="error">The OTP you entered was incorrect</Alert>)}
                 <Box
                     display="flex"
-                    flexDirection="row"
+                    flexDirection={isMobile ? "column" : "row"}
                     justifyContent="center"
                     alignItems="center"
                 >
@@ -764,16 +578,15 @@ const TrackSample = () => {
         <Box 
             display="flex"
             flexDirection="column"
-            justifyContent="center"
+            justifyContent="flex-start"
             alignItems="center"
-            minHeight="100vh"
+            sx={{mt:2}}
         >
             {(pageState == 0) && <TrackingIDInput />}
-            {((pageState == 1) && !isMobile) && <ShowSample />}
-            {((pageState == 1) && isMobile) && <MobileShowSample />}
-            {(pageState == 2) && <ContactDisplay />}
-            {/* {(pageState == 3) && <ContactEdit />} */}
-            {(pageState == 3) && <ContactVerify />}
+            {(pageState == 1) && <ShowSample />}
+            {/* {(pageState == 2) && <ContactDisplay />}
+            {(pageState == 3) && <ContactEdit />}
+            {(pageState == 3) && <ContactVerify />} */}
         </Box>
     )
 }
