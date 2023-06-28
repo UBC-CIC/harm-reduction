@@ -55,7 +55,7 @@ const TrackSample = () => {
             const resp = await axios.get(`https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples&sample-id=${trackingID}`);
             console.log(resp.data);
             setSampleID(resp.data['sample-id']);
-            setSampleStatus(resp.data['test-results']);
+            setSampleStatus(resp.data['status']);
             setSampleDate(resp.data['date-received']);
             setPageState(1);
         }catch(err){
