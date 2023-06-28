@@ -13,6 +13,8 @@ import About from './pages/about.js';
 
 import { isMobile } from 'react-device-detect'
 
+// const isMobile = true;
+
 function App() {
   return (
     <Box>

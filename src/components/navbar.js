@@ -8,7 +8,7 @@ import '../css/navbar.css'
 export const NavBar = () => {
     return(
         <Box>
-            <AppBar position='static' classname='appbar'>
+            <AppBar position='static'>
                 <div className="navBar">
                     <Link to="/" className='navbutton'>Home</Link>
                     <Link to="/About" className='navbutton'>About</Link>

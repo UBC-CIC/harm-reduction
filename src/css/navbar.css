@@ -7,11 +7,6 @@
     font-family: 'Open Sans', sans-serif;
   }
 
-.appbar {
-    background-color: #ffffff;
-    height: 200px;
-}
-
 .logoBackground {
     box-shadow: 0, 10, 50, rgb(0,0,0);
     z-index: 10;

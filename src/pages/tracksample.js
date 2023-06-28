@@ -10,7 +10,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Switch, Alert, Typography, Checkbox } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Alert, Typography, Checkbox, Autocomplete } from '@mui/material';
 
 import EmailIcon from '@mui/icons-material/Email';
 import SmsIcon from '@mui/icons-material/Sms';
@@ -18,10 +18,20 @@ import SmsIcon from '@mui/icons-material/Sms';
 import '../css/tracksample.css'
 import { SendOTP, VerifyOTP } from '../lambda_Invoke/otpworkers.js';
 
+// const isMobile = true;
+
 const rows = [
     {name: 'Stuff1', percentage: '95', mass: '95.0'},
     {name: 'Stuff2', percentage: '5', mass: '5.0'}
 ];
+
+const expectedContentOptions = [
+    {value: 'Cocaine'},
+    {value: 'Marijuana'},
+    {value: 'Methamphetamine'},
+    {value: 'Adderall'},
+  ];
+  
 
 const TrackSample = () => {
     const [pageState, setPageState] = useState(0); // pageStates = ["enterid", "showsample", "showcontact", "updatecontact", "verifycontact"]
@@ -57,10 +67,13 @@ const TrackSample = () => {
             setSampleID(resp.data['sample-id']);
             setSampleStatus(resp.data['status']);
             setSampleDate(resp.data['date-received']);
+
+            if(resp.data['is-used'] == 'N/A' || resp.data['expect-contents'] == 'N/A') setDisplayGetMetadata(true);
+
+            setDisplayError(false);
             setPageState(1);
         }catch(err){
-            // no response -> item doesn't exist
-            // load error page
+            setDisplayError(true);
         }
     }
 
@@ -141,6 +154,7 @@ const TrackSample = () => {
             sx={{mt:4}}
         >
             <Typography variant='h6' align='center' sx={{m:1, width: WIDTH}}>Enter the sample ID provided on the package in the box below</Typography>
+            {displayError && <Alert sx={{m:1}}severity='error'> The sample ID you entered does not exist</Alert>}
             <TextField 
                 className="textbox" 
                 onChange={(event)=>{trackingID=event.target.value}}
@@ -384,13 +398,29 @@ const TrackSample = () => {
                 alignItems="center"
             >   
                 <Typography style={{margin: '10px'}}>Submit additional information about this sample</Typography>
-                <TextField 
+                {/* <TextField 
                     className="textbox" 
                     onChange={(event)=>{expectedContentsField=event.target.value}}
                     id="trackinginput" 
                     label="Expected contents of this sample" 
                     variant="outlined" 
                     sx={{m:1, mb:2, width: WIDTH - 100}}
+                /> */}
+                <Autocomplete
+                    freeSolo
+                    disableClearable
+                    sx={{m:1,mb:2,width: WIDTH - 100}}
+                    options={expectedContentOptions.map((option) => option.value)}
+                    renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label="Expected contents of this sample (select or type in your own)"
+                        InputProps={{
+                        ...params.InputProps,
+                        type: 'search',
+                        }}
+                    />
+                    )}
                 />
                 <Box
                     display="flex"
