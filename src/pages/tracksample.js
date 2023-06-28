@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import axios from 'axios'
 
-// import { isMobile } from 'react-device-detect'
+import { isMobile } from 'react-device-detect'
 
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -22,8 +22,6 @@ const rows = [
     {name: 'Stuff1', percentage: '95', mass: '95.0'},
     {name: 'Stuff2', percentage: '5', mass: '5.0'}
 ];
-
-const isMobile = false;
 
 const TrackSample = () => {
     const [pageState, setPageState] = useState(0); // pageStates = ["enterid", "showsample", "showcontact", "updatecontact", "verifycontact"]
@@ -142,7 +140,7 @@ const TrackSample = () => {
             alignItems="center"
             sx={{mt:4}}
         >
-            <Typography variant='h6' align='center' sx={{m:1, width: WIDTH}}>Enter the sample ID provided on the pacakge in the box below</Typography>
+            <Typography variant='h6' align='center' sx={{m:1, width: WIDTH}}>Enter the sample ID provided on the package in the box below</Typography>
             <TextField 
                 className="textbox" 
                 onChange={(event)=>{trackingID=event.target.value}}
@@ -199,7 +197,7 @@ const TrackSample = () => {
                     {displaySavedMsg && (
                         <Alert severity="success">Your contact information has been saved successfully</Alert>
                     )}
-                    {!displayContactEdit && 
+                    {(!displayContactEdit && !displayContactVerify) && 
                     <Button
                         className="outlinedbutton" 
                         variant="outlined" 

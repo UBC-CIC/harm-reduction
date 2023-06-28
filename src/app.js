@@ -11,10 +11,9 @@ import Home from './pages/home.js';
 import Admin from './pages/admin.js';
 import About from './pages/about.js';
 
-// import { isMobile } from 'react-device-detect'
+import { isMobile } from 'react-device-detect'
 
 function App() {
-  const isMobile = false;
   return (
     <Box>
       {!isMobile && (<div className="logoBackground">
