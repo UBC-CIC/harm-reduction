@@ -1,31 +1,43 @@
-import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 import axios from 'axios'
 
 export const handler = async(event) => {
-    const oldImg = event.Records[0].dynamodb.OldImage;
+    console.log(event.Records[0].dynamodb);
+    if(!event.Records[0].dynamodb.NewImage || !event.Records[0].dynamodb.OldImage) {console.log('[ERROR]: missing newimg or missing oldimg'); return;}
+    
     const newImg = event.Records[0].dynamodb.NewImage;
+    const oldImg = event.Records[0].dynamodb.OldImage;
+    
     const adminemail = '';
-    
-    console.log(oldImg);
-    console.log(newImg);
-    
-    if(oldImg['test-results'] == newImg['test-results']) return;
     const inconclusiveBodyText = '';
-    if(newImg['test-results'] == 'Inconclusive') sendSES(adminemail, 'Alert - Test is Inconclusive', inconclusiveBodyText)
-    if(newImg['test-results'] != 'Complete')  return;
+    const completeBodyText = 'placeholder - the results of your sample are ready';
     
     try{
-        const userTableResp = axios.get(`https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/users?tableName=users&sample-id=${newImg['sample-id']}`);
+        const newStatus = newImg['status'].S;
+        const oldStatus = oldImg['status'].S;
+        
+        if(oldStatus == newStatus) {console.log('[ERROR]: no status change'); return;}
+        console.log('statuses are different');
+        if(newStatus == 'Inconclusive') sendSES(adminemail, 'Alert - Test is Inconclusive', inconclusiveBodyText)
+        console.log('status is not inconclusive');
+        if(newStatus != 'Complete') {console.log('[ERROR]: invalid status'); return;}
+        console.log('checking users table');
+        
+        const userTableResp = await axios.get(`https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/users?tableName=users&sample-id=${newImg['sample-id'].S}`);
         console.log(userTableResp.data);
         const contact = userTableResp.data.contact;
         
-        const completeBodyText = '';
-        if(checkEmailOrPhone(contact) == 'neither') return;
-        const sendMsgResp = (checkEmailOrPhone(contact) == 'email') ? 
-            sendSES(contact, 'Update from UBC Harm Reduction', completeBodyText) : 
-            sendSNS(contact, 'Update from UBC Harm Reduction', completeBodyText);
+        if(checkEmailOrPhone(contact) == 'neither') {console.log('[ERROR]: invalid contact'); return;}
+        let sendMsgResp = 'null';
+        if(checkEmailOrPhone(contact) == 'email'){
+            console.log('EMAIL');
+            sendMsgResp = await sendSES(contact, 'Update from UBC Harm Reduction', completeBodyText);
+        }
+        else{
+            console.log('PHONE');
+            sendMsgResp = await sendSNS(contact, 'Update from UBC Harm Reduction', completeBodyText);
+        }
             
         return sendMsgResp;
     }catch(err){
