@@ -94,7 +94,7 @@ async function sendSNS(recipient, subject, message){
     })
 
     try{
-        const verifyNumResp = await snsClient.send(verifySandboxNumCMD);
+        const verifyNumResp = await snsClient.send(sendTextCMD);
         console.log(verifyNumResp);
         return true
     }catch(err){

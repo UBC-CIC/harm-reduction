@@ -109,9 +109,14 @@ const TrackSample = () => {
     const editContact = async () => {
         console.log(`contactfield: ${contactField}`);
         console.log('email? ' + contactMethod);
-        const OTPInfo = await SendOTP(contactField, (contactMethod == 'email'));
+
+        const authtoken = await authUser(process.env.REACT_APP_USERNAME, process.env.REACT_APP_PASSWORD);
+        console.log(authtoken);
+
+        const OTPInfo = await SendOTP(contactField, (contactMethod == 'email'), authtoken);
         setNewContact(contactField);
         setReferenceID(OTPInfo.referenceID)
+
         setDisplayError(false);
         contactField = '';
         setDisplayContactEdit(false);
@@ -120,7 +125,10 @@ const TrackSample = () => {
 
     const verifyContact = async () => {
         console.log(`entered OTP: ${enteredOTP}`);
-        const verifyResp = await VerifyOTP(newContact, enteredOTP, referenceID);
+        const authtoken = await authUser(process.env.REACT_APP_USERNAME, process.env.REACT_APP_PASSWORD);
+        console.log(authtoken);
+        
+        const verifyResp = await VerifyOTP(newContact, enteredOTP, referenceID, authtoken);
 
         if(!verifyResp.valid){
             setDisplayError(true);
