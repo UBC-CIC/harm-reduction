@@ -110,10 +110,13 @@ const TrackSample = () => {
         console.log(`contactfield: ${contactField}`);
         console.log('email? ' + contactMethod);
 
-        const authtoken = await authUser(process.env.REACT_APP_USERNAME, process.env.REACT_APP_PASSWORD);
-        console.log(authtoken);
 
-        const OTPInfo = await SendOTP(contactField, (contactMethod == 'email'), authtoken);
+        // const OTPInfo = await SendOTP(contactField, (contactMethod == 'email'), authtoken);
+        const OTPResp = await axios.post(`https://bwxq8zcfp2.execute-api.us-west-2.amazonaws.com/beta/otp`, {
+            "recipient": contactField,
+            "contactbyemail": (contactMethod == 'email'),
+        });
+        const OTPInfo = JSON.parse(OTPResp);
         setNewContact(contactField);
         setReferenceID(OTPInfo.referenceID)
 
@@ -125,10 +128,13 @@ const TrackSample = () => {
 
     const verifyContact = async () => {
         console.log(`entered OTP: ${enteredOTP}`);
-        const authtoken = await authUser(process.env.REACT_APP_USERNAME, process.env.REACT_APP_PASSWORD);
-        console.log(authtoken);
         
-        const verifyResp = await VerifyOTP(newContact, enteredOTP, referenceID, authtoken);
+        // const verifyResp = await VerifyOTP(newContact, enteredOTP, referenceID, authtoken);
+        const verifyResp = await axios.get(`https://bwxq8zcfp2.execute-api.us-west-2.amazonaws.com/beta/otp`, {
+            "recipient": newContact,
+            "userOTP": enteredOTP,
+            "userRefID": referenceID
+        })
 
         if(!verifyResp.valid){
             setDisplayError(true);
@@ -212,9 +218,9 @@ const TrackSample = () => {
                         alignItems="flex-start"
                         sx={{width: INNERWIDTH, m: 1, mt: 2}}
                     >
-                        <Typography sx={{m: 1}} style={{textAlign: "left"}}> {`${sampleID}`} </Typography>                    
-                        <Typography sx={{m: 1}} style={{textAlign: "right"}}> {`${sampleStatus}`}</Typography>
-                        <Typography sx={{m: 1}} style={{textAlign: "right"}}> {`${sampleDate}`} </Typography>   
+                        <Typography sx={{m: 1}} style={{textAlign: "left"}}> Sample: {`${sampleID}`} </Typography>                    
+                        <Typography sx={{m: 1}} style={{textAlign: "right"}}> Status: {`${sampleStatus}`}</Typography>
+                        <Typography sx={{m: 1}} style={{textAlign: "right"}}> Date Received: {`${sampleDate}`} </Typography>   
                     </Box>
                     {displaySavedMsg && (
                         <Alert severity="success">Your contact information has been saved successfully</Alert>
