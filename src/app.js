@@ -10,6 +10,7 @@ import TrackSample from './pages/tracksample.js';
 import Home from './pages/home.js';
 import Admin from './pages/admin.js';
 import About from './pages/about.js';
+import Resources from '.pages/resource.js'
 
 import { isMobile } from 'react-device-detect'
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/Track"><TrackSample /></Route>
           <Route path="/Admin"><Admin /></Route>
           <Route path="/About"><About /></Route>
+          <Route path="/Resources"><Resources /></Route>
           <Route path="/"><Home /></Route>
         </Switch>
       </Router>
