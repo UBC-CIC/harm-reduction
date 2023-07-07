@@ -1,19 +1,14 @@
 import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 // import AwsCredentialIdentity from "@aws-sdk/types"
-import config from '../config.json'
+// import config from '../config.json'
 import { toUtf8 } from "@aws-sdk/util-utf8";
 
-export const SendOTP = async (recipient, contactbyemail) => {
+export const SendOTP = async (recipient, contactbyemail, token) => {
     const SENDOTPLAMBDA = 'generateandsendOTP';
-
-    const credentials = {
-        accessKeyId: config.ID,
-        secretAccessKey: config.Key
-    }
 
     const lambdaClient = new LambdaClient({
         region: 'us-west-2', 
-        credentials: credentials
+        sessionToken: token
     });
 
     let referenceID = new String(new Date().getTime());
@@ -48,17 +43,17 @@ export const SendOTP = async (recipient, contactbyemail) => {
     
 }
 
-export const VerifyOTP = async (recipient, enteredOTP, referenceID) => {
+export const VerifyOTP = async (recipient, enteredOTP, referenceID, token) => {
     const VERIFYOTPLAMBDA = 'verifyOTP';
 
-    const credentials = {
-        accessKeyId: config.ID,
-        secretAccessKey: config.Key
-    }
+    // const credentials = {
+    //     accessKeyId: config.ID,
+    //     secretAccessKey: config.Key
+    // }
 
     const lambdaClient = new LambdaClient({
         region: 'us-west-2', 
-        credentials: credentials
+        sessionToken: token
     });
 
     console.log("destination: " + recipient);

@@ -70,6 +70,8 @@ const TrackSample = () => {
 
             if(resp.data['is-used'] == 'N/A' || resp.data['expect-contents'] == 'N/A') setDisplayGetMetadata(true);
 
+            setDisplayContactEdit(false);
+            setDisplayContactVerify(false);
             setDisplayError(false);
             setPageState(1);
         }catch(err){
@@ -109,9 +111,16 @@ const TrackSample = () => {
     const editContact = async () => {
         console.log(`contactfield: ${contactField}`);
         console.log('email? ' + contactMethod);
-        const OTPInfo = await SendOTP(contactField, (contactMethod == 'email'));
+
+        // const OTPInfo = await SendOTP(contactField, (contactMethod == 'email'), authtoken);
+        const OTPInfo = await axios.post(`https://bwxq8zcfp2.execute-api.us-west-2.amazonaws.com/beta/otp?action=send`,{
+            "recipient": contactField,
+            "contactbyemail": (contactMethod == 'email'),
+        });
+        console.log(OTPInfo.data);
         setNewContact(contactField);
-        setReferenceID(OTPInfo.referenceID)
+        setReferenceID(OTPInfo.data.refID);
+        
         setDisplayError(false);
         contactField = '';
         setDisplayContactEdit(false);
@@ -120,9 +129,17 @@ const TrackSample = () => {
 
     const verifyContact = async () => {
         console.log(`entered OTP: ${enteredOTP}`);
-        const verifyResp = await VerifyOTP(newContact, enteredOTP, referenceID);
+        console.log(`refID: ${referenceID}`);
+        
+        // const verifyResp = await VerifyOTP(newContact, enteredOTP, referenceID, authtoken);
+        const verifyResp = await axios.post(`https://bwxq8zcfp2.execute-api.us-west-2.amazonaws.com/beta/otp?action=verify`, {
+            "recipient": newContact,
+            "userOTP": enteredOTP,
+            "userRefID": referenceID
+        })
+        console.log(verifyResp.data);
 
-        if(!verifyResp.valid){
+        if(!verifyResp.data.valid){
             setDisplayError(true);
             return;
         }
@@ -204,9 +221,9 @@ const TrackSample = () => {
                         alignItems="flex-start"
                         sx={{width: INNERWIDTH, m: 1, mt: 2}}
                     >
-                        <Typography sx={{m: 1}} style={{textAlign: "left"}}> {`${sampleID}`} </Typography>                    
-                        <Typography sx={{m: 1}} style={{textAlign: "right"}}> {`${sampleStatus}`}</Typography>
-                        <Typography sx={{m: 1}} style={{textAlign: "right"}}> {`${sampleDate}`} </Typography>   
+                        <Typography sx={{m: 1}} style={{textAlign: "left"}}> Sample: {`${sampleID}`} </Typography>                    
+                        <Typography sx={{m: 1}} style={{textAlign: "right"}}> Status: {`${sampleStatus}`}</Typography>
+                        <Typography sx={{m: 1}} style={{textAlign: "right"}}> Date Received: {`${sampleDate}`} </Typography>   
                     </Box>
                     {displaySavedMsg && (
                         <Alert severity="success">Your contact information has been saved successfully</Alert>
