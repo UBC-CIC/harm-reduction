@@ -1,24 +1,25 @@
 import React from 'react';
 import { useState } from 'react';
-
+import { isMobile } from 'react-device-detect'
 import axios from 'axios'
 
-import { isMobile } from 'react-device-detect'
-
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Alert, Typography, Checkbox, Autocomplete } from '@mui/material';
+import { 
+    Alert, 
+    Autocomplete, 
+    Button, 
+    Box, 
+    Checkbox, 
+    Paper, 
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
+    TextField, 
+    ToggleButton, ToggleButtonGroup, 
+    Typography, 
+} from '@mui/material';
 
 import EmailIcon from '@mui/icons-material/Email';
 import SmsIcon from '@mui/icons-material/Sms';
 
 import '../css/tracksample.css'
-import { SendOTP, VerifyOTP } from '../lambda_Invoke/otpworkers.js';
-
-// const isMobile = true;
 
 const rows = [
     {name: 'Stuff1', percentage: '95', mass: '95.0'},
@@ -59,7 +60,6 @@ const TrackSample = () => {
 
     const trackSample = async () => {
         console.log(`trackingID: ${trackingID}`);
-        //query database    
         try{
             console.log('try api')
             const resp = await axios.get(`https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples&sample-id=${trackingID}`);
@@ -112,7 +112,6 @@ const TrackSample = () => {
         console.log(`contactfield: ${contactField}`);
         console.log('email? ' + contactMethod);
 
-        // const OTPInfo = await SendOTP(contactField, (contactMethod == 'email'), authtoken);
         const OTPInfo = await axios.post(`https://bwxq8zcfp2.execute-api.us-west-2.amazonaws.com/beta/otp?action=send`,{
             "recipient": contactField,
             "contactbyemail": (contactMethod == 'email'),
@@ -131,7 +130,6 @@ const TrackSample = () => {
         console.log(`entered OTP: ${enteredOTP}`);
         console.log(`refID: ${referenceID}`);
         
-        // const verifyResp = await VerifyOTP(newContact, enteredOTP, referenceID, authtoken);
         const verifyResp = await axios.post(`https://bwxq8zcfp2.execute-api.us-west-2.amazonaws.com/beta/otp?action=verify`, {
             "recipient": newContact,
             "userOTP": enteredOTP,

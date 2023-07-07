@@ -10,7 +10,7 @@ import TrackSample from './pages/tracksample.js';
 import Home from './pages/home.js';
 import Admin from './pages/admin.js';
 import About from './pages/about.js';
-import Resources from '.pages/resource.js'
+import Resources from './pages/resource.js'
 
 import { isMobile } from 'react-device-detect'
 

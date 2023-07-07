@@ -1,15 +1,10 @@
 import { Box } from "@mui/material"
-
-import logo from '../ubclogo.png'
-import NavBar from '../components/navbar.js'
+import { isMobile } from 'react-device-detect'
 
 const Home = () => {
     return(
         <Box>
-            {/* <div className="logoBackground">
-                <img src={logo} alt="Logo" style={{ height: '160px' }} />
-            </div>
-            <NavBar /> */}
+            
         </Box>
     )
 }
