@@ -70,6 +70,8 @@ const TrackSample = () => {
 
             if(resp.data['is-used'] == 'N/A' || resp.data['expect-contents'] == 'N/A') setDisplayGetMetadata(true);
 
+            setDisplayContactEdit(false);
+            setDisplayContactVerify(false);
             setDisplayError(false);
             setPageState(1);
         }catch(err){
@@ -110,16 +112,15 @@ const TrackSample = () => {
         console.log(`contactfield: ${contactField}`);
         console.log('email? ' + contactMethod);
 
-
         // const OTPInfo = await SendOTP(contactField, (contactMethod == 'email'), authtoken);
-        const OTPResp = await axios.post(`https://bwxq8zcfp2.execute-api.us-west-2.amazonaws.com/beta/otp`, {
+        const OTPInfo = await axios.post(`https://bwxq8zcfp2.execute-api.us-west-2.amazonaws.com/beta/otp?action=send`,{
             "recipient": contactField,
             "contactbyemail": (contactMethod == 'email'),
         });
-        const OTPInfo = JSON.parse(OTPResp);
+        console.log(OTPInfo.data);
         setNewContact(contactField);
-        setReferenceID(OTPInfo.referenceID)
-
+        setReferenceID(OTPInfo.data.refID);
+        
         setDisplayError(false);
         contactField = '';
         setDisplayContactEdit(false);
@@ -128,15 +129,17 @@ const TrackSample = () => {
 
     const verifyContact = async () => {
         console.log(`entered OTP: ${enteredOTP}`);
+        console.log(`refID: ${referenceID}`);
         
         // const verifyResp = await VerifyOTP(newContact, enteredOTP, referenceID, authtoken);
-        const verifyResp = await axios.get(`https://bwxq8zcfp2.execute-api.us-west-2.amazonaws.com/beta/otp`, {
+        const verifyResp = await axios.post(`https://bwxq8zcfp2.execute-api.us-west-2.amazonaws.com/beta/otp?action=verify`, {
             "recipient": newContact,
             "userOTP": enteredOTP,
             "userRefID": referenceID
         })
+        console.log(verifyResp.data);
 
-        if(!verifyResp.valid){
+        if(!verifyResp.data.valid){
             setDisplayError(true);
             return;
         }
