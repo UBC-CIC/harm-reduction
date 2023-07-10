@@ -4,7 +4,6 @@ import { CognitoIdentityProviderClient, InitiateAuthCommand } from "@aws-sdk/cli
 
 export const authUser = async (username, password) => {
     const CLIENTID = process.env.REACT_APP_COGCLIENT;
-    console.log(CLIENTID);
 
     const cognitoIdpClient = new CognitoIdentityProviderClient({region: 'us-west-2'});
     const initAuthCMD = new InitiateAuthCommand({
@@ -19,7 +18,7 @@ export const authUser = async (username, password) => {
 
     try{
         const initAuthResp = await cognitoIdpClient.send(initAuthCMD);
-        console.log(initAuthResp.AuthenticationResult);
+        console.log(initAuthResp.AuthenticationResult.TokenType);
         return initAuthResp.AuthenticationResult;
     }catch(err){
         console.log(err);

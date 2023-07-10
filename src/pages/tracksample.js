@@ -30,23 +30,24 @@ const expectedContentOptions = [
   
 
 const TrackSample = () => {
-    const [pageState, setPageState] = useState(0); // pageStates = ["enterid", "showsample", "showcontact", "updatecontact", "verifycontact"]
-    const [referenceID, setReferenceID] = useState('');
-    const [newContact, setNewContact] = useState('');
+    const [pageState,     setPageState]     = useState(0); // pageStates = ["enterid", "showsample", "showcontact", "updatecontact", "verifycontact"]
+    const [referenceID,   setReferenceID]   = useState('');
+    const [newContact,    setNewContact]    = useState('');
     const [contactMethod, setContactMethod] = useState('email')
     
-    const [displayError, setDisplayError] = useState(false);
-    const [disableButton, setDisableButton] = useState(false);
-    const [displaySavedMsg, setDisplaySavedMsg] = useState(false);
-    const [displayContactEdit, setDisplayContactEdit] = useState(false);
+    const [displayError,         setDisplayError]         = useState(false);
+    const [disableButton,        setDisableButton]        = useState(false);
+    const [displaySavedMsg,      setDisplaySavedMsg]      = useState(false);
+    const [displayContactEdit,   setDisplayContactEdit]   = useState(false);
     const [displayContactVerify, setDisplayContactVerify] = useState(false);
-    const [displayGetMetadata, setDisplayGetMetadata] = useState(false);
+    const [displayGetMetadata,   setDisplayGetMetadata]   = useState(false);
     
-    const [sampleID, setSampleID] = useState('');
+    const [sampleID,     setSampleID]     = useState('');
     const [sampleStatus, setSampleStatus] = useState('');
-    const [sampleDate, setSampleDate] = useState('');
-
-    const [sampleUsed, setSampleUsed] = useState(false);
+    const [sampleDate,   setSampleDate]   = useState('');
+    const [sampleNotes,  setSampleNotes]  = useState('');
+    const [sampleUsed,   setSampleUsed]   = useState(false);
+    const [sampleTable,  setSampleTable]  = useState([]);
     
     let   trackingID;
     let   contactField;
@@ -62,6 +63,8 @@ const TrackSample = () => {
             setSampleID(resp.data['sample-id']);
             setSampleStatus(resp.data['status']);
             setSampleDate(resp.data['date-received']);
+            setSampleNotes(resp.data['notes']);
+            if(resp.data['status'] == 'Complete') setSampleTable(getSampleTableData(resp.data['test-results']));
 
             if(resp.data['is-used'] == 'N/A' || resp.data['expect-contents'] == 'N/A') setDisplayGetMetadata(true);
 
@@ -153,6 +156,15 @@ const TrackSample = () => {
         }
     }
 
+    const getSampleTableData = (inputStr) => {
+        let entries = inputStr.split(',');
+        let output = entries.map((entry) => {
+            let pair = entry.trim().split(' ');
+            return {name: pair[0], percentage: pair[1]}
+        });
+        return output;
+    }
+
     const TrackingIDInput = () => {
         const WIDTH = isMobile ? 400 : 800;
         return(
@@ -188,10 +200,10 @@ const TrackSample = () => {
         const INNERWIDTH = isMobile ? 400 : 700;
         const OUTERBOXSHADOW = isMobile ? 0 : 3;
 
-        const rows = [
-            {name: 'Stuff1', percentage: '95', mass: '95.0'},
-            {name: 'Stuff2', percentage: '5', mass: '5.0'}
-        ];
+        // const rows = [
+        //     {name: 'Stuff1', percentage: '95'},
+        //     {name: 'Stuff2', percentage: '5'}
+        // ];
 
         const SampleBlock = () => {
             return(
@@ -343,28 +355,28 @@ const TrackSample = () => {
         const SampleTable = () => {
             const WIDTH = isMobile ? 400 : 700;
             return(
-                <TableContainer component={Paper} sx={{width: WIDTH, m: 2, marginBottom: '40px'}}>
-                    <Table sx={{ width: WIDTH - 50, marginBottom: 2 }} aria-label="simple table">
+                <TableContainer component={Paper} sx={{width: WIDTH, m: 2, mb:4}} >
+                    <Table sx={{ width: WIDTH - 40, m:2 }} aria-label="simple table">
                         <TableHead>
-                        <TableRow>
-                            <TableCell>Chemical component</TableCell>
-                            <TableCell align="right">Percentage (%)</TableCell>
-                            <TableCell align="right">Mass (mg)</TableCell>
-                        </TableRow>
+                            <TableRow>
+                                <TableCell>Chemical component</TableCell>
+                                <TableCell align="right">Percentage by Mass (%)</TableCell>
+                            </TableRow>
                         </TableHead>
                         <TableBody>
-                        {rows.map((row) => (
+                        {sampleTable.map((row) => (
                             <TableRow
                             key={row.name}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
-                            <TableCell component="th" scope="row">
-                                {row.name}
-                            </TableCell>
-                            <TableCell align="right">{`${row.percentage}%`}</TableCell>
-                            <TableCell align="right">{`${row.mass} mg`}</TableCell>
+                                <TableCell component="th" scope="row">{row.name}</TableCell>
+                                <TableCell align="right">{row.percentage}</TableCell>
                             </TableRow>
                         ))}
+                            <TableRow>
+                                <TableCell>Notes:</TableCell>
+                                <TableCell align="right">{`${sampleNotes}`}</TableCell>
+                            </TableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>
