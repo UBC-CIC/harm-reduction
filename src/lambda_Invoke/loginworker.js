@@ -1,11 +1,10 @@
-import { LambdaClient, InvokeCommand, Lambda } from "@aws-sdk/client-lambda";
 import { CognitoIdentityProviderClient, InitiateAuthCommand } from "@aws-sdk/client-cognito-identity-provider";
-import { toUtf8 } from "@aws-sdk/util-utf8";
 
 // import config from '../config.json';
 
 export const authUser = async (username, password) => {
     const CLIENTID = process.env.REACT_APP_COGCLIENT;
+    console.log(CLIENTID);
 
     const cognitoIdpClient = new CognitoIdentityProviderClient({region: 'us-west-2'});
     const initAuthCMD = new InitiateAuthCommand({
