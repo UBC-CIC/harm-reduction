@@ -21,11 +21,6 @@ import SmsIcon from '@mui/icons-material/Sms';
 
 import '../css/tracksample.css'
 
-const rows = [
-    {name: 'Stuff1', percentage: '95', mass: '95.0'},
-    {name: 'Stuff2', percentage: '5', mass: '5.0'}
-];
-
 const expectedContentOptions = [
     {value: 'Cocaine'},
     {value: 'Marijuana'},
@@ -192,6 +187,12 @@ const TrackSample = () => {
         const WIDTH = isMobile ? 400 : 800;
         const INNERWIDTH = isMobile ? 400 : 700;
         const OUTERBOXSHADOW = isMobile ? 0 : 3;
+
+        const rows = [
+            {name: 'Stuff1', percentage: '95', mass: '95.0'},
+            {name: 'Stuff2', percentage: '5', mass: '5.0'}
+        ];
+
         const SampleBlock = () => {
             return(
                 <Box

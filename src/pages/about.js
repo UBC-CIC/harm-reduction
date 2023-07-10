@@ -58,6 +58,38 @@ const About = () => {
                 alt="Stock UBC image"
                 src="https://images.unsplash.com/photo-1603857365671-93cd96dc1df8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80"
             />
+            <Box
+                    sx={{
+                        boxShadow: 1,
+                        width: WIDTH,
+                        height: 'auto',
+                        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
+                        color: (theme) =>
+                            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+                        p: 1,
+                        m: 4,
+                        borderRadius: 2,
+                        textAlign: 'center',
+                    }}
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="flex-start"
+                >
+                    <Typography variant="h5" sx={{m:2}}>More Information</Typography>
+                    <Link 
+                        href="https://www.cbc.ca/news/canada/british-columbia/ubc-lab-bc-portable-drug-checking-tech-hplcs-1.6718800"
+                        sx={{ml:2, mb:1}}
+                    >
+                        UBC lab develops new, portable drug-checking device ahead of limited decriminalization
+                        </Link>
+                    <Link 
+                        href="https://www.bccsu.ca/blog/news/ubc-lab-testing-new-portable-drug-checking-device/"
+                        sx={{ml:2, mb:1}}
+                    >
+                        UBC lab testing new portable drug-checking device
+                    </Link>
+                </Box>
         </Box>
     )
     return(
@@ -66,14 +98,14 @@ const About = () => {
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
-            sx={{m:2, mt:4}}
+            sx={{height: '70vh', m:2, mt:4}}
         >
             <Box
                 display="flex"
                 flexDirection="row"
                 justifyContent="center"
                 alignItems="center"
-                sx={{width: WIDTH, m:2}}
+                sx={{m:2}}
             >
                 <AboutText />
                 <Box
@@ -84,86 +116,38 @@ const About = () => {
                     alt="Stock UBC image"
                     src="https://images.unsplash.com/photo-1603857365671-93cd96dc1df8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1632&q=80"
                 />
-                <Box
-                    sx={{
-                        boxShadow: 1,
-                        width: WIDTH,
-                        height: 'auto',
-                        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
-                        color: (theme) =>
-                            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
-                        p: 1,
-                        m: 4,
-                        borderRadius: 2,
-                        textAlign: 'center',
-                    }}
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="flex-start"
-                >
-                    <Typography variant="h5" sx={{m:2}}>More Information</Typography>
-                    <Link 
-                        href="https://www.cbc.ca/news/canada/british-columbia/ubc-lab-bc-portable-drug-checking-tech-hplcs-1.6718800"
-                        sx={{ml:2, mb:1}}
-                    >
-                        UBC lab develops new, portable drug-checking device ahead of limited decriminalization
-                        </Link>
-                    <Link 
-                        href="https://www.bccsu.ca/blog/news/ubc-lab-testing-new-portable-drug-checking-device/"
-                        sx={{ml:2, mb:1}}
-                    >
-                        UBC lab testing new portable drug-checking device
-                    </Link>
-                </Box>
             </Box>
             <Box
+                sx={{
+                    boxShadow: 1,
+                    height: 'auto',
+                    width: '80vw',
+                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
+                    color: (theme) =>
+                        theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+                    p: 1,
+                    m: 4,
+                    borderRadius: 2,
+                    textAlign: 'center',
+                }}
                 display="flex"
-                flexDirection="row"
+                flexDirection="column"
                 justifyContent="center"
-                alignItems="center"
-                sx={{width: WIDTH, m:2}}
+                alignItems="flex-start"
             >
-                <Box
-                    component="img"
-                    sx={{
-                    width: WIDTH / 2,
-                    }}
-                    alt="Stock UBC image"
-                    src="https://i.cbc.ca/1.6718816.1674094992!/fileImage/httpImage/image.jpg_gen/derivatives/16x9_780/hein-lab.jpg"
-                />
-                <Box
-                    sx={{
-                        boxShadow: 1,
-                        width: WIDTH,
-                        height: 'auto',
-                        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
-                        color: (theme) =>
-                            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
-                        p: 1,
-                        m: 4,
-                        borderRadius: 2,
-                        textAlign: 'center',
-                    }}
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="flex-start"
+                <Typography variant="h5" sx={{m:2}}>More Information</Typography>
+                <Link 
+                    href="https://www.cbc.ca/news/canada/british-columbia/ubc-lab-bc-portable-drug-checking-tech-hplcs-1.6718800"
+                    sx={{ml:2, mb:1}}
                 >
-                    <Typography variant="h5" sx={{m:2}}>More Information</Typography>
-                    <Link 
-                        href="https://www.cbc.ca/news/canada/british-columbia/ubc-lab-bc-portable-drug-checking-tech-hplcs-1.6718800"
-                        sx={{ml:2, mb:1}}
-                    >
-                        UBC lab develops new, portable drug-checking device ahead of limited decriminalization
-                        </Link>
-                    <Link 
-                        href="https://www.bccsu.ca/blog/news/ubc-lab-testing-new-portable-drug-checking-device/"
-                        sx={{ml:2, mb:1}}
-                    >
-                        UBC lab testing new portable drug-checking device
+                    UBC lab develops new, portable drug-checking device ahead of limited decriminalization
                     </Link>
-                </Box>
+                <Link 
+                    href="https://www.bccsu.ca/blog/news/ubc-lab-testing-new-portable-drug-checking-device/"
+                    sx={{ml:2, mb:1}}
+                >
+                    UBC lab testing new portable drug-checking device
+                </Link>
             </Box>
         </Box>
     )
