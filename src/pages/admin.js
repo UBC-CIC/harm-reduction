@@ -36,7 +36,7 @@ const Admin = () => {
                 flexDirection="column"
                 justifyContent="center"
                 alignItems="center"
-                minHeight="100vh"
+                minHeight="60vh"
             >
                 <TextField
                     className="textbox" 
@@ -77,7 +77,7 @@ const Admin = () => {
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
-            minHeight="100vh"
+            minHeight="60vh"
             style={{marginTop: '20px'}}
         >
             {!loginStatus && <LoginPage/>}

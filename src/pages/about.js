@@ -98,7 +98,7 @@ const About = () => {
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
-            sx={{height: '70vh', m:2, mt:4}}
+            sx={{height: '100vh', m:2, mt:4}}
         >
             <Box
                 display="flex"
