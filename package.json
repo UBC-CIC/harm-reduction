@@ -31,6 +31,7 @@
   "license": "MIT",
   "dependencies": {
     "@aws-amplify/ui-react": "^4.6.4",
+    "@aws-sdk/client-cognito-identity-provider": "^3.354.0",
     "@aws-sdk/client-lambda": "^3.341.0",
     "@aws-sdk/util-utf8": "^3.310.0",
     "@emotion/react": "^11.11.0",
