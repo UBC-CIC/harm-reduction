@@ -9,7 +9,7 @@ const Resources = () => {
             alignItems="center"
             sx={{height: '70vh', m:2, mt:4}}
         >
-            <Typography variant='h5'>Resources regarding potential substances found in a sample</Typography>
+            <Typography variant='h5'>Filler text</Typography>
             <Box
                 sx={{
                     boxShadow: 1,
