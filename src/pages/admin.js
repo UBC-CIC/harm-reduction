@@ -44,7 +44,7 @@ const Admin = () => {
                     id="usernameinput" 
                     label="username" 
                     variant="outlined" 
-                    style={{ marginBottom: '20px' }}
+                    sx={{m:1}}
                 >
                 </TextField>
                 <TextField
@@ -54,7 +54,7 @@ const Admin = () => {
                     label="password" 
                     type="password"
                     variant="outlined" 
-                    style={{ marginBottom: '20px' }}
+                    sx={{m:1}}
                 >
                 </TextField>
                 {showError && (
@@ -64,7 +64,7 @@ const Admin = () => {
                     className="containedbutton"
                     variant="contained" 
                     onClick={() => {adminSignin()}}
-                    style={{ marginTop: '10px', marginLeft: "10px" , marginRight: "10px" }}
+                    sx={{m:1}}
                 >Login
                 </Button>
             </Box>
