@@ -37,3 +37,9 @@
     background-color: rgb(1,1,1,.05);
 }
   
+.filter-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  

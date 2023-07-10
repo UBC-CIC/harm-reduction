@@ -14,7 +14,7 @@ import About from './pages/about.js';
 // import { isMobile } from 'react-device-detect'
 
 function App() {
-  const isMobile = true;
+  const isMobile = false;
   return (
     <Box>
       {!isMobile && (<div className="logoBackground">

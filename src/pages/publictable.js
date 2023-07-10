@@ -1,188 +1,135 @@
-"use client"; 
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { styled } from '@mui/material/styles';
 import {
-    Box,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    TextField,
-    Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TextField,
+  Button,
 } from '@mui/material';
+import axios from 'axios';
 
-// const useStyles = makeStyles({
-//   root: {
-//     display: 'flex',
-//     flexDirection: 'column',
-//     alignItems: 'center',
-//     marginTop: '2rem',
-//     backgroundColor: 'white', 
-//     height: '100vh', 
-//     width: '100vw', 
-//     margin: 0, 
-//     padding: 0, 
-//   },
-//   tableContainer: {
-//     width: '80%',
-//     marginTop: '2rem',
-//   },
-//   searchContainer: {
-//     display: 'flex',
-//     justifyContent: 'center',
-//     marginBottom: '2rem',
-//   },
-//   searchInput: {
-//     marginRight: '1rem',
-//   },
-//   paginationContainer: {
-//     display: 'flex',
-//     justifyContent: 'flex-end',
-//     marginTop: '2rem',
-//   },
-//   paginationButton: {
-//     marginLeft: '1rem',
-//     color: 'black',
-//   },
-// });
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  '&': {
+    fontSize: 11,
+  },
+}));
 
-const data = [
-  { date: '2023-05-25', contents: 'Cocaine', testResults: 'Cocaine: 100%' },
-  { date: '2023-05-28', contents: 'Methamphetamine', testResults: 'Methampetamine: 98%, Glucose: 2%' },
-  { date: '2023-05-27', contents: 'Marijuana', testResults: 'Marijuana: 100%' },
-  { date: '2023-04-23', contents: 'Heroin', testResults: 'Heroin: 99%, Fentanyl: 1%' },
-  { date: '2023-05-25', contents: 'Cocaine', testResults: 'Cocaine: 100%' },
-  { date: '2023-05-28', contents: 'Methamphetamine', testResults: 'Methampetamine: 98%, Glucose: 2%' },
-  { date: '2023-05-27', contents: 'Marijuana', testResults: 'Marijuana: 100%' },
-  { date: '2023-04-23', contents: 'Heroin', testResults: 'Heroin: 99%, Fentanyl: 1%' },
-  { date: '2023-05-25', contents: 'Cocaine', testResults: 'Cocaine: 100%' },
-  { date: '2023-05-28', contents: 'Methamphetamine', testResults: 'Methampetamine: 98%, Glucose: 2%' },
-  { date: '2023-05-27', contents: 'Marijuana', testResults: 'Marijuana: 100%' },
-  { date: '2023-04-23', contents: 'Heroin', testResults: 'Heroin: 99%, Fentanyl: 1%' },
-  { date: '2023-05-25', contents: 'Cocaine', testResults: 'Cocaine: 100%' },
-  { date: '2023-05-28', contents: 'Methamphetamine', testResults: 'Methampetamine: 98%, Glucose: 2%' },
-  { date: '2023-05-27', contents: 'Marijuana', testResults: 'Marijuana: 100%' },
-  { date: '2023-04-23', contents: 'Heroin', testResults: 'Heroin: 99%, Fentanyl: 1%' },
-  { date: '2023-05-25', contents: 'Cocaine', testResults: 'Cocaine: 100%' },
-  { date: '2023-05-28', contents: 'Methamphetamine', testResults: 'Methampetamine: 98%, Glucose: 2%' },
-  { date: '2023-05-27', contents: 'Marijuana', testResults: 'Marijuana: 100%' },
-  { date: '2023-04-23', contents: 'Heroin', testResults: 'Heroin: 99%, Fentanyl: 1%' },
-  { date: '2023-05-25', contents: 'Cocaine', testResults: 'Cocaine: 100%' },
-  { date: '2023-05-28', contents: 'Methamphetamine', testResults: 'Methampetamine: 98%, Glucose: 2%' },
-  { date: '2023-05-27', contents: 'Marijuana', testResults: 'Marijuana: 100%' },
-  { date: '2023-04-23', contents: 'Heroin', testResults: 'Heroin: 99%, Fentanyl: 1%' },
-];
+const StyledTableHead = styled(TableHead)(({ theme }) => ({
+  '&': {
+    backgroundColor: 'black',
+  },
+}));
 
-const PAGE_SIZE = 5;
+const StyledTableHeaderCell = styled(TableCell)(({ theme }) => ({
+  '&': {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+}));
 
-const PublicTable = () => {
-  const [searchContents, setSearchContents] = useState('');
-  const [searchResults, setSearchResults] = useState('');
-  const [currentPage, setCurrentPage] = useState(0);
+const SampleTable = () => {
+  const [samples, setSamples] = useState([]);
+  const [filteredSamples, setFilteredSamples] = useState([]);
+  const [searchQueryDateReceived, setSearchQueryDateReceived] = useState('');
+  const [searchQueryExpectedContent, setSearchQueryExpectedContent] = useState('');
+  const [searchQueryTestResults, setSearchQueryTestResults] = useState('');
 
-  const handleContentsSearch = (event) => {
-    setSearchContents(event.target.value);
-    setCurrentPage(0);
+  useEffect(() => {
+    fetchSamples();
+  }, []);
+
+  const fetchSamples = async () => {
+    try {
+      const response = await axios.get(
+        'https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples'
+      );
+      const data = response.data;
+      setSamples(data);
+      setFilteredSamples(data);
+    } catch (error) {
+      console.error('Error fetching samples:', error);
+    }
   };
 
-  const handleResultsSearch = (event) => {
-    setSearchResults(event.target.value);
-    setCurrentPage(0);
+  const handleSearchClick = () => {
+    const filteredSamples = samples.filter((sample) => {
+      return (
+        sample['date-received'].includes(searchQueryDateReceived) &&
+        sample['expected-content'].includes(searchQueryExpectedContent) &&
+        sample['test-results'].includes(searchQueryTestResults)
+      );
+    });
+    setFilteredSamples(filteredSamples);
   };
 
-  const filteredData = data
-    .filter(
-      (item) =>
-        item.contents.toLowerCase().includes(searchContents.toLowerCase()) &&
-        item.testResults.toLowerCase().includes(searchResults.toLowerCase())
-    )
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
-
-  const totalPages = Math.ceil(filteredData.length / PAGE_SIZE);
-
-  const handleClickPage = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const renderTableRows = () => {
-    const startIndex = currentPage * PAGE_SIZE;
-    const endIndex = startIndex + PAGE_SIZE;
-
-    return filteredData.slice(startIndex, endIndex).map((item, index) => (
-      <TableRow key={index}>
-        <TableCell>{item.date}</TableCell>
-        <TableCell>{item.contents}</TableCell>
-        <TableCell>{item.testResults}</TableCell>
-      </TableRow>
-    ));
+  const handleResetClick = () => {
+    setFilteredSamples(samples);
+    setSearchQueryDateReceived('');
+    setSearchQueryExpectedContent('');
+    setSearchQueryTestResults('');
   };
 
   return (
-    <Box
-        style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            marginTop: '2rem',
-            backgroundColor: 'white', 
-            height: '100vh', 
-            width: '100vw', 
-            marginTop: '20px',
-            padding: 0, 
-        }}
-    >
-        <div 
-            style={{
-                display: 'flex',
-                justifyContent: 'center',
-                marginBottom: '2rem',
-            }}  
-        >
-            <TextField
-                style={{marginRight: '1rem'}}
-                label="Search by Contents"
-                variant="outlined"
-                value={searchContents}
-                onChange={handleContentsSearch}
-            />
-            <TextField
-                style={{marginRight: '1rem'}}
-                label="Search by Test Results"
-                variant="outlined"
-                value={searchResults}
-                onChange={handleResultsSearch}
-            />
+    <div>
+      <div style={{ marginBottom: '10px' }}>
+        <br/>
+        <TextField
+          label="Date Received"
+          variant="outlined"
+          size="small"
+          value={searchQueryDateReceived}
+          onChange={(e) => setSearchQueryDateReceived(e.target.value)}
+          style={{ marginRight: '10px', marginLeft: '10px' }}
+        />
+        <TextField
+          label="Expected Contents"
+          variant="outlined"
+          size="small"
+          value={searchQueryExpectedContent}
+          onChange={(e) => setSearchQueryExpectedContent(e.target.value)}
+          style={{ marginRight: '10px' }}
+        />
+        <TextField
+          label="Test Results"
+          variant="outlined"
+          size="small"
+          value={searchQueryTestResults}
+          onChange={(e) => setSearchQueryTestResults(e.target.value)}
+        />
+        <Button variant="contained" onClick={handleSearchClick} style={{ marginLeft: '10px' }}>
+          Search
+        </Button>
+        <Button variant="contained" onClick={handleResetClick} style={{ marginLeft: '10px' }}>
+          Reset
+        </Button>
       </div>
-      <TableContainer component={Paper} style={{width: '80%', marginTop: '2rem',}}>
-        <Table>
-          <TableHead>
+      <TableContainer component={Paper} style={{ padding: '10px' }}>
+        <Table sx={{ minWidth: 600 }} aria-label="sample table">
+          <StyledTableHead>
             <TableRow>
-              <TableCell>Date</TableCell>
-              <TableCell>Expected Contents</TableCell>
-              <TableCell>Test Results</TableCell>
+              <StyledTableHeaderCell>Date Received</StyledTableHeaderCell>
+              <StyledTableHeaderCell>Expected Contents</StyledTableHeaderCell>
+              <StyledTableHeaderCell>Test Results</StyledTableHeaderCell>
             </TableRow>
-          </TableHead>
-          <TableBody>{renderTableRows()}</TableBody>
+          </StyledTableHead>
+          <TableBody>
+            {filteredSamples.map((sample) => (
+              <TableRow key={sample['sample-id']}>
+                <StyledTableCell>{sample['date-received']}</StyledTableCell>
+                <StyledTableCell>{sample['expected-content']}</StyledTableCell>
+                <StyledTableCell>{sample['test-results']}</StyledTableCell>
+              </TableRow>
+            ))}
+          </TableBody>
         </Table>
       </TableContainer>
-      <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: '2rem',}}>
-        {Array.from(Array(totalPages).keys()).map((pageNumber) => (
-          <Button
-            key={pageNumber}
-            style={{marginLeft: '1rem', color: 'black',}}
-            variant={currentPage === pageNumber ? 'contained' : 'outlined'}
-            color="primary"
-            onClick={() => handleClickPage(pageNumber)}
-          >
-            {pageNumber + 1}
-          </Button>
-        ))}
-      </div>
-    </Box>
+    </div>
   );
 };
 
-export default PublicTable;
+export default SampleTable;
