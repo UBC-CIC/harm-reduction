@@ -36,7 +36,7 @@ const Admin = () => {
                 flexDirection="column"
                 justifyContent="center"
                 alignItems="center"
-                minHeight="100vh"
+                minHeight="60vh"
             >
                 <TextField
                     className="textbox" 
@@ -44,7 +44,7 @@ const Admin = () => {
                     id="usernameinput" 
                     label="username" 
                     variant="outlined" 
-                    style={{ marginBottom: '20px' }}
+                    sx={{m:1}}
                 >
                 </TextField>
                 <TextField
@@ -54,7 +54,7 @@ const Admin = () => {
                     label="password" 
                     type="password"
                     variant="outlined" 
-                    style={{ marginBottom: '20px' }}
+                    sx={{m:1}}
                 >
                 </TextField>
                 {showError && (
@@ -64,7 +64,7 @@ const Admin = () => {
                     className="containedbutton"
                     variant="contained" 
                     onClick={() => {adminSignin()}}
-                    style={{ marginTop: '10px', marginLeft: "10px" , marginRight: "10px" }}
+                    sx={{m:1}}
                 >Login
                 </Button>
             </Box>
@@ -77,7 +77,7 @@ const Admin = () => {
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
-            minHeight="100vh"
+            minHeight="60vh"
             style={{marginTop: '20px'}}
         >
             {!loginStatus && <LoginPage/>}
