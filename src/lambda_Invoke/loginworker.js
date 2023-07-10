@@ -14,7 +14,7 @@ export const authUser = async (username, password) => {
             "USERNAME": username,
             "PASSWORD": password
         },
-        ClientId: CLIENTID, // required
+        ClientId: '7c97mqj5bp09oi950fmt7poh8j', // required
     })
 
     try{
