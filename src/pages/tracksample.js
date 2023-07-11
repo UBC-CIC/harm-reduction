@@ -68,6 +68,7 @@ const TrackSample = () => {
             if(resp.data['status'] == 'Complete') setSampleTable(getSampleTableData(resp.data['test-results']));
 
             if(resp.data['is-used'] == 'na' || resp.data['expect-contents'] == 'na') setDisplayGetMetadata(true);
+            else setDisplayGetMetadata(false);
 
             setDisplayContactEdit(false);
             setDisplayContactVerify(false);
