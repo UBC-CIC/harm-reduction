@@ -250,7 +250,7 @@ const TrackSample = () => {
                     <Button
                         className="outlinedbutton" 
                         variant="outlined" 
-                        onClick={() => {setDisplayContactEdit(true)}}
+                        onClick={() => {setDisplayContactEdit(true); setDisplaySavedMsg(false)}}
                         sx={{m: 1, width: INNERWIDTH}}
                     >Recieve updates via email/sms
                     </Button>}
