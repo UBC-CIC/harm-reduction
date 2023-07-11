@@ -67,7 +67,7 @@ const TrackSample = () => {
             setSampleNotes(resp.data['notes']);
             if(resp.data['status'] == 'Complete') setSampleTable(getSampleTableData(resp.data['test-results']));
 
-            if(resp.data['is-used'] == 'N/A' || resp.data['expect-contents'] == 'N/A') setDisplayGetMetadata(true);
+            if(resp.data['is-used'] == 'na' || resp.data['expect-contents'] == 'na') setDisplayGetMetadata(true);
 
             setDisplayContactEdit(false);
             setDisplayContactVerify(false);
@@ -613,15 +613,15 @@ const TrackSample = () => {
                         sx={{ m: 1, mb: 2 }}
                     >Confirm
                     </Button>
-                    <Button 
+                    {/* <Button 
                         className="outlinedbutton"
                         variant="outlined" 
                         onClick={() => {editContact(); setDisableButton(true); setTimeout(() => {setDisableButton(false)}, 60000)}}
                         sx={{ m: 1, mb: 2 }}
                         disabled={disableButton}
                     >Send Another Code
-                    </Button>
-                    {displayError && (
+                    </Button> */}
+                    {/* {displayError && (
                         <Button
                             className="outlinedbutton"
                             variant="outlined" 
@@ -630,7 +630,15 @@ const TrackSample = () => {
                             color="error"
                         >Exit without saving  
                         </Button>
-                    )}
+                    )} */}
+                    <Button
+                            className="outlinedbutton"
+                            variant="outlined" 
+                            onClick={() => {setDisplayContactVerify(false); enteredOTP=''; setDisplayError(false)}}
+                            sx={{m: 1, mb: 2}}
+                            color="error"
+                        >Exit without saving  
+                    </Button>
                 </Box>
             </Box>
         )
