@@ -14,21 +14,12 @@ import {
     TextField, 
     ToggleButton, ToggleButtonGroup, 
     Typography,
-    Divider, 
 } from '@mui/material';
 
 import EmailIcon from '@mui/icons-material/Email';
 import SmsIcon from '@mui/icons-material/Sms';
 
 import '../css/tracksample.css'
-
-const expectedContentOptions = [
-    {value: 'Cocaine'},
-    {value: 'Marijuana'},
-    {value: 'Methamphetamine'},
-    {value: 'Adderall'},
-  ];
-  
 
 const TrackSample = () => {
     const [pageState,     setPageState]     = useState(0); // pageStates = ["enterid", "showsample", "showcontact", "updatecontact", "verifycontact"]
@@ -43,20 +34,32 @@ const TrackSample = () => {
     const [displayContactVerify, setDisplayContactVerify] = useState(false);
     const [displayGetMetadata,   setDisplayGetMetadata]   = useState(false);
     
-    const [sampleID,     setSampleID]     = useState('');
-    const [sampleStatus, setSampleStatus] = useState('');
-    const [sampleDate,   setSampleDate]   = useState('');
-    const [sampleNotes,  setSampleNotes]  = useState('');
-    const [sampleUsed,   setSampleUsed]   = useState(false);
-    const [sampleTable,  setSampleTable]  = useState([]);
+    const [sampleID,       setSampleID]       = useState('');
+    const [sampleStatus,   setSampleStatus]   = useState('');
+    const [sampleDate,     setSampleDate]     = useState('');
+    const [sampleNotes,    setSampleNotes]    = useState('');
+    const [sampleUsed,     setSampleUsed]     = useState(false);
+    const [sampleTable,    setSampleTable]    = useState([]);
+    const [contentOptions, setContentOptions] = useState([]);
     
     let   trackingID;
     let   contactField;
     let   enteredOTP;
     let   expectedContentsField;
 
+    const getOptions = async () => {
+        try{
+            const resp = await axios.get('https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples');
+            const data = resp.data;
+            setContentOptions([...new Set(data.map((sample) => sample['expected-content']))])
+        }catch(err){
+            setContentOptions(['Cocaine', 'MDMA', 'Methamphetamine', 'Adderall'])
+        }
+    }
+
     const trackSample = async () => {
         console.log(`trackingID: ${trackingID}`);
+        getOptions();
         try{
             console.log('try api')
             const resp = await axios.get(`https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples&sample-id=${trackingID}`);
@@ -67,7 +70,7 @@ const TrackSample = () => {
             setSampleNotes(resp.data['notes']);
             if(resp.data['status'] == 'Complete') setSampleTable(getSampleTableData(resp.data['test-results']));
 
-            if(resp.data['is-used'] == 'na' || resp.data['expect-contents'] == 'na') setDisplayGetMetadata(true);
+            if(resp.data['is-used'] == 'na' || resp.data['expect-contents'] == 'na')setDisplayGetMetadata(true);
             else setDisplayGetMetadata(false);
 
             setDisplayContactEdit(false);
@@ -408,16 +411,8 @@ const TrackSample = () => {
         )
     }
 
-    const GetMetadata = async () => {
+    const GetMetadata = () => {
         const WIDTH = isMobile ? 400 : 700;
-        let options;
-        try{
-            const resp = await axios.get('https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples');
-            const data = resp.data;
-            options = Array.from(new Set(data.map((sample) => sample.status)))
-        }catch(err){
-            options = ['Methamphetamine', 'Marijuana', 'Adderall', 'MDMA', 'Ketamine', 'Cocaine']
-        }
         return(
             <Box
                 sx={{
@@ -448,13 +443,13 @@ const TrackSample = () => {
                 /> */}
                 <Autocomplete
                     freeSolo
+                    sx={{width: WIDTH - 100, m:1}}
                     disableClearable
-                    sx={{m:1,mb:2,width: WIDTH - 100}}
-                    options={options.sort().map((option) => option.value)}
+                    options={Array.from(contentOptions)}
                     renderInput={(params) => (
                     <TextField
                         {...params}
-                        label="Expected contents of this sample (select or type in your own)"
+                        label="Expected contents of the sample"
                         InputProps={{
                         ...params.InputProps,
                         type: 'search',
