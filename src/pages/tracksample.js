@@ -13,7 +13,8 @@ import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
     TextField, 
     ToggleButton, ToggleButtonGroup, 
-    Typography, 
+    Typography,
+    Divider, 
 } from '@mui/material';
 
 import EmailIcon from '@mui/icons-material/Email';
@@ -157,10 +158,12 @@ const TrackSample = () => {
     }
 
     const getSampleTableData = (inputStr) => {
-        let entries = inputStr.split(',');
-        let output = entries.map((entry) => {
-            let pair = entry.trim().split(' ');
-            return {name: pair[0], percentage: pair[1]}
+        const entries = inputStr.split(',');
+        const output  = entries.map((entry) => {
+            const splitIndex = entry.lastIndexOf(' ');
+            const name = entry.substring(0, splitIndex);
+            const percentage = entry.substring(splitIndex+1);
+            return {name: name, percentage: percentage}
         });
         return output;
     }
@@ -232,7 +235,7 @@ const TrackSample = () => {
                         alignItems="flex-start"
                         sx={{width: INNERWIDTH, m: 1, mt: 2}}
                     >
-                        <Typography sx={{m: 1}} style={{textAlign: "left"}}> Sample: {`${sampleID}`} </Typography>                    
+                        <Typography sx={{m: 1}} style={{textAlign: "left"}}> Sample ID: {`${sampleID}`} </Typography>                    
                         <Typography sx={{m: 1}} style={{textAlign: "right"}}> Status: {`${sampleStatus}`}</Typography>
                         <Typography sx={{m: 1}} style={{textAlign: "right"}}> Date Received: {`${sampleDate}`} </Typography>   
                     </Box>
@@ -359,8 +362,8 @@ const TrackSample = () => {
                     <Table sx={{ width: WIDTH - 40, m:2 }} aria-label="simple table">
                         <TableHead>
                             <TableRow>
-                                <TableCell>Chemical component</TableCell>
-                                <TableCell align="right">Percentage by Mass (%)</TableCell>
+                                <TableCell sx={{fontWeight:'bold'}}>Chemical Component</TableCell>
+                                <TableCell sx={{fontWeight:'bold'}}align="right">Percentage by Mass (%)</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -374,8 +377,8 @@ const TrackSample = () => {
                             </TableRow>
                         ))}
                             <TableRow>
-                                <TableCell>Notes:</TableCell>
-                                <TableCell align="right">{`${sampleNotes}`}</TableCell>
+                                <TableCell sx={{fontWeight:'bold'}}>Notes:</TableCell>
+                                <TableCell align="right">{sampleNotes}</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>
