@@ -408,8 +408,16 @@ const TrackSample = () => {
         )
     }
 
-    const GetMetadata = () => {
+    const GetMetadata = async () => {
         const WIDTH = isMobile ? 400 : 700;
+        let options;
+        try{
+            const resp = await axios.get('https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples');
+            const data = resp.data;
+            options = Array.from(new Set(data.map((sample) => sample.status)))
+        }catch(err){
+            options = ['Methamphetamine', 'Marijuana', 'Adderall', 'MDMA', 'Ketamine', 'Cocaine']
+        }
         return(
             <Box
                 sx={{
@@ -442,7 +450,7 @@ const TrackSample = () => {
                     freeSolo
                     disableClearable
                     sx={{m:1,mb:2,width: WIDTH - 100}}
-                    options={expectedContentOptions.map((option) => option.value)}
+                    options={options.sort().map((option) => option.value)}
                     renderInput={(params) => (
                     <TextField
                         {...params}
