@@ -20,7 +20,13 @@ import {
   Pagination,
 } from '@mui/material';
 import { tableCellClasses } from '@mui/material/TableCell';
-import '../css/admintable.css'
+import '../css/admintable.css';
+
+import { DatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from 'dayjs';
+
 
 import axios from 'axios';
 
@@ -49,6 +55,8 @@ const SampleTable = () => {
   const [searchQuerySampleId, setSearchQuerySampleId] = useState('');
   const [searchQueryExpectedContent, setSearchQueryExpectedContent] = useState('');
   const [searchQueryTestResults, setSearchQueryTestResults] = useState('');
+
+  const [searchQueryDateReceived, setSearchQueryDateReceived] = useState('');
 
   const [filterOptions, setFilterOptions] = useState({
     status: [],
@@ -280,7 +288,9 @@ const SampleTable = () => {
       return (
         sample['sample-id'].includes(searchQuerySampleId) &&
         sample['expected-content'].includes(searchQueryExpectedContent) &&
-        sample['test-results'].includes(searchQueryTestResults)
+        sample['test-results'].includes(searchQueryTestResults) &&
+        (searchQueryDateReceived === '' ||
+          sample['date-received'].includes(searchQueryDateReceived))
       );
     });
   
@@ -289,12 +299,14 @@ const SampleTable = () => {
     setCurrentPage(1); // Reset to the first page
   };
   
+  
 
   const handleResetClick = () => {
     setSamples(initialSamples);
     setSearchQuerySampleId('');
     setSearchQueryExpectedContent('');
     setSearchQueryTestResults('');
+    setSearchQueryDateReceived(''); // Add this line to reset the date filter
     setFilters({
       status: [],
       location: [],
@@ -303,6 +315,7 @@ const SampleTable = () => {
       isUsed: [],
     });
   };
+  
 
   const indexOfLastSample = currentPage * samplesPerPage;
   const indexOfFirstSample = indexOfLastSample - samplesPerPage;
@@ -316,6 +329,7 @@ const SampleTable = () => {
 
 
   return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
     <div>
     <Box sx={{ display: 'flex', flexDirection: 'column', marginBottom: '16px'}}>
         <Box component='fieldset' sx={{m:1, display: 'flex', alignItems: 'center', borderRadius:1, borderColor: 'text.primary', border: 1, fontSize:10 }}>
@@ -432,6 +446,18 @@ const SampleTable = () => {
             onChange={(e) => setSearchQueryTestResults(e.target.value)}
             sx={{m:1, marginRight: '8px' }}
           />
+          <DatePicker
+            label="Date Received"
+            inputFormat="YYYY-MM-DD"
+            value={searchQueryDateReceived}
+            onChange={(newValue) => setSearchQueryDateReceived(dayjs(newValue).format('YYYY-MM-DD'))}
+            slotProps={{
+              textField: {
+                size: "small",
+                error: false,
+              },
+            }}
+          />
         </Box>
         <Box sx = {{m:1,}}>
           <Button variant="contained" onClick={handleSearchClick} sx = {{marginRight: '5px'}}>
@@ -521,6 +547,7 @@ const SampleTable = () => {
   <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} sx={{m:1}}/>
 
     </div>
+    </LocalizationProvider>
   );
 };
 
