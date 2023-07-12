@@ -58,19 +58,28 @@ const TrackSample = () => {
     }
 
     const trackSample = async () => {
-        console.log(`trackingID: ${trackingID}`);
+        let sampleID = trackingID.trim();
+        sampleID = sampleID.toUpperCase();
+        if(!(/^[a-zA-Z0-9\s]{1,12}$/.test(sampleID))){
+            setDisplayError(true);
+            return;
+        }
+        console.log(`trackingID: ${sampleID}`);
         getOptions();
         try{
             console.log('try api')
-            const resp = await axios.get(`https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples&sample-id=${trackingID}`);
+            const resp = await axios.get(`https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples&sample-id=${sampleID}`);
             console.log(resp.data);
             setSampleID(resp.data['sample-id']);
-            setSampleStatus(resp.data['status']);
+            (resp.data['status'] === 'Manual Testing Required') ? setSampleStatus('Pending') : setSampleStatus(resp.data['status']);
             setSampleDate(resp.data['date-received']);
             setSampleNotes(resp.data['notes']);
             if(resp.data['status'] == 'Complete') setSampleTable(getSampleTableData(resp.data['test-results']));
 
-            if(resp.data['is-used'] == 'na' || resp.data['expect-contents'] == 'na')setDisplayGetMetadata(true);
+            if(resp.data['is-used'] == 'Pending' || resp.data['expected-content'] == 'Pending' || 
+                !resp.data['is-used'] || !resp.data['expected-content']){
+                    setDisplayGetMetadata(true);
+            }
             else setDisplayGetMetadata(false);
 
             setDisplayContactEdit(false);
@@ -112,11 +121,19 @@ const TrackSample = () => {
     }
 
     const editContact = async () => {
-        console.log(`contactfield: ${contactField}`);
+        let recipient = contactField.trim();
+        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+        const phoneRegex = /^\+?[0-9]{1,3}[-.\s]?\(?[0-9]{1,3}\)?[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,4}$/;
+        const valid = (contactMethod === 'email') ? emailRegex.test(recipient) : phoneRegex.test(recipient);
+        if(!valid){
+            setDisplayError(true);
+            return;
+        }
+        console.log(`contactfield: ${recipient}`);
         console.log('email? ' + contactMethod);
 
         const OTPInfo = await axios.post(`https://bwxq8zcfp2.execute-api.us-west-2.amazonaws.com/beta/otp?action=send`,{
-            "recipient": contactField,
+            "recipient": recipient,
             "contactbyemail": (contactMethod == 'email'),
         });
         console.log(OTPInfo.data);
@@ -183,7 +200,7 @@ const TrackSample = () => {
             sx={{mt:4}}
         >
             <Typography variant='h6' align='center' sx={{m:1, width: WIDTH}}>Enter the sample ID provided on the package in the box below</Typography>
-            {displayError && <Alert sx={{m:1}}severity='error'> The sample ID you entered does not exist</Alert>}
+            {displayError && <Alert sx={{m:1}}severity='error'> The sample ID you entered is invalid</Alert>}
             <TextField 
                 className="textbox" 
                 onChange={(event)=>{trackingID=event.target.value}}
@@ -529,6 +546,7 @@ const TrackSample = () => {
                         <SmsIcon /> SMS
                     </ToggleButton>
                 </ToggleButtonGroup>
+                {displayError && <Alert severity="error" sx={{m:1, mt:0}}>The contact info you entered is invalid</Alert>}
                 <TextField 
                     className="textbox" 
                     onChange={(event)=>{contactField=event.target.value}}
@@ -564,7 +582,7 @@ const TrackSample = () => {
                     <Button 
                         className="outlinedbutton"
                         variant="outlined" 
-                        onClick={() => {setDisplayContactEdit(false)}}
+                        onClick={() => {setDisplayContactEdit(false); setDisplayError(false)}}
                         style={{ marginLeft: "10px" , marginRight: "10px" }}
                     >Close without saving
                     </Button>
