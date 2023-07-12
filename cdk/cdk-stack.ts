@@ -17,31 +17,23 @@ export class CdkStack extends cdk.Stack {
     //   visibilityTimeout: cdk.Duration.seconds(300)
     // });
 
-    const pinpointApp = new pinpoint.CfnApp(this, 'HarmReduction', {
-      name: 'HarmReduction'
-    })
 
-    // OTP functionality
+    // DynamoDB
     const OTPTable = new dynamodb.Table(this, 'OTPTable', {
       partitionKey: { name: 'recipient', type: dynamodb.AttributeType.STRING },
       // timeToLiveAttribute: "TTL"
     });
 
-    const sendOTPFunction = new lambda.Function(this, 'sendOTP', {
-      timeout: cdk.Duration.seconds(600),
-      memorySize: 1024,
-      runtime: lambda.Runtime.NODEJS_18_X,
-      handler: 'sendotp.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, './lambdas/sendotp')),
+    const SampleTable = new dynamodb.Table(this, 'SampleTable', {
+      partitionKey: {name: 'sample-id', type: dynamodb.AttributeType.STRING},
     });
 
-    const verifyOTPFunction = new lambda.Function(this, 'verifyOTP', {
-      timeout: cdk.Duration.seconds(600),
-      memorySize: 1024,
-      runtime: lambda.Runtime.NODEJS_18_X,
-      handler: 'verify.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, './lambdas/verifyotp')),
+    const UserTable = new dynamodb.Table(this, 'UserTable', {
+      partitionKey: {name: 'sample-id', type: dynamodb.AttributeType.STRING},
     });
+
+    // Lambdas
+    
     
   }
 }
