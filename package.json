@@ -1,0 +1,52 @@
+{
+  "name": "ubc-harm-reduction",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-amplify/ui-react": "^4.6.4",
+    "@aws-sdk/client-cognito-identity-provider": "^3.354.0",
+    "@aws-sdk/client-lambda": "^3.341.0",
+    "@aws-sdk/util-utf8": "^3.310.0",
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.13.2",
+    "@mui/x-date-pickers": "^6.9.2",
+    "aws-amplify": "^5.3.3",
+    "axios": "^1.4.0",
+    "buffer": "^6.0.3",
+    "dayjs": "^1.11.9",
+    "react": "^18.2.0",
+    "react-device-detect": "^2.2.3",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^5.3.4",
+    "react-scripts": "^5.0.1"
+  }
+}

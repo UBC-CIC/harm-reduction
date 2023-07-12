@@ -1,0 +1,39 @@
+@font-face {
+    font-family: 'Open Sans';
+    src: url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap') format('truetype');
+  }
+  
+  * {
+    font-family: 'Open Sans', sans-serif;
+  }
+
+.logoBackground {
+    box-shadow: 0, 10, 50, rgb(0,0,0);
+    z-index: 10;
+}
+
+.navBar {
+    background-color: #97D4E9;
+    height: 60px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    box-shadow: 0, 2, 4, rgb(0,0,0);
+}
+
+.navbutton {
+    font-size: 16px;
+    background: transparent;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: auto;
+    margin-bottom: auto;
+    border: none;
+    align-items: center;
+    text-decoration: none;
+}
+
+.navbutton:hover {
+    background-color: rgb(1,1,1,.05);
+}
+  
