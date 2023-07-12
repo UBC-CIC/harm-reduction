@@ -147,12 +147,17 @@ const TrackSample = () => {
     }
 
     const verifyContact = async () => {
-        console.log(`entered OTP: ${enteredOTP}`);
+        let OTP = enteredOTP.trim();
+        if(!(/^.{6}$/.test(enteredOTP))){
+            setDisplayError(true);
+            return;
+        }
+        console.log(`entered OTP: ${OTP}`);
         console.log(`refID: ${referenceID}`);
         
         const verifyResp = await axios.post(`https://bwxq8zcfp2.execute-api.us-west-2.amazonaws.com/beta/otp?action=verify`, {
             "recipient": newContact,
-            "userOTP": enteredOTP,
+            "userOTP": OTP,
             "userRefID": referenceID
         })
         console.log(verifyResp.data);
