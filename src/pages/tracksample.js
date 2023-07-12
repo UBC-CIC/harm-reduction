@@ -15,9 +15,9 @@ import {
     ToggleButton, ToggleButtonGroup, 
     Typography,
 } from '@mui/material';
-
 import EmailIcon from '@mui/icons-material/Email';
 import SmsIcon from '@mui/icons-material/Sms';
+import InputMask from 'react-input-mask';
 
 import '../css/tracksample.css'
 
@@ -45,12 +45,13 @@ const TrackSample = () => {
     let   trackingID;
     let   contactField;
     let   enteredOTP;
-    let   expectedContentsField;
+    let   expectedContentsField = '';
 
     const getOptions = async () => {
         try{
             const resp = await axios.get('https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples');
             const data = resp.data;
+            console.log(data);
             setContentOptions([...new Set(data.map((sample) => sample['expected-content']))])
         }catch(err){
             setContentOptions(['Cocaine', 'MDMA', 'Methamphetamine', 'Adderall'])
@@ -100,6 +101,7 @@ const TrackSample = () => {
             const getresp = await axios.get(`https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples&sample-id=${sampleID}`);
             const item = getresp.data;
             const resp = await axios.put(`https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples`,{
+                "status": item['status'],
                 "sample-id": item["sample-id"],
                 "vial-id": item["vial-id"],
                 "date-received": item["date-received"],
@@ -435,6 +437,7 @@ const TrackSample = () => {
 
     const GetMetadata = () => {
         const WIDTH = isMobile ? 400 : 700;
+        console.log(contentOptions);
         return(
             <Box
                 sx={{
@@ -517,6 +520,7 @@ const TrackSample = () => {
 
     const ContactDisplay = () => {
         const WIDTH = isMobile ? 400 : 700;
+        const { value, onChange, ...otherProps } = [];
         return(
             <Box
                 sx={{
@@ -545,31 +549,35 @@ const TrackSample = () => {
                     sx={{m:2, mt: 0}}
                     >
                     <ToggleButton value="email" aria-label="email">
-                        Email <EmailIcon/>
+                        Email <EmailIcon sx={{ml:1}}/>
                     </ToggleButton>
                     <ToggleButton value="sms" aria-label="sms">
-                        <SmsIcon /> SMS
+                        <SmsIcon sx={{mr:1}}/> SMS
                     </ToggleButton>
                 </ToggleButtonGroup>
                 {displayError && <Alert severity="error" sx={{m:1, mt:0}}>The contact info you entered is invalid</Alert>}
-                <TextField 
+                {(contactMethod == 'email') && <TextField 
                     className="textbox" 
                     onChange={(event)=>{contactField=event.target.value}}
                     id="trackinginput" 
-                    label="Enter new email" 
+                    label="Enter your email here" 
                     variant="outlined" 
-                    style={{ marginBottom: '20px', width: WIDTH - 100}}
-                    disabled={contactMethod=='sms'}
-                />
-                <TextField 
-                    className="textbox" 
-                    onChange={(event)=>{contactField=event.target.value}}
-                    id="trackinginput" 
-                    label="Enter new phone number" 
-                    variant="outlined" 
-                    style={{ marginBottom: '20px', width: WIDTH - 100 }}
-                    disabled={contactMethod=='email'}
-                />
+                    sx={{ mb:2, width: WIDTH - 100}}
+                />}
+                {(contactMethod == 'sms') && <InputMask
+                    mask="+1 (999) 999-9999"
+                    onChange={(event) => contactField=event.target.value}
+                    maskChar=''
+                    id="trackinginput"
+                    >
+                    {() => (
+                        <TextField
+                        sx={{mb:2, width: WIDTH - 100}}
+                        variant="outlined"
+                        label="Enter your phone number here"
+                        />
+                    )}
+                </InputMask>}
                 <Box
                     display="flex"
                     flexDirection="row"
