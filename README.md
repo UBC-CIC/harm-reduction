@@ -40,7 +40,7 @@ The following architecture diagram illustrates the various AWS components utiliz
 
 ### Admin Table of Samples
 
-![alt text](./doc/images/admintable.png)
+![alt text](./docs/images/admintable.png)
 
 ## Deployment Guide
 
