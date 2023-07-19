@@ -30,7 +30,7 @@ The following architecture diagram illustrates the various AWS components utiliz
 
 ### Public Table of Samples
 
-![alt text](.docs/images/publictable.png)
+![alt text](./docs/images/publictable.png)
 
 ### Searching via Specific Sample ID
 
@@ -40,7 +40,7 @@ The following architecture diagram illustrates the various AWS components utiliz
 
 ### Admin Table of Samples
 
-![alt text](.doc/images/admintable.png)
+![alt text](./doc/images/admintable.png)
 
 ## Deployment Guide
 
