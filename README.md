@@ -20,25 +20,27 @@ The solution is a web application, which allows users (students/lab admins) to m
 ## High Level Architecture
 
 The following architecture diagram illustrates the various AWS components utilized to deliver the solution.  
-![alt text](./docs/images/videoassessment.drawio.png)
+![alt text](./docs/images/architecture.png)
 
 ## Screenshots
 
 ### Home Page
 
-![alt text](./docs/images/login.png)
+![alt text](./docs/images/.png)
 
 ### Public Table of Samples
 
-![alt text](.docs/images/../../docs/images/VideoAssessmentRecordingPage.png)
+![alt text](.docs/images/publictable.png)
 
 ### Searching via Specific Sample ID
 
-![alt text](./docs/images/VideoAssessmentDownloadPage.png)
+![alt text](./docs/images/.png)
 
 ### Admin Login Page
 
 ### Admin Table of Samples
+
+![alt text](.doc/images/admintable.png)
 
 ## Deployment Guide
 
