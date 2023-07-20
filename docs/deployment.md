@@ -108,58 +108,6 @@ Once you have added the five variables, your screen should look something like t
 Finally, navigate to the "build settings" section in the left sidebar. In the upper right corner of the box labeled "app build specification", click on the edit button to edit the build configuration. 
 ![alt text](images/buildsettings.png)
 
-A windowed text editor should appear, and the file should look like something this
-```
-version: 1
-backend:
-  phases:
-    build:
-      commands:
-        - '# Execute Amplify CLI with the helper script'
-        - amplifyPush --simple
-frontend:
-  phases:
-    preBuild:
-      commands:
-        - npm ci
-    build:
-      commands:
-        - npm run build
-  artifacts:
-    baseDirectory: build
-    files:
-      - '**/*'
-  cache:
-    paths:
-      - node_modules/**/*
-```
-
-Under the section frontend->build->commands, right above the line 'npm run build' paste the following lines
-```
-- REACT_APP_AWS_REGION=${REACT_APP_AWS_REGION}
-- REACT_APP_GETCLIP=${REACT_APP_GETCLIP}
-- REACT_APP_MP4STITCH=${REACT_APP_MP4STITCH}
-- REACT_APP_GETSIGNEDURL=${REACT_APP_GETSIGNEDURL}
-- REACT_APP_VIDEODATA=${REACT_APP_VIDEODATA}
-```
-
-The "frontend" section of your file should look like this after pasting the lines
-```
-frontend:
-  phases:
-    preBuild:
-      commands:
-        - npm ci
-    build:
-      commands:
-        - REACT_APP_AWS_REGION=${REACT_APP_AWS_REGION}
-        - REACT_APP_GETCLIP=${REACT_APP_GETCLIP}
-        - REACT_APP_MP4STITCH=${REACT_APP_MP4STITCH}
-        - REACT_APP_GETSIGNEDURL=${REACT_APP_GETSIGNEDURL}
-        - REACT_APP_VIDEODATA=${REACT_APP_VIDEODATA}
-        - npm run build
-```
-
 Click save to save your changes and exit the text editor. Then, go to your app, and click on the front end as shown in the image below.
 ![alt text](images/buildagain.png)
 
