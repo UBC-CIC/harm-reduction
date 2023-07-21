@@ -4,6 +4,7 @@ import { Construct } from 'constructs';
 import { aws_dynamodb as dynamodb } from 'aws-cdk-lib';
 import { aws_lambda as lambda } from 'aws-cdk-lib';
 import { aws_apigateway } from 'aws-cdk-lib';
+import { MockIntegration } from 'aws-cdk-lib/aws-apigateway';
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 export class CdkStack extends cdk.Stack {
@@ -32,35 +33,69 @@ export class CdkStack extends cdk.Stack {
       partitionKey: {name: 'sample-id', type: dynamodb.AttributeType.STRING},
     });
 
+    // Lmabda - Axios Layer
+    const axiosLayer = new lambda.LayerVersion(this, 'axiosLayer', {
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      code: lambda.Code.fromAsset(path.join(__dirname, './lambdas/axioslayer')),
+      compatibleArchitectures: [lambda.Architecture.X86_64],
+    });
+
     // Lambdas
     const OTPApiHandler = new lambda.Function(this, 'OTPApiHandler', {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'otpapihandler.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'otpapihandler')),
+      layers: [axiosLayer],
+      code: lambda.Code.fromAsset(path.join(__dirname, './lambdas/otpapihandler')),
     });
 
     const DBApiHandler = new lambda.Function(this, 'DBApiHandler', {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'dbapihandler.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'dbapihandler')),
+      code: lambda.Code.fromAsset(path.join(__dirname, './lambdas/dbapihandler')),
     });
 
     const SendNotification = new lambda.Function(this, 'SendNotification', {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'sendnotif.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'sendnotif')),
+      code: lambda.Code.fromAsset(path.join(__dirname, './lambdas/sendnotif')),
     });
 
     // API Gateways
+    const integrationOptions = {
+      integrationResponses: [{
+        statusCode: '200',
+        responseParameters: {
+          'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+          'Access-Control-Allow-Methods': 'POST',
+          'Access-Control-Allow-Origin': '*',
+        },
+      }],
+      passthroughBehavior: aws_apigateway.PassthroughBehavior.WHEN_NO_MATCH,
+    };
+    const methodOptions = {
+      methodResponses: [{
+        statusCode: '200',
+        responseParameters: {
+          'Access-Control-Allow-Headers': true,
+          'Access-Control-Allow-Methods': true,
+          'Access-Control-Allow-Origin': true,
+        },
+      }],
+    };
+
     const OTPapi = new aws_apigateway.RestApi(this, 'OTPapi');
+    OTPapi.root.addMethod('POST', new aws_apigateway.LambdaIntegration(OTPApiHandler, {proxy: true}));
+    OTPapi.root.addMethod('OPTIONS', new aws_apigateway.MockIntegration(integrationOptions), methodOptions);
 
     const DBApiMethods = ['POST', 'GET', 'PUT', 'DELETE']
     const DBapi = new aws_apigateway.RestApi(this, 'DBapi');
     const DBSample = DBapi.root.addResource('samples');
     const DBUser = DBapi.root.addResource('users');
+    DBSample.addMethod('OPTIONS', new aws_apigateway.MockIntegration(integrationOptions), methodOptions);
+    DBUser.addMethod('OPTIONS', new aws_apigateway.MockIntegration(integrationOptions), methodOptions);
     for(const method in DBApiMethods){ 
-      DBSample.addMethod(method);
-      DBUser.addMethod(method);
+      DBSample.addMethod(method, new aws_apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+      DBUser.addMethod(method, new aws_apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
     }
 
     // Cognito
