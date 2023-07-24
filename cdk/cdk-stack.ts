@@ -3,8 +3,8 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { aws_dynamodb as dynamodb } from 'aws-cdk-lib';
 import { aws_lambda as lambda } from 'aws-cdk-lib';
-import { aws_apigateway } from 'aws-cdk-lib';
-import { MockIntegration } from 'aws-cdk-lib/aws-apigateway';
+import { aws_apigateway as apigateway } from 'aws-cdk-lib';
+import { aws_cognito as cognito } from 'aws-cdk-lib';
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 export class CdkStack extends cdk.Stack {
@@ -22,7 +22,6 @@ export class CdkStack extends cdk.Stack {
     // DynamoDB
     const OTPTable = new dynamodb.Table(this, 'OTPTable', {
       partitionKey: { name: 'recipient', type: dynamodb.AttributeType.STRING },
-      // timeToLiveAttribute: "TTL"
     });
 
     const SampleTable = new dynamodb.Table(this, 'SampleTable', {
@@ -70,7 +69,7 @@ export class CdkStack extends cdk.Stack {
           'Access-Control-Allow-Origin': '*',
         },
       }],
-      passthroughBehavior: aws_apigateway.PassthroughBehavior.WHEN_NO_MATCH,
+      passthroughBehavior: apigateway.PassthroughBehavior.WHEN_NO_MATCH,
     };
     const methodOptions = {
       methodResponses: [{
@@ -83,22 +82,47 @@ export class CdkStack extends cdk.Stack {
       }],
     };
 
-    const OTPapi = new aws_apigateway.RestApi(this, 'OTPapi');
-    OTPapi.root.addMethod('POST', new aws_apigateway.LambdaIntegration(OTPApiHandler, {proxy: true}));
-    OTPapi.root.addMethod('OPTIONS', new aws_apigateway.MockIntegration(integrationOptions), methodOptions);
+    const OTPapi = new apigateway.RestApi(this, 'OTPapi');
+    OTPapi.root.addMethod('POST', new apigateway.LambdaIntegration(OTPApiHandler, {proxy: true}));
+    OTPapi.root.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
 
     const DBApiMethods = ['POST', 'GET', 'PUT', 'DELETE']
-    const DBapi = new aws_apigateway.RestApi(this, 'DBapi');
+    const DBapi = new apigateway.RestApi(this, 'DBapi');
     const DBSample = DBapi.root.addResource('samples');
     const DBUser = DBapi.root.addResource('users');
-    DBSample.addMethod('OPTIONS', new aws_apigateway.MockIntegration(integrationOptions), methodOptions);
-    DBUser.addMethod('OPTIONS', new aws_apigateway.MockIntegration(integrationOptions), methodOptions);
+    DBSample.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
+    DBUser.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
     for(const method in DBApiMethods){ 
-      DBSample.addMethod(method, new aws_apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-      DBUser.addMethod(method, new aws_apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+      DBSample.addMethod(method, new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+      DBUser.addMethod(method, new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
     }
 
     // Cognito
+    const adminPool = new cognito.UserPool(this, 'adminuserpool', {
+      userPoolName: 'harmreduction-adminpool',
+      signInCaseSensitive: false,
+      selfSignUpEnabled: false,
+      mfa: cognito.Mfa.OFF,
+      passwordPolicy: {
+        minLength: 12,
+        requireLowercase: true,
+        requireUppercase: true,
+        requireDigits: true,
+        requireSymbols: true,
+        tempPasswordValidity: cdk.Duration.days(3),
+      },
+      accountRecovery: cognito.AccountRecovery.NONE,
+      deviceTracking: {
+        challengeRequiredOnNewDevice: false,
+        deviceOnlyRememberedOnUserPrompt: false
+      },
+    });
+
+    const adminPoolClient = adminPool.addClient('adminpoolclient', {
+      authFlows: {
+        userPassword: true
+      }
+    });
 
     // 
     
