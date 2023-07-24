@@ -22,6 +22,7 @@ export class CdkStack extends cdk.Stack {
     // DynamoDB
     const OTPTable = new dynamodb.Table(this, 'OTPTable', {
       partitionKey: { name: 'recipient', type: dynamodb.AttributeType.STRING },
+      timeToLiveAttribute: 'expiry'
     });
 
     const SampleTable = new dynamodb.Table(this, 'SampleTable', {

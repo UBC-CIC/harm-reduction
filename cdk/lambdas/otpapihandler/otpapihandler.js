@@ -76,13 +76,15 @@ async function generateAndSendOTP(params){
     try{
         let recipient      = params.recipient;
         let contactbyemail = params.contactbyemail;
+        let expirytime     = Date.now() + 5 * 60 * 1000;
         
         const putitemCMD = new PutItemCommand({
             TableName: TABLE, 
             Item: {
                 "recipient": {S: recipient},
                 "OTP": {S: OTPCode},
-                "refID": {S: refID}
+                "refID": {S: refID},
+                "expiry": {N: expirytime}
             },
             ReturnConsumedCapacity: "TOTAL",
         });
