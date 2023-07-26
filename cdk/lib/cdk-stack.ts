@@ -1,11 +1,16 @@
 import * as path from 'path';
 import * as cdk from 'aws-cdk-lib';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import { Stack } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { aws_dynamodb as dynamodb } from 'aws-cdk-lib';
 import { aws_lambda as lambda } from 'aws-cdk-lib';
 import { aws_apigateway as apigateway } from 'aws-cdk-lib';
 import { aws_cognito as cognito } from 'aws-cdk-lib';
+import { CfnWebACL, CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
+
+const APIurl = `https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/`;
 
 export class CdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -27,10 +32,13 @@ export class CdkStack extends cdk.Stack {
 
     const SampleTable = new dynamodb.Table(this, 'SampleTable', {
       partitionKey: {name: 'sample-id', type: dynamodb.AttributeType.STRING},
+      tableName: 'samples'
     });
 
     const UserTable = new dynamodb.Table(this, 'UserTable', {
       partitionKey: {name: 'sample-id', type: dynamodb.AttributeType.STRING},
+      tableName: 'users',
+      timeToLiveAttribute: 'ttl'
     });
 
     // Lmabda - Axios Layer
@@ -59,6 +67,12 @@ export class CdkStack extends cdk.Stack {
       handler: 'sendnotif.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/sendnotif')),
     });
+
+    const statement = new iam.PolicyStatement();
+    statement.addActions("execute-api:Invoke");
+    statement.addResources(APIurl + '/*');
+
+    SendNotification.addToRolePolicy(statement); 
 
     // API Gateways
     const integrationOptions = {
@@ -127,6 +141,62 @@ export class CdkStack extends cdk.Stack {
     });
 
     // 
-    
+    // Store the gateway ARN for use with our WAF stack 
+    const apiGatewayARN = `arn:aws:apigateway:${Stack.of(this).region}::/restapis/${DBapi.restApiId}/stages/${DBapi.deploymentStage.stageName}`
+
+
+    // Waf Firewall
+    const webAcl = new CfnWebACL(this, 'waf', {
+      description: 'waf for Parkinson API Gateway',
+      scope: 'REGIONAL',
+      defaultAction: { allow: {} },
+      visibilityConfig: { 
+        sampledRequestsEnabled: true, 
+        cloudWatchMetricsEnabled: true,
+        metricName: 'parkinsons-survey-firewall'
+      },
+      rules: [
+        {
+          name: 'AWS-AWSManagedRulesCommonRuleSet',
+          priority: 1,
+          statement: {
+            managedRuleGroupStatement: {
+              vendorName: 'AWS',
+              name: 'AWSManagedRulesCommonRuleSet',
+            }
+          },
+          overrideAction: { none: {}},
+          visibilityConfig: {
+            sampledRequestsEnabled: true,
+            cloudWatchMetricsEnabled: true,
+            metricName: 'AWS-AWSManagedRulesCommonRuleSet'
+          }
+        },
+        {
+          name: 'LimitRequests1000',
+          priority: 2,
+          action: {
+            block: {}
+          },
+          statement: {
+            rateBasedStatement: {
+              limit: 1000,
+              aggregateKeyType: "IP"
+            }
+          },
+          visibilityConfig: {
+            sampledRequestsEnabled: true,
+            cloudWatchMetricsEnabled: true,
+            metricName: 'LimitRequests1000'
+          }
+        },
+    ]
+    })
+
+    // Associate the WAF with the API endpoint
+    new CfnWebACLAssociation(this, `WebAclAssociation`, {
+      resourceArn: apiGatewayARN,
+      webAclArn: webAcl.attrArn
+    });
   }
 }

@@ -96,10 +96,8 @@ Now, navigate to the amplify console that you used in step 1 to deploy the front
 |Name|Value|
 |----|-----|
 |REACT_APP_AWS_REGION|paste name of your AWS region|
-|REACT_APP_GETCLIP|paste name of your getclip function here (from the step above)|
-|REACT_APP_MP4STITCH|paste name of mp4stitch function here|
-|REACT_APP_GETSIGNEDURL|paste name of getsignedurl function here|
-|REACT_APP_VIDEODATA|paste name of the videodata dynamodb table here|
+|REACT_APP_DB_APIURL|paste name of the DB API url here|
+|REACT_APP_OTP_APIURL|paste name of the OTP API url here|
 
 Once you have added the five variables, your screen should look something like the image below, click save to save your changes
 ![alt text](images/addedvars.png)
@@ -111,6 +109,6 @@ Click save to save your changes and exit the text editor. Then, go to your app, 
 ![alt text](images/buildagain.png)
 
 In this menu, click on the button in the upper right corner labeled 'redeploy this version' in order for the updated environmental variables to take effect.
-![alt text](images/redeploy.png) -->
-
+-->
 # Step 4: Configure Environmental Variables
+![alt text](images/redeploy.png)
