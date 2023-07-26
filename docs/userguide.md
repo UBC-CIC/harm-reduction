@@ -2,7 +2,7 @@
 
 **Before Continuing with this User Guide, please make sure you have deployed the frontend and backend stacks.**
 
-- [Deployment Guides](./DeploymentGuide.md)
+- [Deployment Guides](./deployment.md)
 
 | Index | Description |
 | :---- | :---------- |
