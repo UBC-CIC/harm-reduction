@@ -34,17 +34,17 @@ export class CdkStack extends cdk.Stack {
     });
 
     // Lmabda - Axios Layer
-    const axiosLayer = new lambda.LayerVersion(this, 'axiosLayer', {
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
-      code: lambda.Code.fromAsset(path.join(__dirname, './lambdas/axioslayer')),
-      compatibleArchitectures: [lambda.Architecture.X86_64],
-    });
+    // const axiosLayer = new lambda.LayerVersion(this, 'axiosLayer', {
+    //   removalPolicy: cdk.RemovalPolicy.RETAIN,
+    //   code: lambda.Code.fromAsset(path.join(__dirname, './lambdas/axioslayer')),
+    //   compatibleArchitectures: [lambda.Architecture.X86_64],
+    // });
 
     // Lambdas
     const OTPApiHandler = new lambda.Function(this, 'OTPApiHandler', {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'otpapihandler.handler',
-      layers: [axiosLayer],
+      // layers: [axiosLayer],
       code: lambda.Code.fromAsset(path.join(__dirname, './lambdas/otpapihandler')),
     });
 
