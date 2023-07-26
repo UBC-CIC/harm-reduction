@@ -103,3 +103,34 @@ Finally, go back to the tab labled `harm reduction`, under the `hosting environm
 Now the web app has been deployed, we will configure the admin user, and the email from which notifications will be sent to the user. The admin user will be provisioned through cognito, and the admin email address will be verified through SES.
 
 ## Provision Admin User
+An **admin user** is needed in order to access the admin table feature, more information on this feature can be found in the [user guide](./docs/userguide.md). As the AWS user who deploys this project, you can create as many **admin users** as needed.
+
+First, go to the `cognito` console, ensure you are in the region in which your back end was deployed, you should see a user pool named **harmreduction-adminpool**
+
+Enter the user pool by clicking on the name, then scroll down to the `users` section and click the button labeled `create user`.
+
+Select the options `don't send an invitation` and `generate a password`, and enter the desired username for your admin user. Then click **create user** to create the user.
+![creating a user](./images/createuser.png)
+
+To finalize the creation of this user, we will use AWS CLI to set a permanent password for this user. Listed below are the password requirements for a permanent password, once you have a permanent password for the user, it is recommended you keep this infromation in a secure location.
+```
+password must:
+    - be 8 characters or more in length
+    - contain at least one lower case character
+    - contain at least one upper case character
+    - contain at least one number
+    - contain at least one special character
+```
+
+Copy the `userpool id` found in the box labeled `user pool overview`, this value will be used in the step below. Then, navigate to the AWS [Cloudshell](https://us-west-2.console.aws.amazon.com/cloudshell), ensure that the region displayed in the top right is the region in which your app is deployed.
+
+Enter the command shown below in the command line to set a permanent password for your user
+
+```bash
+aws cognito-idp admin-set-user-password --user-pool-id "PASTE_USER_POOL_ID_HERE" --username "PASTE_USERNAME_HERE" --password "ENTER_NEW_PASSWORD_HERE" --permanent
+```
+
+To check if the password has been successfully set, navigate back to the `cognito console`, the user that was created should appear like the image below.
+![confirm user has been created](./images/confirmuser.png)
+
+## Set Administrator Email
