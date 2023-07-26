@@ -46,19 +46,19 @@ export class CdkStack extends cdk.Stack {
     const OTPApiHandler = new lambda.Function(this, 'OTPApiHandler', {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'otpapihandler.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, './lambdas/otpapihandler')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/otpapihandler')),
     });
 
     const DBApiHandler = new lambda.Function(this, 'DBApiHandler', {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'dbapihandler.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, './lambdas/dbapihandler')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/dbapihandler')),
     });
 
     const SendNotification = new lambda.Function(this, 'SendNotification', { //TODO Set env variables for api, region, cogclient
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'sendnotif.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, './lambdas/sendnotif')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/sendnotif')),
     });
 
     const statement = new iam.PolicyStatement();
@@ -109,7 +109,8 @@ export class CdkStack extends cdk.Stack {
     
     DBSample.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
     DBUser.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
-    for(const method in DBApiMethods){ 
+    for(let i=0; i<DBApiMethods.length; i++){
+      let method = DBApiMethods[i]; 
       DBSample.addMethod(method, new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
       DBUser.addMethod(method, new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
     }

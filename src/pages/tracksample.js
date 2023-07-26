@@ -136,12 +136,13 @@ const TrackSample = () => {
             return;
         }
         console.log(`contactfield: ${recipient}`);
-        console.log('email? ' + contactMethod);
+        console.log('email? ' + (contactMethod == 'email'));
 
         const OTPInfo = await axios.post(`https://bwxq8zcfp2.execute-api.us-west-2.amazonaws.com/beta/otp?action=send`,{
             "recipient": recipient,
             "contactbyemail": (contactMethod == 'email'),
         });
+
         console.log(OTPInfo.data);
         setNewContact(contactField);
         setReferenceID(OTPInfo.data.refID);
