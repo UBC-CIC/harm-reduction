@@ -2,6 +2,8 @@ import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 import axios from 'axios'
 
+const APIurl = `https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/`;
+
 export const handler = async(event) => {
     console.log(event.Records[0].dynamodb);
     if(!event.Records[0].dynamodb.NewImage || !event.Records[0].dynamodb.OldImage) {console.log('[ERROR]: missing newimg or missing oldimg'); return;}
@@ -24,7 +26,7 @@ export const handler = async(event) => {
         if(newStatus != 'Complete') {console.log('[ERROR]: invalid status'); return;}
         console.log('checking users table');
         
-        const userTableResp = await axios.get(`https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/users?tableName=users&sample-id=${newImg['sample-id'].S}`);
+        const userTableResp = await axios.get(APIurl + `users?tableName=users&sample-id=${newImg['sample-id'].S}`);
         console.log(userTableResp.data);
         const contact = userTableResp.data.contact;
         

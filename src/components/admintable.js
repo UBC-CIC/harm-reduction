@@ -30,6 +30,8 @@ import dayjs from 'dayjs';
 
 import axios from 'axios';
 
+const APIurl = `https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/`;
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
@@ -77,7 +79,7 @@ const SampleTable = () => {
   const fetchSamples = async () => {
     try {
       const response = await axios.get(
-        'https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples'
+        APIurl + 'samples?tableName=samples'
       );
       const data = response.data;
 
@@ -137,7 +139,7 @@ const SampleTable = () => {
   ) => {
     try {
       await axios.put(
-        `https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples`,
+        APIurl + `samples?tableName=samples`,
         {
           'sample-id': sampleId,
           notes: newNote,

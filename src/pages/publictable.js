@@ -18,6 +18,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
 
+const APIurl = `https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/`;
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   '&': {
     fontSize: 11,
@@ -51,7 +53,7 @@ const SampleTable = () => {
   const fetchSamples = async () => {
     try {
       const response = await axios.get(
-        'https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/samples?tableName=samples'
+        APIurl + 'samples?tableName=samples'
       );
       const data = response.data;
       setSamples(data);
