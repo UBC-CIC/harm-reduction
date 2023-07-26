@@ -7,7 +7,6 @@ Before you deploy, you must have the following in place:
 * [AWS Account](https://aws.amazon.com/account/)
 * [GitHub Account](https://github.com/)
 * [AWS CLI](https://aws.amazon.com/cli/)
-* [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
 ## Step 1: Clone The Repository
 
@@ -41,13 +40,13 @@ Congratulations, your front end is now deployed!
 # Step 3: Backend Deployment
 
 ## Configure AWS CLI
-Ensure Docker is running, and begin configuring the AWS credentials by typing the following line in the CLI
+Begin by configuring the AWS credentials by typing the following line in the CLI
 ```bash
 aws configure
 ```
 Please note that it is expected for your account to have administrator access for the steps in this deployment guide
 
-## Deploy Backend (Lambdas + S3)
+## Deploy Backend 
 Once the AWS CLI has been configured with the credentials, navigate to the directory named 'cdk' 
 ```bash
 cd cdk
@@ -73,7 +72,7 @@ In order to delete the stack deployed in the step above, run the following comma
 cdk destroy
 ```
 
-## Configure Environmental Variables
+<!-- ## Configure Environmental Variables
 Environmental variables on the Amplify deployment will provide information about the lambda functions that make up the backend. 
 
 Start by navigating to the [CloudFormation console](https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2#/).
@@ -91,9 +90,9 @@ Find the resources with "GetClip", "mp4stitch", "getsignedurl", and "videodata" 
 ![alt text](images/lambdaname.png)
 
 Now, navigate to the amplify console that you used in step 1 to deploy the frontend of the project. In the sidebar on the left, navigate to the "environmental variables" section. 
-![alt text](images/envvar.png)
+![alt text](images/envvar.png) -->
 
-Click on manage variables, then add the five following variables
+<!-- Click on manage variables, then add the five following variables
 |Name|Value|
 |----|-----|
 |REACT_APP_AWS_REGION|paste name of your AWS region|
@@ -112,4 +111,6 @@ Click save to save your changes and exit the text editor. Then, go to your app, 
 ![alt text](images/buildagain.png)
 
 In this menu, click on the button in the upper right corner labeled 'redeploy this version' in order for the updated environmental variables to take effect.
-![alt text](images/redeploy.png)
+![alt text](images/redeploy.png) -->
+
+# Step 4: Configure Environmental Variables
