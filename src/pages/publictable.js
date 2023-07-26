@@ -19,7 +19,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import dayjs from 'dayjs';
 
 const REGION = process.env.REACT_APP_AWS_REGION;
-const DB_APIurl = process.env.REACT_APP_DB_API_URL;//`https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/`;
+const DB_APIurl = process.env.REACT_APP_DB_API_URL;
 const OTP_APIurl = process.env.REACT_APP_OTP_API_URL;
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
