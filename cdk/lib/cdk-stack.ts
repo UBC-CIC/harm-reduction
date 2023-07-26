@@ -10,8 +10,9 @@ import { aws_cognito as cognito } from 'aws-cdk-lib';
 import { CfnWebACL, CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 
-const APIurl = `https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/`;
-
+const REGION = process.env.REACT_APP_AWS_REGION;
+const DB_APIurl = process.env.REACT_APP_DB_API_URL;
+const OTP_APIurl = process.env.REACT_APP_OTP_API_URL;
 export class CdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -41,18 +42,10 @@ export class CdkStack extends cdk.Stack {
       timeToLiveAttribute: 'ttl'
     });
 
-    // Lmabda - Axios Layer
-    // const axiosLayer = new lambda.LayerVersion(this, 'axiosLayer', {
-    //   removalPolicy: cdk.RemovalPolicy.RETAIN,
-    //   code: lambda.Code.fromAsset(path.join(__dirname, './lambdas/axioslayer')),
-    //   compatibleArchitectures: [lambda.Architecture.X86_64],
-    // });
-
     // Lambdas
     const OTPApiHandler = new lambda.Function(this, 'OTPApiHandler', {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'otpapihandler.handler',
-      // layers: [axiosLayer],
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/otpapihandler')),
     });
 
@@ -62,7 +55,7 @@ export class CdkStack extends cdk.Stack {
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/dbapihandler')),
     });
 
-    const SendNotification = new lambda.Function(this, 'SendNotification', {
+    const SendNotification = new lambda.Function(this, 'SendNotification', { //TODO Set env variables for api, region, cogclient
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'sendnotif.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/sendnotif')),
@@ -70,7 +63,7 @@ export class CdkStack extends cdk.Stack {
 
     const statement = new iam.PolicyStatement();
     statement.addActions("execute-api:Invoke");
-    statement.addResources(APIurl + '/*');
+    statement.addResources(DB_APIurl + '/*');
 
     SendNotification.addToRolePolicy(statement); 
 
@@ -97,14 +90,23 @@ export class CdkStack extends cdk.Stack {
       }],
     };
 
-    const OTPapi = new apigateway.RestApi(this, 'OTPapi');
+    const OTPapi = new apigateway.RestApi(this, 'OTPapi', {
+      deployOptions: {
+        stageName: 'prod',
+      }
+    });
     OTPapi.root.addMethod('POST', new apigateway.LambdaIntegration(OTPApiHandler, {proxy: true}));
     OTPapi.root.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
 
     const DBApiMethods = ['POST', 'GET', 'PUT', 'DELETE']
-    const DBapi = new apigateway.RestApi(this, 'DBapi');
+    const DBapi = new apigateway.RestApi(this, 'DBapi', {
+      deployOptions: {
+        stageName: 'prod',
+      }
+    });
     const DBSample = DBapi.root.addResource('samples');
     const DBUser = DBapi.root.addResource('users');
+    
     DBSample.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
     DBUser.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
     for(let i=0; i<DBApiMethods.length; i++){
@@ -147,7 +149,7 @@ export class CdkStack extends cdk.Stack {
 
     // Waf Firewall
     const webAcl = new CfnWebACL(this, 'waf', {
-      description: 'waf for Parkinson API Gateway',
+      description: 'waf for Harm Reduction API Gateway',
       scope: 'REGIONAL',
       defaultAction: { allow: {} },
       visibilityConfig: { 

@@ -21,7 +21,9 @@ import SmsIcon from '@mui/icons-material/Sms';
 
 import '../css/tracksample.css'
 
-const APIurl = `https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/`;
+const REGION = process.env.REACT_APP_AWS_REGION;
+const DB_APIurl = process.env.REACT_APP_DB_API_URL;
+const OTP_APIurl = process.env.REACT_APP_OTP_API_URL;
 
 const TrackSample = () => {
     const [pageState,     setPageState]     = useState(0); // pageStates = ["enterid", "showsample", "showcontact", "updatecontact", "verifycontact"]
@@ -51,7 +53,7 @@ const TrackSample = () => {
 
     const getOptions = async () => {
         try{
-            const resp = await axios.get(APIurl + 'samples?tableName=samples');
+            const resp = await axios.get(DB_APIurl + '/samples?tableName=samples');
             const data = resp.data;
             console.log(data);
             setContentOptions([...new Set(data.map((sample) => sample['expected-content']))])
@@ -71,7 +73,7 @@ const TrackSample = () => {
         getOptions();
         try{
             console.log('try api')
-            const resp = await axios.get(APIurl + `samples?tableName=samples&sample-id=${sampleID}`);
+            const resp = await axios.get(DB_APIurl + `/samples?tableName=samples&sample-id=${sampleID}`);
             console.log(resp.data);
             setSampleID(resp.data['sample-id']);
             (resp.data['status'] === 'Manual Testing Required') ? setSampleStatus('Pending') : setSampleStatus(resp.data['status']);
@@ -100,9 +102,9 @@ const TrackSample = () => {
         setDisplayGetMetadata(false);
 
         try{
-            const getresp = await axios.get(APIurl + `samples?tableName=samples&sample-id=${sampleID}`);
+            const getresp = await axios.get(DB_APIurl + `/samples?tableName=samples&sample-id=${sampleID}`);
             const item = getresp.data;
-            const resp = await axios.put(APIurl + `samples?tableName=samples`,{
+            const resp = await axios.put(DB_APIurl + `/samples?tableName=samples`,{
                 "status": item['status'],
                 "sample-id": item["sample-id"],
                 "vial-id": item["vial-id"],
@@ -136,7 +138,7 @@ const TrackSample = () => {
         console.log(`contactfield: ${recipient}`);
         console.log('email? ' + (contactMethod == 'email'));
 
-        const OTPInfo = await axios.post(`https://bwxq8zcfp2.execute-api.us-west-2.amazonaws.com/beta/otp?action=send`,{
+        const OTPInfo = await axios.post(OTP_APIurl + `/otp?action=send`,{
             "recipient": recipient,
             "contactbyemail": (contactMethod == 'email'),
         });
@@ -160,7 +162,7 @@ const TrackSample = () => {
         console.log(`entered OTP: ${OTP}`);
         console.log(`refID: ${referenceID}`);
         
-        const verifyResp = await axios.post(`https://bwxq8zcfp2.execute-api.us-west-2.amazonaws.com/beta/otp?action=verify`, {
+        const verifyResp = await axios.post(OTP_APIurl + `/otp?action=verify`, {
             "recipient": newContact,
             "userOTP": OTP,
             "userRefID": referenceID
@@ -173,7 +175,7 @@ const TrackSample = () => {
         }
 
         try{
-            const updateContactResp = await axios.put(APIurl + `users?tableName=users`, {
+            const updateContactResp = await axios.put(DB_APIurl + `/users?tableName=users`, {
                 "sample-id": sampleID,
                 "contact": newContact,
             });

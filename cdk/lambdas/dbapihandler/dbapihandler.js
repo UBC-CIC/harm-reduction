@@ -3,9 +3,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 const headers = {
   "Access-Control-Allow-Headers" : "Content-Type",
-  // "Access-Control-Allow-Origin": "http://localhost:3000",
-  //"Access-Control-Allow-Origin": "https://no-config.d1wvjo9x2tn2e7.amplifyapp.com",
-  "Access-Control-Allow-Origin": "https://dev.d1wvjo9x2tn2e7.amplifyapp.com",
+  "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "DELETE,PUT,POST,GET,OPTIONS"
 }
 
