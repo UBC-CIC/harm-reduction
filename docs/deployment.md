@@ -91,7 +91,7 @@ Then, add the following variables
 |REACT_APP_COGCLIENT|paste client ID of cognito userpool app client here|
 
 Once you have added the variables, your screen should look something like the image below, click save to save your changes
-![alt text](images/addedvars.png)
+![alt text](images/envvar.png)
 
 Navigate to the `build settings` section in the left sidebar. In the upper right corner of the box labeled `app build specification`, click edit and add the highlighted lines to the build settings
 ![alt text](images/buildsettings.png)
