@@ -29,7 +29,7 @@ The **Deploy to Amplify Console** button will take you to your AWS console to de
 [![amplifybutton](https://oneclick.amplifyapp.com/button.svg)](https://console.aws.amazon.com/amplify/home#/create)
 
 1. On the AWS console. select your region on the top right, then select Github as your code source ![alt text](images/deploy1.png)
-2. Select the repository named **harm-reduction**, then select the branch **main**, you may be prompted to authorize amplify to access your github account![alt text](images/deploy2.png)
+2. Select the repository named `harm-reduction`, then select the branch `main`, you may be prompted to authorize amplify to access your github account![alt text](images/deploy2.png)
 
 <!-- 3. In the box 'Build and test settings', make the following edits as pointed out below. ![alt text](images/deploy3-1.png) ![alt text](images/deploy3.png) -->
 
