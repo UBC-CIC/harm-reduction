@@ -44,11 +44,11 @@ The following architecture diagram illustrates the various AWS components utiliz
 
 ## Deployment Guide
 
-To deploy this solution, please follow our [Deployment Guide](docs/DeploymentGuide.md).
+To deploy this solution, please follow our [Deployment Guide](docs/deployment.md).
 
 ## User Guide
 
-For instructions on how to use the web app, refer to the [User Guide](docs/Userguide.md).
+For instructions on how to use the web app, refer to the [User Guide](docs/userguide.md).
 
 ## Credits
 
