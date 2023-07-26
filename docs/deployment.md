@@ -31,9 +31,9 @@ The **Deploy to Amplify Console** button will take you to your AWS console to de
 1. On the AWS console. select your region on the top right, then select Github as your code source ![alt text](images/deploy1.png)
 2. Select the repository named **harm-reduction**, then select the branch **main**, you may be prompted to authorize amplify to access your github account![alt text](images/deploy2.png)
 
-3. In the box 'Build and test settings', make the following edits as pointed out below. ![alt text](images/deploy3-1.png) ![alt text](images/deploy3.png)
+<!-- 3. In the box 'Build and test settings', make the following edits as pointed out below. ![alt text](images/deploy3-1.png) ![alt text](images/deploy3.png) -->
 
-4. Finally, click save and deploy to deploy the front end.![alt text](images/deploy4.png)
+3. Finally, click save and deploy to deploy the front end.![alt text](images/deploy4.png)
 
 Congratulations, your front end is now deployed!
 
@@ -72,43 +72,28 @@ In order to delete the stack deployed in the step above, run the following comma
 cdk destroy
 ```
 
-<!-- ## Configure Environmental Variables
-Environmental variables on the Amplify deployment will provide information about the lambda functions that make up the backend. 
+## Output Values
+Once the cdk deployment is complete, you should see four values in the terminal under the line **Outputs**, copy these values into a text file, as they will be important in the next step of the deployment.
 
-Start by navigating to the [CloudFormation console](https://us-west-2.console.aws.amazon.com/cloudformation/home?region=us-west-2#/).
+# Step 4: Configure Environmental Variables
 
-Open the sidebar and navigate to the "stacks" section
-![alt text](images/mainmenu.png)
+Now that the back end has been deployed, we can configure the environmental variables on amplify in order to point the frontend to the correct resources to access.
 
-The stack named "RecordWithFaceBlurStack" should be the first item in the list, click on it in order to display information about the deployed stack.
-![alt text](images/stackmenu.png)
+On the [AWS console](https://console.aws.amazon.com/console/home), Navigate back to the amplify console by entering **Amplify**. Under the App Settings heading on the left hand sidebar, click `Environment Variables`, then click `Manage variables`
 
-Select the tab named "resources"
-![alt text](images/resources.png)
+Then, add the following variables
 
-Find the resources with "GetClip", "mp4stitch", "getsignedurl", and "videodata" in their names, copy the names of the lambda functions in the column "physical id", and paste them to the location described in the next 2 steps.
-![alt text](images/lambdaname.png)
-
-Now, navigate to the amplify console that you used in step 1 to deploy the frontend of the project. In the sidebar on the left, navigate to the "environmental variables" section. 
-![alt text](images/envvar.png) -->
-
-<!-- Click on manage variables, then add the five following variables
 |Name|Value|
 |----|-----|
 |REACT_APP_AWS_REGION|paste name of your AWS region|
 |REACT_APP_DB_APIURL|paste name of the DB API url here|
 |REACT_APP_OTP_APIURL|paste name of the OTP API url here|
+|REACT_APP_COGCLIENT|paste client ID of cognito userpool app client here|
 
-Once you have added the five variables, your screen should look something like the image below, click save to save your changes
+Once you have added the variables, your screen should look something like the image below, click save to save your changes
 ![alt text](images/addedvars.png)
 
-Finally, navigate to the "build settings" section in the left sidebar. In the upper right corner of the box labeled "app build specification", click on the edit button to edit the build configuration. 
+Navigate to the `build settings` section in the left sidebar. In the upper right corner of the box labeled `app build specification`, click edit and add the highlighted lines to the build settings
 ![alt text](images/buildsettings.png)
 
-Click save to save your changes and exit the text editor. Then, go to your app, and click on the front end as shown in the image below.
-![alt text](images/buildagain.png)
-
-In this menu, click on the button in the upper right corner labeled 'redeploy this version' in order for the updated environmental variables to take effect.
--->
-# Step 4: Configure Environmental Variables
-![alt text](images/redeploy.png)
+Finally, go back to the tab labled `harm reduction`, under the `hosting environments` tab, select the deployment named `main`. Click the button **Redeploy this version** to allow for your changes to take place.
