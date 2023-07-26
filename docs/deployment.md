@@ -134,3 +134,28 @@ To check if the password has been successfully set, navigate back to the `cognit
 ![confirm user has been created](./images/confirmuser.png)
 
 ## Set Administrator Email
+In order to send email notifications to users and lab admins, we must set up and verify an email address to send emails **from**.
+
+First, to verify the email address, go to the [SES console](https://us-west-2.console.aws.amazon.com/ses/). Again, please ensure the region displayed in the top right of the screen is the region in which you have deployed the project.
+
+Under the `configuration` tab on the left, click on the `verified identities` tab, then click the `create identity` button on the right side of the screen.
+
+Select the option `email address`, and enter your email of choice in the box labeled `email address`. Your screen should appear like the image below. Click **create identity** to finish.
+![verify email](./images/verifyemail.png) 
+
+Navigate to your email inbox, you should have received an email from Amazon Web Services, click on the blue link to verify your email address.
+![verify email pt 2](./images/verifylink.png)
+
+The link should take you to a page that confirms your email has been verified, no further action is required on that page.
+
+Then, navigate to the [Lambda console](https://us-west-2.console.aws.amazon.com/lambda), once again, ensure the region shown at the top right of the screen is the region in which your app is deployed. Click on the tab labeled `function`, then take note of two functions, one should contained the name **'otpapihandler'**, the other should contain the name **'sendnotif'**. We will configure these two lambda functions to user your verified email address with the following steps.
+
+1. Click on the function name to open it and navigate to the tab labeled `configuration`. Then, in the bar that opens on the left, select the tab `environment variables` and click on the button **edit**.
+
+2. In the page that opens, for `Key`, type in `EMAIL_ADDRESS`, and for `Value`, type in the email verified in the step above. The screen should appear like so: ![add email env variable](./images/emailenvvar.png)
+
+3. Click save to save your changes
+
+Follow the 3 steps listed for both of the functions. If at anytime you wish to change the email address, repeat this section with the new email address.
+
+
