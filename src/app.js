@@ -18,9 +18,6 @@ import { isMobile } from 'react-device-detect'
 function App() {
   return (
     <Box>
-      {!isMobile && (<div className="logoBackground">
-        <img src={logo} alt="Logo" style={{ height: '160px' }} />
-      </div>)}
       <Router>
         {isMobile ? <MobileNavBar/> : <NavBar />}
         <Switch>

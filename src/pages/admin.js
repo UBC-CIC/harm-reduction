@@ -4,7 +4,7 @@ import { Box, Alert } from "@mui/material"
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
-import { authUser } from '../lambda_Invoke/loginworker.js'
+import { authUser } from '../utils/loginworker.js'
 import AdminTable from '../components/admintable.js'
 
 // import { Authenticator } from '@aws-amplify/ui-react';

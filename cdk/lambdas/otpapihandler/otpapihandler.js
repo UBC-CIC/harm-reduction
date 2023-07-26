@@ -4,8 +4,9 @@ import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 
 const headers = {
   "Access-Control-Allow-Headers" : "Content-Type",
-  "Access-Control-Allow-Origin": "http://localhost:3000",
-  //"Access-Control-Allow-Origin": "https://no-config.d1wvjo9x2tn2e7.amplifyapp.com/Track",
+  //"Access-Control-Allow-Origin": "http://localhost:3000",
+  //"Access-Control-Allow-Origin": "https://no-config.d1wvjo9x2tn2e7.amplifyapp.com/",
+  "Access-Control-Allow-Origin": "https://dev.d1wvjo9x2tn2e7.amplifyapp.com",
   "Access-Control-Allow-Methods": "POST, OPTIONS"
 }
 
@@ -76,13 +77,15 @@ async function generateAndSendOTP(params){
     try{
         let recipient      = params.recipient;
         let contactbyemail = params.contactbyemail;
+        let expirytime     = Date.now() + 5 * 60 * 1000;
         
         const putitemCMD = new PutItemCommand({
             TableName: TABLE, 
             Item: {
                 "recipient": {S: recipient},
                 "OTP": {S: OTPCode},
-                "refID": {S: refID}
+                "refID": {S: refID},
+                "expiry": {N: expirytime}
             },
             ReturnConsumedCapacity: "TOTAL",
         });

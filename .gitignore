@@ -7,6 +7,8 @@
 /cdk/cdk.staging
 /cdk/cdk.out
 
+/cdk/lambdas/sendnotif/node_modules
+
 #root
 /node_modules
 
