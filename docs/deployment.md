@@ -97,3 +97,9 @@ Navigate to the `build settings` section in the left sidebar. In the upper right
 ![alt text](images/buildsettings.png)
 
 Finally, go back to the tab labled `harm reduction`, under the `hosting environments` tab, select the deployment named `main`. Click the button **Redeploy this version** to allow for your changes to take place.
+
+# Step 5: Configure Admin Profile & Email
+
+Now the web app has been deployed, we will configure the admin user, and the email from which notifications will be sent to the user. The admin user will be provisioned through cognito, and the admin email address will be verified through SES.
+
+## Provision Admin User
