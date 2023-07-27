@@ -122,7 +122,7 @@ export class CdkStack extends cdk.Stack {
       selfSignUpEnabled: false,
       mfa: cognito.Mfa.OFF,
       passwordPolicy: {
-        minLength: 12,
+        minLength: 8,
         requireLowercase: true,
         requireUppercase: true,
         requireDigits: true,
@@ -140,6 +140,12 @@ export class CdkStack extends cdk.Stack {
       authFlows: {
         userPassword: true
       }
+    });
+
+    const adminUser = new cognito.CfnUserPoolUser(this, 'adminuser', {
+      userPoolId: adminPool.userPoolId,
+      forceAliasCreation: false,
+      username: 'admin'
     });
 
     // 
