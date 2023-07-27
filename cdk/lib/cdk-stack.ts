@@ -25,6 +25,7 @@ export class CdkStack extends cdk.Stack {
     // DynamoDB
     const OTPTable = new dynamodb.Table(this, 'OTPTable', {
       partitionKey: { name: 'recipient', type: dynamodb.AttributeType.STRING },
+      tableName: 'harm_reduction_otps',
       timeToLiveAttribute: 'expiry'
     });
 
@@ -36,7 +37,7 @@ export class CdkStack extends cdk.Stack {
     const UserTable = new dynamodb.Table(this, 'UserTable', {
       partitionKey: {name: 'sample-id', type: dynamodb.AttributeType.STRING},
       tableName: 'harm_reduction_users',
-      timeToLiveAttribute: 'ttl'
+      timeToLiveAttribute: 'purge'
     });
 
     // Lambdas
@@ -44,18 +45,21 @@ export class CdkStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'otpapihandler.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/otpapihandler')),
+      functionName: 'OTP_api_handler',
     });
 
     const DBApiHandler = new lambda.Function(this, 'DBApiHandler', {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'dbapihandler.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/dbapihandler')),
+      functionName: 'DB_api_handler',
     });
 
     const SendNotification = new lambda.Function(this, 'SendNotification', { //TODO Set env variables for api, region, cogclient
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'sendnotif.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/sendnotif')),
+      functionName: 'SendNotification',
     });
 
     // API Gateways
@@ -89,12 +93,15 @@ export class CdkStack extends cdk.Stack {
         dataTraceEnabled: true,
         accessLogDestination: new apigateway.LogGroupLogDestination(prdLogGroup),
         accessLogFormat: apigateway.AccessLogFormat.jsonWithStandardFields(),
+      },
+      cloudWatchRole: true,
+      endpointConfiguration: {
+        types: [ apigateway.EndpointType.REGIONAL ]
       }
     });
     OTPapi.root.addMethod('POST', new apigateway.LambdaIntegration(OTPApiHandler, {proxy: true}));
     // OTPapi.root.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
 
-    const DBApiMethods = ['POST', 'GET', 'PUT', 'DELETE']
     const DBapi = new apigateway.RestApi(this, 'DBapi', {
       deployOptions: {
         loggingLevel: apigateway.MethodLoggingLevel.INFO,
@@ -103,18 +110,30 @@ export class CdkStack extends cdk.Stack {
         accessLogFormat: apigateway.AccessLogFormat.jsonWithStandardFields(),
       },
       cloudWatchRole: true,
+      endpointConfiguration: {
+        types: [ apigateway.EndpointType.REGIONAL ]
+      },
     });
 
     const DBSample = DBapi.root.addResource('samples');
     const DBUser = DBapi.root.addResource('users');
+
+    DBSample.addMethod('POST', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+    DBSample.addMethod('GET', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+    DBSample.addMethod('PUT', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+    DBSample.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+    DBSample.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+    DBUser.addMethod('POST', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+    DBUser.addMethod('GET', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {
+      authorizationType: apigateway.AuthorizationType.IAM,
+    });
+    DBUser.addMethod('PUT', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+    DBUser.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+    DBUser.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+
     
     // DBSample.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
     // DBUser.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
-    for(let i=0; i<DBApiMethods.length; i++){
-      let method = DBApiMethods[i]; 
-      DBSample.addMethod(method, new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-      DBUser.addMethod(method, new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    }
 
     const methodSettingProperty: apigateway.CfnDeployment.MethodSettingProperty = {
       cacheDataEncrypted: false,
