@@ -53,7 +53,7 @@ const TrackSample = () => {
 
     const getOptions = async () => {
         try{
-            const resp = await axios.get(DB_APIurl + '/samples?tableName=samples');
+            const resp = await axios.get(DB_APIurl + '/samples?tableName=harm_reduction_samples');
             const data = resp.data;
             console.log(data);
             setContentOptions([...new Set(data.map((sample) => sample['expected-content']))])
@@ -73,7 +73,7 @@ const TrackSample = () => {
         getOptions();
         try{
             console.log('try api')
-            const resp = await axios.get(DB_APIurl + `/samples?tableName=samples&sample-id=${sampleID}`);
+            const resp = await axios.get(DB_APIurl + `/samples?tableName=harm_reduction_samples&sample-id=${sampleID}`);
             console.log(resp.data);
             setSampleID(resp.data['sample-id']);
             (resp.data['status'] === 'Manual Testing Required') ? setSampleStatus('Pending') : setSampleStatus(resp.data['status']);
@@ -102,7 +102,7 @@ const TrackSample = () => {
         setDisplayGetMetadata(false);
 
         try{
-            const getresp = await axios.get(DB_APIurl + `/samples?tableName=samples&sample-id=${sampleID}`);
+            const getresp = await axios.get(DB_APIurl + `/samples?tableName=harm_reduction_samples&sample-id=${sampleID}`);
             const item = getresp.data;
             const resp = await axios.put(DB_APIurl + `/samples?tableName=samples`,{
                 "status": item['status'],
@@ -175,7 +175,7 @@ const TrackSample = () => {
         }
 
         try{
-            const updateContactResp = await axios.put(DB_APIurl + `/users?tableName=users`, {
+            const updateContactResp = await axios.put(DB_APIurl + `/users?tableName=harm_reduction_users`, {
                 "sample-id": sampleID,
                 "contact": newContact,
             });

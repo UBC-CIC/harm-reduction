@@ -55,7 +55,7 @@ const SampleTable = () => {
   const fetchSamples = async () => {
     try {
       const response = await axios.get(
-        DB_APIurl + '/samples?tableName=samples'
+        DB_APIurl + '/samples?tableName=harm_reduction_samples'
       );
       const data = response.data;
       setSamples(data);
