@@ -158,4 +158,45 @@ Then, navigate to the [Lambda console](https://us-west-2.console.aws.amazon.com/
 
 Follow the 3 steps listed for both of the functions. If at anytime you wish to change the email address, repeat this section with the new email address.
 
+# Step 6: Request Production Access in SES and SNS
 
+By default, AWS will limit your access to SES and SNS services to prevent spam and unrestricting spending, as each text/email has an associated cost. For this project, we will want to gain production access in order to be able to send notification to any user that opts in for text/email notification.
+
+## Production Access For SES
+
+Begin by navigating to the [SES Console](https://us-west-2.console.aws.amazon.com/ses/), as usual, ensure the region indicated in the top right is the region in which the app is deployed.
+
+A dialogue should be seen at the top of the screen that reads: **Your Amazon SES account is in the sandbox in [AWS REGION]**. Click the button on the right side of this box labeled: **Request Production Access**
+
+On the subsequent page, take the following action:
+
+1. Check the box labeled **transactional**
+
+2. For website URL, enter the URL of your amplify deployment. This URL can be found on the [Amplify console](https://us-west-2.console.aws.amazon.com/amplify/) under `Harm Reduction >> Hosting Environments >> main`
+
+3. Paste the following text into the box labeled `use case description`
+```
+This web application is a sample-tracking application, users can query for a sample given a specific sample-id, a user can then choose to associate their email to a sample, only one email can be associated with a sample, a text will be sent to a sample's associated email when the status of a sample changes.
+
+Two types of emails will be sent through the application:
+    OTP -> this is for verifying the email address a user provides, it is rate limited so a user can only request for a new OTP text every 5 mins 
+
+    Status Update -> a status update will be sent to a user in the form of an email if there is a verified email address associated with the user, a status update is sent when the sample completes processing. Once this status update is sent, the email is removed from the mailing list. 
+
+Assuming the rate of 100 users/month, an estimated maximum of 10 emails will be sent per day
+
+One recipient is expected to be sent 3-4 emails over the course of their time interacting with the application
+
+An invalid email address will result in no email being sent
+
+There is no option to unsubscribe, but an authentication process ensures subscription is intentional
+```
+4. In the box `additional contacts`, add any emails you may wish to receive notifications on the status of this request for production access.
+
+5. Finally, check the box for terms and conditions, and click the button **submit request**
+
+## Production Access for SNS
+
+## Viewing Support Cases
+
+After submitting the requests for production access, the status of these requests can be viewed at the [AWS Support Center](https://support.console.aws.amazon.com/support/). Ensure the region on the top right is the region in which the app is deployed. Go to the section `your support cases` to view your support cases.
