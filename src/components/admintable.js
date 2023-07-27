@@ -30,7 +30,9 @@ import dayjs from 'dayjs';
 
 import axios from 'axios';
 
-const APIurl = `https://1pgzkwt5w4.execute-api.us-west-2.amazonaws.com/test/`;
+const REGION = process.env.REACT_APP_AWS_REGION;
+const DB_APIurl = process.env.REACT_APP_DB_API_URL;
+const OTP_APIurl = process.env.REACT_APP_OTP_API_URL;
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -79,7 +81,7 @@ const SampleTable = () => {
   const fetchSamples = async () => {
     try {
       const response = await axios.get(
-        APIurl + 'samples?tableName=samples'
+        DB_APIurl + '/samples?tableName=samples'
       );
       const data = response.data;
 
@@ -139,7 +141,7 @@ const SampleTable = () => {
   ) => {
     try {
       await axios.put(
-        APIurl + `samples?tableName=samples`,
+        DB_APIurl + `/samples?tableName=samples`,
         {
           'sample-id': sampleId,
           notes: newNote,

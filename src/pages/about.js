@@ -15,27 +15,13 @@ const About = () => {
             >
                 <Typography variant='h4' sx={{m:1}}>About us</Typography>
                 <Typography sx={{m:1}}>
-                    The Hein lab at the University of British Columbia (UBC) 
-                    aims to solve problems in modern organic chemistry. Goals of the Hein lab 
-                    are to accelerate the rate of research, integrate instruments with 
-                    autonomous robots to develop self-driving laboratories, and deploy 
-                    technologies to process chemistry.
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
                 </Typography>
                 <Typography sx={{m:1}}>
-                    Recently, the Hein lab innovated a drug-checking technology, which 
-                    improves effectiveness and sensitivity, minimizing human error. The drug-checking 
-                    innovation by the Hein lab maximizes the benefits of 
-                    decriminalization and reduces the harm in drug use, supporting the solution 
-                    to the toxic crisis.
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
                 </Typography>
                 <Typography sx={{m:1}}>
-                    Extended, the Hein lab aims to ensure the safety and certainty of drug 
-                    distribution among the public. Currently, students do not have an efficient, 
-                    privacy-ensuring method to test recreational drugs that they plan to use. 
-                    This webpage involves the student sending the drug sample over, 
-                    understanding that their identity remains private. The Hein lab robot records 
-                    drug samples, tracks the sample as it undergoes testing, and posts results of 
-                    the sample to the public.
+                  At imperdiet dui accumsan sit amet nulla facilisi. Sit amet nulla facilisi morbi. Id velit ut tortor pretium viverra suspendisse potenti nullam ac. Tellus cras adipiscing enim eu. Proin sed libero enim sed. Cursus in hac habitasse platea dictumst quisque sagittis purus. Ante metus dictum at tempor. Nunc aliquet bibendum enim facilisis gravida. Aliquam faucibus purus in massa tempor nec feugiat. Blandit volutpat maecenas volutpat blandit aliquam. Aliquam ut porttitor leo a diam sollicitudin. Pellentesque elit eget gravida cum sociis natoque. Sagittis aliquam malesuada bibendum arcu vitae elementum curabitur vitae.
                 </Typography>
             </Box>
         )

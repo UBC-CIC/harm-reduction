@@ -2,11 +2,11 @@ import { DynamoDBClient, PutItemCommand, GetItemCommand } from "@aws-sdk/client-
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 
+const REGION = process.env.REACT_APP_AWS_REGION;
+
 const headers = {
   "Access-Control-Allow-Headers" : "Content-Type",
-  //"Access-Control-Allow-Origin": "http://localhost:3000",
-  //"Access-Control-Allow-Origin": "https://no-config.d1wvjo9x2tn2e7.amplifyapp.com/",
-  "Access-Control-Allow-Origin": "https://dev.d1wvjo9x2tn2e7.amplifyapp.com",
+  "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS"
 }
 
@@ -29,7 +29,7 @@ export const handler = async(event) => {
 
 async function verifyOTP(params){
     const TABLE        = 'otptable';
-    const dynamoClient = new DynamoDBClient({region:'us-west-2'});
+    const dynamoClient = new DynamoDBClient({region:REGION});
     
     try{
         let recipient = params.recipient;
@@ -70,7 +70,7 @@ async function generateAndSendOTP(params){
     let   OTPCode        = Math.random().toString(36).substring(2, 8).toUpperCase(); 
     let   refID          = new Date().getTime().toString();
 
-    const dynamoClient = new DynamoDBClient({region: 'us-west-2'});
+    const dynamoClient = new DynamoDBClient({region: REGION});
     const OTPMessage   = `UBC Harm Reduction: your OTP is ${OTPCode}`
     console.log(OTPMessage);
 
@@ -120,7 +120,7 @@ async function generateAndSendOTP(params){
 async function sendSES(recipient, subject, message){
     const CHARSET      = 'UTF-8' 
     const SENDER       = 'muhanli.work@gmail.com'
-    const sesClient    = new SESClient({region: 'us-west-2'});
+    const sesClient    = new SESClient({region: REGION});
     const sendEmailCMD = new SendEmailCommand({
         Source: SENDER,
         Destination: {ToAddresses: [recipient]},
@@ -149,7 +149,7 @@ async function sendSES(recipient, subject, message){
 }
 
 async function sendSNS(recipient, subject, message){
-    const snsClient = new SNSClient({region: 'us-west-2'});
+    const snsClient = new SNSClient({region: REGION});
     const sendTextCMD = new PublishCommand({
         PhoneNumber: recipient,
         Message: message,
