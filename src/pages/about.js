@@ -15,13 +15,13 @@ const About = () => {
             >
                 <Typography variant='h4' sx={{m:1}}>About us</Typography>
                 <Typography sx={{m:1}}>
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
                 </Typography>
                 <Typography sx={{m:1}}>
-                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
                 </Typography>
                 <Typography sx={{m:1}}>
-                  At imperdiet dui accumsan sit amet nulla facilisi. Sit amet nulla facilisi morbi. Id velit ut tortor pretium viverra suspendisse potenti nullam ac. Tellus cras adipiscing enim eu. Proin sed libero enim sed. Cursus in hac habitasse platea dictumst quisque sagittis purus. Ante metus dictum at tempor. Nunc aliquet bibendum enim facilisis gravida. Aliquam faucibus purus in massa tempor nec feugiat. Blandit volutpat maecenas volutpat blandit aliquam. Aliquam ut porttitor leo a diam sollicitudin. Pellentesque elit eget gravida cum sociis natoque. Sagittis aliquam malesuada bibendum arcu vitae elementum curabitur vitae.
+                  At imperdiet dui accumsan sit amet nulla facilisi. Sit amet nulla facilisi morbi. Id velit ut tortor pretium viverra suspendisse potenti nullam ac. 
                 </Typography>
             </Box>
         )
