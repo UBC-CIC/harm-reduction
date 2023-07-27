@@ -236,7 +236,15 @@ Two types of messages will be sent:
     
     Status update-> a status update will be sent to a user in the form of an text if there is a verified phone number associated with the user, a status update is sent when the sample completes processing. Once this status update is sent, the phone number is removed from the texting list.
 
-as noted above, i do not expect to have a high number of texts being sent out with this app. I would like to request for production access in order to be able to send texts to any number and not be limited to only 10 numbers as verified recipients
+Assuming the rate of 100 users/month, an estimated maximum of 10 texts will be sent per day
+
+One recipient is expected to be sent 3-4 texts over the course of their time interacting with the application
+
+An invalid phone number will result in no text being sent
+
+There is no option to unsubscribe, but an authentication process ensures subscription is intentional
+
+Production access is necessary to be able to send texts to any phone number and not just the 10 verified phone numbers.
 ```
 
 ## Viewing Support Cases
