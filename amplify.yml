@@ -1,0 +1,21 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm install
+        - npm ci
+    build:
+      commands:
+        - REACT_APP_COGCLIENT=${REACT_APP_COGCLIENT}
+        - REACT_APP_DB_API_URL=${REACT_APP_DB_API_URL}
+        - REACT_APP_OTP_API_URL=${REACT_APP_OTP_API_URL}
+        - REACT_APP_AWS_REGION=${REACT_APP_AWS_REGION}
+        - npm run build
+  artifacts:
+    baseDirectory: build
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
