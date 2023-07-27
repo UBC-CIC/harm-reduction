@@ -86,8 +86,8 @@ Then, add the following variables
 |Name|Value|
 |----|-----|
 |REACT_APP_AWS_REGION|paste name of your AWS region|
-|REACT_APP_DB_APIURL|paste name of the DB API url here|
-|REACT_APP_OTP_APIURL|paste name of the OTP API url here|
+|REACT_APP_DB_API_URL|paste name of the DB API url here|
+|REACT_APP_OTP_API_URL|paste name of the OTP API url here|
 |REACT_APP_COGCLIENT|paste client ID of cognito userpool app client here|
 
 Once you have added the variables, your screen should look something like the image below, click save to save your changes
