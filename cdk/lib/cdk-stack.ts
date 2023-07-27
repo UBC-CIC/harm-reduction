@@ -1,6 +1,7 @@
 import * as path from 'path';
 import * as cdk from 'aws-cdk-lib';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as logs from 'aws-cdk-lib/aws-logs';
 import { Stack } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { aws_dynamodb as dynamodb } from 'aws-cdk-lib';
@@ -9,10 +10,6 @@ import { aws_apigateway as apigateway } from 'aws-cdk-lib';
 import { aws_cognito as cognito } from 'aws-cdk-lib';
 import { CfnWebACL, CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
-
-const REGION = process.env.REACT_APP_AWS_REGION;
-const DB_APIurl = process.env.REACT_APP_DB_API_URL;
-const OTP_APIurl = process.env.REACT_APP_OTP_API_URL;
 export class CdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -33,12 +30,12 @@ export class CdkStack extends cdk.Stack {
 
     const SampleTable = new dynamodb.Table(this, 'SampleTable', {
       partitionKey: {name: 'sample-id', type: dynamodb.AttributeType.STRING},
-      tableName: 'samples'
+      tableName: 'harm_reduction_samples'
     });
 
     const UserTable = new dynamodb.Table(this, 'UserTable', {
       partitionKey: {name: 'sample-id', type: dynamodb.AttributeType.STRING},
-      tableName: 'users',
+      tableName: 'harm_reduction_users',
       timeToLiveAttribute: 'ttl'
     });
 
@@ -61,59 +58,82 @@ export class CdkStack extends cdk.Stack {
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/sendnotif')),
     });
 
-    const statement = new iam.PolicyStatement();
-    statement.addActions("execute-api:Invoke");
-    statement.addResources(DB_APIurl + '/*');
-
-    SendNotification.addToRolePolicy(statement); 
-
     // API Gateways
-    const integrationOptions = {
-      integrationResponses: [{
-        statusCode: '200',
-        responseParameters: {
-          'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-          'Access-Control-Allow-Methods': 'POST',
-          'Access-Control-Allow-Origin': '*',
-        },
-      }],
-      passthroughBehavior: apigateway.PassthroughBehavior.WHEN_NO_MATCH,
-    };
-    const methodOptions = {
-      methodResponses: [{
-        statusCode: '200',
-        responseParameters: {
-          'Access-Control-Allow-Headers': true,
-          'Access-Control-Allow-Methods': true,
-          'Access-Control-Allow-Origin': true,
-        },
-      }],
-    };
+    // const integrationOptions = {
+    //   integrationResponses: [{
+    //     statusCode: '200',
+    //     responseParameters: {
+    //       'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
+    //       'Access-Control-Allow-Methods': 'POST',
+    //       'Access-Control-Allow-Origin': '*',
+    //     },
+    //   }],
+    //   passthroughBehavior: apigateway.PassthroughBehavior.WHEN_NO_MATCH,
+    // };
+    // const methodOptions = {
+    //   methodResponses: [{
+    //     statusCode: '200',
+    //     responseParameters: {
+    //       'Access-Control-Allow-Headers': true,
+    //       'Access-Control-Allow-Methods': true,
+    //       'Access-Control-Allow-Origin': true,
+    //     },
+    //   }],
+    // };
+
+    const prdLogGroup = new logs.LogGroup(this, "PrdLogs");
 
     const OTPapi = new apigateway.RestApi(this, 'OTPapi', {
       deployOptions: {
-        stageName: 'prod',
+        loggingLevel: apigateway.MethodLoggingLevel.INFO,
+        dataTraceEnabled: true,
+        accessLogDestination: new apigateway.LogGroupLogDestination(prdLogGroup),
+        accessLogFormat: apigateway.AccessLogFormat.jsonWithStandardFields(),
       }
     });
     OTPapi.root.addMethod('POST', new apigateway.LambdaIntegration(OTPApiHandler, {proxy: true}));
-    OTPapi.root.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
+    // OTPapi.root.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
 
     const DBApiMethods = ['POST', 'GET', 'PUT', 'DELETE']
     const DBapi = new apigateway.RestApi(this, 'DBapi', {
       deployOptions: {
-        stageName: 'prod',
-      }
+        loggingLevel: apigateway.MethodLoggingLevel.INFO,
+        dataTraceEnabled: true,
+        accessLogDestination: new apigateway.LogGroupLogDestination(prdLogGroup),
+        accessLogFormat: apigateway.AccessLogFormat.jsonWithStandardFields(),
+      },
+      cloudWatchRole: true,
     });
+
     const DBSample = DBapi.root.addResource('samples');
     const DBUser = DBapi.root.addResource('users');
     
-    DBSample.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
-    DBUser.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
+    // DBSample.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
+    // DBUser.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
     for(let i=0; i<DBApiMethods.length; i++){
       let method = DBApiMethods[i]; 
       DBSample.addMethod(method, new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
       DBUser.addMethod(method, new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
     }
+
+    const methodSettingProperty: apigateway.CfnDeployment.MethodSettingProperty = {
+      cacheDataEncrypted: false,
+      cacheTtlInSeconds: 123,
+      cachingEnabled: false,
+      dataTraceEnabled: false,
+      httpMethod: '*',
+      loggingLevel: 'INFO',
+      metricsEnabled: false,
+      resourcePath: '/*',
+      throttlingBurstLimit: 123,
+      throttlingRateLimit: 123,
+    };
+
+    const statement = new iam.PolicyStatement();
+    statement.addActions("execute-api:Invoke");
+    statement.addResources(DBapi.arnForExecuteApi());
+
+    SendNotification.addToRolePolicy(statement); 
 
     // Cognito
     const adminPool = new cognito.UserPool(this, 'adminuserpool', {
