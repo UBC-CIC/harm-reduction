@@ -181,10 +181,9 @@ export class CdkStack extends cdk.Stack {
       }
     });
 
-    const adminUser = new cognito.CfnUserPoolUser(this, 'adminuser', {
-      userPoolId: adminPool.userPoolId,
-      forceAliasCreation: false,
-      username: 'admin'
+    new cdk.CfnOutput(this, 'CognitoClientID', {
+      value: adminPoolClient.userPoolClientId,
+      description: 'Cognito user pool Client ID'
     });
 
     // 
