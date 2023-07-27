@@ -174,7 +174,7 @@ On the subsequent page, take the following action:
 
 2. For website URL, enter the URL of your amplify deployment. This URL can be found on the [Amplify console](https://us-west-2.console.aws.amazon.com/amplify/) under `Harm Reduction >> Hosting Environments >> main`
 
-3. Paste the following text into the box labeled `use case description`
+3. Paste the following text into the box labeled `use case description` 
 ```
 This web application is a sample-tracking application, users can query for a sample given a specific sample-id, a user can then choose to associate their email to a sample, only one email can be associated with a sample, a text will be sent to a sample's associated email when the status of a sample changes.
 
@@ -196,6 +196,48 @@ There is no option to unsubscribe, but an authentication process ensures subscri
 5. Finally, check the box for terms and conditions, and click the button **submit request**
 
 ## Production Access for SNS
+
+Begin by navigating to the [SNS Console](https://us-west-2.console.aws.amazon.com/sns/), ensure that the region in the top right is the region in which the app is deployed. In the tab on the left, select `Test Messaging (SMS)`.
+
+A box labeled `Account Information` should include the dialogue that reads: **This account is in the SMS sandbox in [AWS REGION]**. Click the button on the right side of this box labeled: **Exit SMS Sandbox**.
+
+On the subsequent page, take the following actions:
+
+1. For `limit type`, select **SNS Text Messaging**
+
+2. For the link to site/app which will be sending text messages, enter the URL of your amplify deployment. This URL can be found on the [Amplify console](https://us-west-2.console.aws.amazon.com/amplify/) under `Harm Reduction >> Hosting Environments >> main`
+
+3. For `What type of messages do you plan to send`, select **transactional**
+
+4. For `Which AWS Region you will be sending messages from`, select the region in which your application is deployed in
+
+5. For `Which countries do you plan to send messages to`, fill according to the use case of your application
+
+6. For `How do your customers opt in to receive messages from you`, paste in the following sentence: 
+``` 
+Users can opt in to receive messages on the web app. Users who choose to opt in will receive an OTP message to verify their phone number, this process is rate limited so a user cannot spam themselves with OTP messages.
+```
+7. For `Please provide the message template that you plan to use to send messages`, leave the box empty
+
+8. In the box `Requests`, you will only need to make 1 request. For `Region`, select the region in which your application is deployed.
+
+9. For `Resource Type`, select **General Limits**
+
+10. For `Limit`, select **Exit SMS Sandbox**
+
+11. For `New Limit Value`, enter **100**, this value can be changed at a later date.
+
+12. In the box `Case Description`, paste the following text:
+```
+This web application is a sample-tracking application, users can query for a sample given a specific sample-id, a user can then choose to associate their phone number to a sample, only one phone number can be associated with a sample, a text will be sent to a sample's associated phone number when the status of a sample changes.
+
+Two types of messages will be sent:
+    OTP -> this is for verifying the phone number a user provides, its currently rate limited so a user cannot spam themselves with OTP messages
+    
+    Status update-> a status update will be sent to a user in the form of an text if there is a verified phone number associated with the user, a status update is sent when the sample completes processing. Once this status update is sent, the phone number is removed from the texting list.
+
+as noted above, i do not expect to have a high number of texts being sent out with this app. I would like to request for production access in order to be able to send texts to any number and not be limited to only 10 numbers as verified recipients
+```
 
 ## Viewing Support Cases
 
