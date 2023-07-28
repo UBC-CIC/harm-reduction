@@ -93,9 +93,6 @@ Then, add the following variables
 Once you have added the variables, your screen should look something like the image below, click save to save your changes
 ![alt text](images/envvar.png)
 
-Navigate to the `build settings` section in the left sidebar. In the upper right corner of the box labeled `app build specification`, click edit and add the highlighted lines to the build settings
-![alt text](images/buildsettings.png)
-
 Finally, go back to the tab labled `harm reduction`, under the `hosting environments` tab, select the deployment named `main`. Click the button **Redeploy this version** to allow for your changes to take place.
 
 # Step 5: Configure Admin Profile & Email
