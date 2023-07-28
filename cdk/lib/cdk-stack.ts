@@ -46,7 +46,7 @@ export class CdkStack extends cdk.Stack {
       handler: 'otpapihandler.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/otpapihandler')),
       functionName: 'OTP_api_handler',
-      environment: {key: "EMAIL_ADDRESS", value: ''}
+      environment: {'EMAIL_ADDRESS': ''}
     });
 
     const DBApiHandler = new lambda.Function(this, 'DBApiHandler', {
@@ -61,7 +61,7 @@ export class CdkStack extends cdk.Stack {
       handler: 'sendnotif.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/sendnotif')),
       functionName: 'SendNotification',
-      environment: {key: 'EMAIL_ADDRESS', value: ''}
+      environment: {'EMAIL_ADDRESS': ''}
     });
 
     const prdLogGroup = new logs.LogGroup(this, "PrdLogs");
@@ -78,7 +78,9 @@ export class CdkStack extends cdk.Stack {
         types: [ apigateway.EndpointType.REGIONAL ]
       }
     });
+
     OTPapi.root.addMethod('POST', new apigateway.LambdaIntegration(OTPApiHandler, {proxy: true}));
+    OTPapi.root.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
     // OTPapi.root.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
 
     const DBapi = new apigateway.RestApi(this, 'DBapi', {
@@ -125,9 +127,9 @@ export class CdkStack extends cdk.Stack {
     };
 
     // Lambda Permissions
-    const invokeapiStatement = new iam.PolicyStatement();
-    invokeapiStatement.addActions("execute-api:Invoke");
-    invokeapiStatement.addResources(DBapi.arnForExecuteApi());
+    const invokedbapiStatement = new iam.PolicyStatement();
+    invokedbapiStatement.addActions("execute-api:Invoke");
+    invokedbapiStatement.addResources(DBapi.arnForExecuteApi());
 
     const sessnsStatement = new iam.PolicyStatement();
     sessnsStatement.addActions("ses:SendEmail");
@@ -141,7 +143,7 @@ export class CdkStack extends cdk.Stack {
       resources: [OTPTable.tableArn, `${OTPTable.tableArn}/*`]
     }));
 
-    SendNotification.addToRolePolicy(invokeapiStatement); 
+    SendNotification.addToRolePolicy(invokedbapiStatement); 
     SendNotification.addToRolePolicy(sessnsStatement);
 
     DBApiHandler.addToRolePolicy(new iam.PolicyStatement({
@@ -182,10 +184,8 @@ export class CdkStack extends cdk.Stack {
       description: 'Cognito user pool Client ID'
     });
 
-    // 
     // Store the gateway ARN for use with our WAF stack 
     const apiGatewayARN = `arn:aws:apigateway:${Stack.of(this).region}::/restapis/${DBapi.restApiId}/stages/${DBapi.deploymentStage.stageName}`
-
 
     // Waf Firewall
     const webAcl = new CfnWebACL(this, 'waf', {
