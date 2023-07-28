@@ -253,5 +253,5 @@ After submitting the requests for production access, the status of these request
 Below is an example cURL command that can be used to create a sample item in the backend. Please use the DB API endpoint you obtained during Deployment. 
 
 ```
-curl -X POST -H "Content-Type: application/json" -d '{"sample-id": "ABC123", "color": "White", "date-received": "1234567890", "expected-content": "Cocaine","is-used": "True", "location": "Vancouver, BC", "notes": "N/A", "status": "Manual Testing Required", "test-results": "Cocaine 95%, Uncertain Match 5%", "testing-method": "HPLC"}' <API_URL>/samples?tableName=hard_reduction_samples
+curl -X POST -H "Content-Type: application/json" -d '{"sample-id": "ABC123", "color": "White", "date-received": "1234567890", "expected-content": "Cocaine","is-used": "True", "location": "Vancouver, BC", "notes": "N/A", "status": "Manual Testing Required", "test-results": "Cocaine 95%, Uncertain Match 5%", "testing-method": "HPLC"}' <DB_API_URL>/samples?tableName=harm_reduction_samples
 ```
