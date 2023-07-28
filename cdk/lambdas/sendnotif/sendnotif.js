@@ -5,6 +5,7 @@ import axios from 'axios'
 const REGION = process.env.REACT_APP_AWS_REGION;
 const DB_APIurl = process.env.REACT_APP_DB_API_URL;
 const OTP_APIurl = process.env.REACT_APP_OTP_API_URL;
+const ADMIN_EMAIL = process.env.EMAIL_ADDRESS;
 
 export const handler = async(event) => {
     console.log(event.Records[0].dynamodb);
