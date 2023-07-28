@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import { Box } from '@mui/material';
 import './app.css'; 
 
-import logo from './ubclogo.png'
 import { NavBar, MobileNavBar } from './components/navbar.js'
 import PublicTable from './pages/publictable.js';
 import TrackSample from './pages/tracksample.js';
