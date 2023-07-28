@@ -4,6 +4,7 @@ import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 
 const REGION = process.env.AWS_REGION;
 const SENDER = process.env.EMAIL_ADDRESS;
+const TABLE  = process.env.OTP_TABLE;
 
 const headers = {
   "Access-Control-Allow-Headers" : "Content-Type",
@@ -29,7 +30,6 @@ export const handler = async(event) => {
 }
 
 async function verifyOTP(params){
-    const TABLE        = 'otptable';
     const dynamoClient = new DynamoDBClient({region:REGION});
     
     try{
@@ -66,7 +66,6 @@ async function verifyOTP(params){
 }
 
 async function generateAndSendOTP(params){
-    const TABLE          = 'otptable';
     const SUBJECT        = 'OTP - DO NOT REPLY'
     let   OTPCode        = Math.random().toString(36).substring(2, 8).toUpperCase(); 
     let   refID          = new Date().getTime().toString();
