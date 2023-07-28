@@ -49,7 +49,7 @@ export class CdkStack extends cdk.Stack {
     });
 
     const DBApiHandler = new lambda.Function(this, 'DBApiHandler', {
-      runtime: lambda.Runtime.NODEJS_18_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'dbapihandler.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/dbapihandler')),
       functionName: 'DB_api_handler',
