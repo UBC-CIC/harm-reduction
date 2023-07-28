@@ -46,6 +46,7 @@ export class CdkStack extends cdk.Stack {
       handler: 'otpapihandler.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/otpapihandler')),
       functionName: 'OTP_api_handler',
+      environment: {key: "EMAIL_ADDRESS", value: ''}
     });
 
     const DBApiHandler = new lambda.Function(this, 'DBApiHandler', {
@@ -60,6 +61,7 @@ export class CdkStack extends cdk.Stack {
       handler: 'sendnotif.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/sendnotif')),
       functionName: 'SendNotification',
+      environment: {key: 'EMAIL_ADDRESS', value: ''}
     });
 
     const prdLogGroup = new logs.LogGroup(this, "PrdLogs");
