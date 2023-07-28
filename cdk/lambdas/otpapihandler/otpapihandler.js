@@ -3,6 +3,7 @@ import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 
 const REGION = process.env.REACT_APP_AWS_REGION;
+const SENDER = process.env.EMAIL_ADDRESS;
 
 const headers = {
   "Access-Control-Allow-Headers" : "Content-Type",
@@ -119,7 +120,7 @@ async function generateAndSendOTP(params){
 
 async function sendSES(recipient, subject, message){
     const CHARSET      = 'UTF-8' 
-    const SENDER       = 'muhanli.work@gmail.com'
+    const SENDER       = SENDER
     const sesClient    = new SESClient({region: REGION});
     const sendEmailCMD = new SendEmailCommand({
         Source: SENDER,

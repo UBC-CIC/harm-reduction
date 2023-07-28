@@ -62,29 +62,6 @@ export class CdkStack extends cdk.Stack {
       functionName: 'SendNotification',
     });
 
-    // API Gateways
-    // const integrationOptions = {
-    //   integrationResponses: [{
-    //     statusCode: '200',
-    //     responseParameters: {
-    //       'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-    //       'Access-Control-Allow-Methods': 'POST',
-    //       'Access-Control-Allow-Origin': '*',
-    //     },
-    //   }],
-    //   passthroughBehavior: apigateway.PassthroughBehavior.WHEN_NO_MATCH,
-    // };
-    // const methodOptions = {
-    //   methodResponses: [{
-    //     statusCode: '200',
-    //     responseParameters: {
-    //       'Access-Control-Allow-Headers': true,
-    //       'Access-Control-Allow-Methods': true,
-    //       'Access-Control-Allow-Origin': true,
-    //     },
-    //   }],
-    // };
-
     const prdLogGroup = new logs.LogGroup(this, "PrdLogs");
 
     const OTPapi = new apigateway.RestApi(this, 'OTPapi', {
@@ -131,9 +108,6 @@ export class CdkStack extends cdk.Stack {
     DBUser.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
     DBUser.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
 
-    
-    // DBSample.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
-    // DBUser.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
 
     const methodSettingProperty: apigateway.CfnDeployment.MethodSettingProperty = {
       cacheDataEncrypted: false,
@@ -148,11 +122,31 @@ export class CdkStack extends cdk.Stack {
       throttlingRateLimit: 123,
     };
 
-    const statement = new iam.PolicyStatement();
-    statement.addActions("execute-api:Invoke");
-    statement.addResources(DBapi.arnForExecuteApi());
+    // Lambda Permissions
+    const invokeapiStatement = new iam.PolicyStatement();
+    invokeapiStatement.addActions("execute-api:Invoke");
+    invokeapiStatement.addResources(DBapi.arnForExecuteApi());
 
-    SendNotification.addToRolePolicy(statement); 
+    const sessnsStatement = new iam.PolicyStatement();
+    sessnsStatement.addActions("ses:SendEmail");
+    sessnsStatement.addActions("sns:Publish");
+    sessnsStatement.addResources("*");
+    
+    OTPApiHandler.addToRolePolicy(sessnsStatement);
+    OTPApiHandler.addToRolePolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["dynamodb:PutItem", "dynamodb:GetItem"],
+      resources: [OTPTable.tableArn, `${OTPTable.tableArn}/*`]
+    }));
+
+    SendNotification.addToRolePolicy(invokeapiStatement); 
+    SendNotification.addToRolePolicy(sessnsStatement);
+
+    DBApiHandler.addToRolePolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["dynamodb:PutItem", "dynamodb:GetItem", "dynamodb:Scan", "dynamodb:UpdateItem", "dynamodb:DeleteItem"],
+      resources: [SampleTable.tableArn, UserTable.tableArn, `${SampleTable.tableArn}/*`, `${UserTable.tableArn}/*`]
+    }))
 
     // Cognito
     const adminPool = new cognito.UserPool(this, 'adminuserpool', {
