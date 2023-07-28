@@ -61,7 +61,7 @@ export class CdkStack extends cdk.Stack {
       handler: 'sendnotif.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/sendnotif')),
       functionName: 'SendNotification',
-      environment: {'EMAIL_ADDRESS': ''}
+      environment: {'EMAIL_ADDRESS': '', 'DB_API_URL': ''}
     });
 
     const prdLogGroup = new logs.LogGroup(this, "PrdLogs");
