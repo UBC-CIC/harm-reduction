@@ -78,7 +78,7 @@ async function generateAndSendOTP(params){
     try{
         let recipient      = params.recipient;
         let contactbyemail = params.contactbyemail;
-        let expirytime     = Date.now() + 5 * 60 * 1000;
+        let expirytime     = (Date.now() + 5 * 60 * 1000).toString();
         
         const putitemCMD = new PutItemCommand({
             TableName: TABLE, 
