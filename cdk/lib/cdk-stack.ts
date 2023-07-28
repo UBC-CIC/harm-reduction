@@ -130,6 +130,7 @@ export class CdkStack extends cdk.Stack {
     const sessnsStatement = new iam.PolicyStatement();
     sessnsStatement.addActions("ses:SendEmail");
     sessnsStatement.addActions("sns:Publish");
+    sessnsStatement.addResources("*");
     
     OTPApiHandler.addToRolePolicy(sessnsStatement);
     OTPApiHandler.addToRolePolicy(new iam.PolicyStatement({
