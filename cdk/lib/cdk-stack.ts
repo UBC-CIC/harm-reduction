@@ -21,7 +21,6 @@ export class CdkStack extends cdk.Stack {
     //   visibilityTimeout: cdk.Duration.seconds(300)
     // });
 
-
     // DynamoDB
     const OTPTable = new dynamodb.Table(this, 'OTPTable', {
       partitionKey: { name: 'recipient', type: dynamodb.AttributeType.STRING },
@@ -61,7 +60,7 @@ export class CdkStack extends cdk.Stack {
       handler: 'sendnotif.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/sendnotif')),
       functionName: 'SendNotification',
-      environment: {'EMAIL_ADDRESS': '', 'DB_API_URL': ''}
+      environment: {'EMAIL_ADDRESS': ''}
     });
 
     const prdLogGroup = new logs.LogGroup(this, "PrdLogs");
@@ -79,9 +78,9 @@ export class CdkStack extends cdk.Stack {
       }
     });
 
-    OTPapi.root.addMethod('POST', new apigateway.LambdaIntegration(OTPApiHandler, {proxy: true}));
-    OTPapi.root.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    // OTPapi.root.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
+    const OTPResource = OTPapi.root.addResource('otp');
+    OTPResource.addMethod('POST', new apigateway.LambdaIntegration(OTPApiHandler, {proxy: true}));
+    OTPResource.addMethod('OPTIONS', new apigateway.LambdaIntegration(OTPApiHandler, {proxy: true}));
 
     const DBapi = new apigateway.RestApi(this, 'DBapi', {
       deployOptions: {
@@ -111,7 +110,6 @@ export class CdkStack extends cdk.Stack {
     DBUser.addMethod('PUT', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
     DBUser.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
     DBUser.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-
 
     const methodSettingProperty: apigateway.CfnDeployment.MethodSettingProperty = {
       cacheDataEncrypted: false,
@@ -145,6 +143,9 @@ export class CdkStack extends cdk.Stack {
 
     SendNotification.addToRolePolicy(invokedbapiStatement); 
     SendNotification.addToRolePolicy(sessnsStatement);
+
+    // configure env var
+    SendNotification.addEnvironment('DB_API_URL', DBapi.url);
 
     DBApiHandler.addToRolePolicy(new iam.PolicyStatement({
       effect: iam.Effect.ALLOW,
