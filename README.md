@@ -26,7 +26,7 @@ The following architecture diagram illustrates the various AWS components utiliz
 
 ### Home Page
 
-![alt text](./docs/images/.png)
+![alt text](./docs/images/home.png)
 
 ### Public Table of Samples
 
@@ -34,9 +34,11 @@ The following architecture diagram illustrates the various AWS components utiliz
 
 ### Searching via Specific Sample ID
 
-![alt text](./docs/images/.png)
+![alt text](./docs/images/sampleidentry.png)
 
 ### Admin Login Page
+
+![alt text](./docs/images/adminlogin.png)
 
 ### Admin Table of Samples
 

@@ -42,7 +42,7 @@ export const handler = async(event) => {
             console.log('PHONE');
             sendMsgResp = await sendSNS(contact, 'Update from UBC Harm Reduction', completeBodyText);
         }
-        let expirytime = (Date.now() + 5 * 60 * 1000).toString();
+        let expirytime = Math.floor((Date.now()/1000) + 5 * 60).toString();
         const userTablePurgeResp = await axios.put(DB_APIurl + `users?tableName=harm_reduction_users`, {
             "sample-id" : userTableResp.data['sample-id'],
             "contact" : userTableResp.data['contact'],
