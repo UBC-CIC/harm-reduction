@@ -41,7 +41,7 @@ const About = () => {
                 sx={{
                 width: WIDTH,
                 }}
-                alt="Stock UBC image"
+                alt="Stock image"
                 src="https://images.unsplash.com/photo-1628863353691-0071c8c1874c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"
             />
             <Box
@@ -64,13 +64,13 @@ const About = () => {
                 >
                     <Typography variant="h5" sx={{m:2}}>More Information</Typography>
                     <Link 
-                        href="https://www.cbc.ca/news/canada/british-columbia/ubc-lab-bc-portable-drug-checking-tech-hplcs-1.6718800"
+                        href="https://www.google.ca"
                         sx={{ml:2, mb:1}}
                     >
                         UBC lab develops new, portable drug-checking device ahead of limited decriminalization
                         </Link>
                     <Link 
-                        href="https://www.bccsu.ca/blog/news/ubc-lab-testing-new-portable-drug-checking-device/"
+                        href="https://www.google.ca"
                         sx={{ml:2, mb:1}}
                     >
                         UBC lab testing new portable drug-checking device
