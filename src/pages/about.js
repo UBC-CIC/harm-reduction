@@ -123,13 +123,13 @@ const About = () => {
             >
                 <Typography variant="h5" sx={{m:2}}>More Information</Typography>
                 <Link 
-                    href="https://www.cbc.ca/news/canada/british-columbia/ubc-lab-bc-portable-drug-checking-tech-hplcs-1.6718800"
+                    href="https://www.google.ca"
                     sx={{ml:2, mb:1}}
                 >
                     UBC lab develops new, portable drug-checking device ahead of limited decriminalization
                     </Link>
                 <Link 
-                    href="https://www.bccsu.ca/blog/news/ubc-lab-testing-new-portable-drug-checking-device/"
+                    href="https://www.google.ca"
                     sx={{ml:2, mb:1}}
                 >
                     UBC lab testing new portable drug-checking device
