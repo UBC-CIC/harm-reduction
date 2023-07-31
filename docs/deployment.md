@@ -58,7 +58,6 @@ Subdirectories under the directory '/cdk/lambda' each contain the code for the l
 Run the following commands in the CLI to install the dependencies required for the CDK deployment
 ```bash
 npm install -g aws-cdk
-pip install -r requirements.txt
 ```
 
 The next two commands will provision resources required to deploy the full stack (backend), and begin the deployment process.
@@ -253,5 +252,5 @@ After submitting the requests for production access, the status of these request
 Below is an example cURL command that can be used to create a sample item in the backend. Please use the DB API endpoint you obtained during Deployment. 
 
 ```
-curl -X POST -H "Content-Type: application/json" -d '{"sample-id": "ABC123", "color": "White", "date-received": "1234567890", "expected-content": "Cocaine","is-used": "True", "location": "Vancouver, BC", "notes": "N/A", "status": "Manual Testing Required", "test-results": "Cocaine 95%, Uncertain Match 5%", "testing-method": "HPLC"}' <DB_API_URL>/samples?tableName=harm-reduction-samples
+curl -X POST -H "Content-Type: application/json" -d '{"sample-id": "ABC123", "color": "White", "date-received": "1234567890", "expected-content": "Cocaine","is-used": "True", "location": "Vancouver, BC", "notes": "N/A", "status": "Manual Testing Required", "test-results": "Cocaine 95%, Uncertain Match 5%", "testing-method": "HPLC"}' <DB_API_URL>samples?tableName=harm-reduction-samples
 ```
