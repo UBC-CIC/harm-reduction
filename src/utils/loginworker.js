@@ -7,12 +7,12 @@ export const authUser = async (username, password) => {
 
     const cognitoIdpClient = new CognitoIdentityProviderClient({region: REGION});
     const initAuthCMD = new InitiateAuthCommand({
-        AuthFlow: "USER_PASSWORD_AUTH", //"USER_SRP_AUTH" || "REFRESH_TOKEN_AUTH" || "REFRESH_TOKEN" || "CUSTOM_AUTH" || "ADMIN_NO_SRP_AUTH" || "USER_PASSWORD_AUTH" || "ADMIN_USER_PASSWORD_AUTH", // required
+        AuthFlow: "USER_PASSWORD_AUTH",
         AuthParameters: { 
             "USERNAME": username,
             "PASSWORD": password
         },
-        ClientId: CLIENTID, // required
+        ClientId: CLIENTID,
     })
 
     try{
