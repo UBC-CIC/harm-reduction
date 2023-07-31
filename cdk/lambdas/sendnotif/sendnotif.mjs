@@ -28,7 +28,7 @@ export const handler = async(event) => {
         if(newStatus != 'Complete') {console.log('[ERROR]: invalid status'); return;}
         console.log('checking users table');
         
-        const userTableResp = await axios.get(DB_APIurl + `/users?tableName=harm-reduction-users&sample-id=${newImg['sample-id'].S}`);
+        const userTableResp = await axios.get(DB_APIurl + `users?tableName=harm-reduction-users&sample-id=${newImg['sample-id'].S}`);
         console.log(userTableResp.data);
         const contact = userTableResp.data.contact;
         
