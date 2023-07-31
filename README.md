@@ -15,8 +15,6 @@ In collaboration with the UBC CIC, the Hein Lab (UBC Chemistry) developed a solu
 
 The solution is a web application, which allows users (students/lab admins) to make various interactions and queries to the database in the backend. Testing results from the robot in the lab is automatically uploaded to the storage in the cloud via an API endpoint. students are able to check the status of a specific sample by searching via sample ID, as well as view basic information about all the samples that the lab has tested.
 
-![alt text](./docs/images/interactions.png)
-
 ## High Level Architecture
 
 The following architecture diagram illustrates the various AWS components utilized to deliver the solution.  
@@ -26,7 +24,7 @@ The following architecture diagram illustrates the various AWS components utiliz
 
 ### Home Page
 
-![alt text](./docs/images/.png)
+![alt text](./docs/images/home.png)
 
 ### Public Table of Samples
 
@@ -34,9 +32,11 @@ The following architecture diagram illustrates the various AWS components utiliz
 
 ### Searching via Specific Sample ID
 
-![alt text](./docs/images/.png)
+![alt text](./docs/images/sampleidentry.png)
 
 ### Admin Login Page
+
+![alt text](./docs/images/adminlogin.png)
 
 ### Admin Table of Samples
 

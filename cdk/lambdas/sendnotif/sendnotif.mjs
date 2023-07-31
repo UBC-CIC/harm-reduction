@@ -2,9 +2,9 @@ import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 import axios from 'axios'
 
-const REGION = process.env.REACT_APP_AWS_REGION;
-const DB_APIurl = process.env.REACT_APP_DB_API_URL;
-const OTP_APIurl = process.env.REACT_APP_OTP_API_URL;
+const REGION = process.env.AWS_REGION;
+const DB_APIurl = process.env.DB_API_URL;
+// const OTP_APIurl = process.env.REACT_APP_OTP_API_URL;
 const ADMIN_EMAIL = process.env.EMAIL_ADDRESS;
 
 export const handler = async(event) => {
@@ -14,7 +14,6 @@ export const handler = async(event) => {
     const newImg = event.Records[0].dynamodb.NewImage;
     const oldImg = event.Records[0].dynamodb.OldImage;
     
-    const adminemail = '';
     const inconclusiveBodyText = '';
     const completeBodyText = 'placeholder - the results of your sample are ready';
     
@@ -24,7 +23,7 @@ export const handler = async(event) => {
         
         if(oldStatus == newStatus) {console.log('[ERROR]: no status change'); return;}
         console.log('statuses are different');
-        if(newStatus == 'Inconclusive') sendSES(adminemail, 'Alert - Test is Inconclusive', inconclusiveBodyText)
+        if(newStatus == 'Inconclusive') sendSES(ADMIN_EMAIL, 'Alert - Test is Inconclusive', inconclusiveBodyText)
         console.log('status is not inconclusive');
         if(newStatus != 'Complete') {console.log('[ERROR]: invalid status'); return;}
         console.log('checking users table');
@@ -43,8 +42,8 @@ export const handler = async(event) => {
             console.log('PHONE');
             sendMsgResp = await sendSNS(contact, 'Update from UBC Harm Reduction', completeBodyText);
         }
-        let expirytime = Date.now() + 5 * 60 * 1000
-        const userTablePurgeResp = await axios.put(DB_APIurl + `/users?tableName=harm-reduction-users`, {
+        let expirytime = Math.floor((Date.now()/1000) + 5 * 60).toString();
+        const userTablePurgeResp = await axios.put(DB_APIurl + `users?tableName=harm-reduction-users`, {
             "sample-id" : userTableResp.data['sample-id'],
             "contact" : userTableResp.data['contact'],
             "purge": expirytime
@@ -61,10 +60,9 @@ export const handler = async(event) => {
 
 async function sendSES(recipient, subject, message){
     const CHARSET      = 'UTF-8' 
-    const SENDER       = 'muhanli.work@gmail.com'
     const sesClient    = new SESClient({region: REGION});
     const sendEmailCMD = new SendEmailCommand({
-        Source: SENDER,
+        Source: ADMIN_EMAIL,
         Destination: {ToAddresses: [recipient]},
         Message: { 
             Subject: { 

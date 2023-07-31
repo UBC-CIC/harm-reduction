@@ -2,8 +2,9 @@ import { DynamoDBClient, PutItemCommand, GetItemCommand } from "@aws-sdk/client-
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 
-const REGION = process.env.REACT_APP_AWS_REGION;
+const REGION = process.env.AWS_REGION;
 const SENDER = process.env.EMAIL_ADDRESS;
+const TABLE  = process.env.OTP_TABLE;
 
 const headers = {
   "Access-Control-Allow-Headers" : "Content-Type",
@@ -29,7 +30,6 @@ export const handler = async(event) => {
 }
 
 async function verifyOTP(params){
-    const TABLE        = 'otptable';
     const dynamoClient = new DynamoDBClient({region:REGION});
     
     try{
@@ -66,7 +66,6 @@ async function verifyOTP(params){
 }
 
 async function generateAndSendOTP(params){
-    const TABLE          = 'otptable';
     const SUBJECT        = 'OTP - DO NOT REPLY'
     let   OTPCode        = Math.random().toString(36).substring(2, 8).toUpperCase(); 
     let   refID          = new Date().getTime().toString();
@@ -78,7 +77,7 @@ async function generateAndSendOTP(params){
     try{
         let recipient      = params.recipient;
         let contactbyemail = params.contactbyemail;
-        let expirytime     = Date.now() + 5 * 60 * 1000;
+        let expirytime     = Math.floor((Date.now()/1000) + 5 * 60).toString();
         
         const putitemCMD = new PutItemCommand({
             TableName: TABLE, 
@@ -120,7 +119,6 @@ async function generateAndSendOTP(params){
 
 async function sendSES(recipient, subject, message){
     const CHARSET      = 'UTF-8' 
-    const SENDER       = SENDER
     const sesClient    = new SESClient({region: REGION});
     const sendEmailCMD = new SendEmailCommand({
         Source: SENDER,
