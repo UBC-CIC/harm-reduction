@@ -4,7 +4,6 @@ import axios from 'axios'
 
 const REGION = process.env.AWS_REGION;
 const DB_APIurl = process.env.DB_API_URL;
-// const OTP_APIurl = process.env.REACT_APP_OTP_API_URL;
 const ADMIN_EMAIL = process.env.EMAIL_ADDRESS;
 
 export const handler = async(event) => {
@@ -29,7 +28,6 @@ export const handler = async(event) => {
         console.log('checking users table');
         
         const userTableResp = await axios.get(DB_APIurl + `users?tableName=harm-reduction-users&sample-id=${newImg['sample-id'].S}`);
-        console.log(userTableResp.data);
         const contact = userTableResp.data.contact;
         
         if(checkEmailOrPhone(contact) == 'neither') {console.log('[ERROR]: invalid contact'); return;}
@@ -48,7 +46,6 @@ export const handler = async(event) => {
             "contact" : userTableResp.data['contact'],
             "purge": expirytime
         });
-        console.log(userTablePurgeResp.data);
             
         return sendMsgResp;
     }catch(err){
@@ -80,7 +77,6 @@ async function sendSES(recipient, subject, message){
 
     try{
         const sendEmailResp = await sesClient.send(sendEmailCMD);
-        console.log(sendEmailResp);
         return true
     }catch(err){
         return false
@@ -97,7 +93,6 @@ async function sendSNS(recipient, subject, message){
 
     try{
         const verifyNumResp = await snsClient.send(sendTextCMD);
-        console.log(verifyNumResp);
         return true
     }catch(err){
         return false
