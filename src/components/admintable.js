@@ -81,7 +81,7 @@ const SampleTable = () => {
   const fetchSamples = async () => {
     try {
       const response = await axios.get(
-        DB_APIurl + '/samples?tableName=harm_reduction_samples'
+        DB_APIurl + '/samples?tableName=harm-reduction-samples'
       );
       const data = response.data;
 
@@ -141,7 +141,7 @@ const SampleTable = () => {
   ) => {
     try {
       await axios.put(
-        DB_APIurl + `/samples?tableName=harm_reduction_samples`,
+        DB_APIurl + `/samples?tableName=harm-reduction-samples`,
         {
           'sample-id': sampleId,
           notes: newNote,

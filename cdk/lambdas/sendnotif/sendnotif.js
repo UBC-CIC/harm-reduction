@@ -29,7 +29,7 @@ export const handler = async(event) => {
         if(newStatus != 'Complete') {console.log('[ERROR]: invalid status'); return;}
         console.log('checking users table');
         
-        const userTableResp = await axios.get(DB_APIurl + `/users?tableName=harm_reduction_users&sample-id=${newImg['sample-id'].S}`);
+        const userTableResp = await axios.get(DB_APIurl + `/users?tableName=harm-reduction-users&sample-id=${newImg['sample-id'].S}`);
         console.log(userTableResp.data);
         const contact = userTableResp.data.contact;
         
@@ -44,7 +44,7 @@ export const handler = async(event) => {
             sendMsgResp = await sendSNS(contact, 'Update from UBC Harm Reduction', completeBodyText);
         }
         let expirytime = Date.now() + 5 * 60 * 1000
-        const userTablePurgeResp = await axios.put(DB_APIurl + `/users?tableName=harm_reduction_users`, {
+        const userTablePurgeResp = await axios.put(DB_APIurl + `/users?tableName=harm-reduction-users`, {
             "sample-id" : userTableResp.data['sample-id'],
             "contact" : userTableResp.data['contact'],
             "purge": expirytime
