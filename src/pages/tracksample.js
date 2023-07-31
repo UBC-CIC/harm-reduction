@@ -26,7 +26,7 @@ const DB_APIurl = process.env.REACT_APP_DB_API_URL;
 const OTP_APIurl = process.env.REACT_APP_OTP_API_URL;
 
 const TrackSample = () => {
-    const [pageState,     setPageState]     = useState(0); // pageStates = ["enterid", "showsample", "showcontact", "updatecontact", "verifycontact"]
+    const [pageState,     setPageState]     = useState(0); 
     const [referenceID,   setReferenceID]   = useState('');
     const [newContact,    setNewContact]    = useState('');
     const [contactMethod, setContactMethod] = useState('email')
@@ -69,10 +69,9 @@ const TrackSample = () => {
             setDisplayError(true);
             return;
         }
-        console.log(`trackingID: ${sampleID}`);
+        console.log(`Entered sampleID: ${sampleID}`);
         getOptions();
         try{
-            console.log('try api')
             const resp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-samples&sample-id=${sampleID}`);
             console.log(resp.data);
             setSampleID(resp.data['sample-id']);
@@ -97,8 +96,8 @@ const TrackSample = () => {
     }
 
     const saveMetadata = async () => {
-        console.log('expected-field: ' + expectedContentsField);
-        console.log('used?: ' + sampleUsed);
+        //console.log('expected-content: ' + expectedContentsField);
+        //console.log('used?: ' + sampleUsed);
         setDisplayGetMetadata(false);
 
         try{
@@ -135,8 +134,8 @@ const TrackSample = () => {
             setDisplayError(true);
             return;
         }
-        console.log(`contactfield: ${recipient}`);
-        console.log('email? ' + (contactMethod == 'email'));
+        //console.log(`contactfield: ${recipient}`);
+        //console.log('email? ' + (contactMethod == 'email'));
 
         const OTPInfo = await axios.post(OTP_APIurl + `otp?action=send`,{
             "recipient": recipient,
@@ -159,8 +158,8 @@ const TrackSample = () => {
             setDisplayError(true);
             return;
         }
-        console.log(`entered OTP: ${OTP}`);
-        console.log(`refID: ${referenceID}`);
+        //console.log(`entered OTP: ${OTP}`);
+        //console.log(`refID: ${referenceID}`);
         
         const verifyResp = await axios.post(OTP_APIurl + `otp?action=verify`, {
             "recipient": newContact,
@@ -186,7 +185,6 @@ const TrackSample = () => {
             setDisplayContactVerify(false);
         }catch(err){
             console.log(err);
-            // should try again or do some thing to fix issue, probably do not want user to know this part went wrong
         }
     }
 
