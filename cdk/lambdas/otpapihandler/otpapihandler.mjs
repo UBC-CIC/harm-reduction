@@ -14,10 +14,9 @@ const headers = {
 
 export const handler = async(event) => {
     const { httpMethod, path, body } = event;
-    console.log(httpMethod);
-    console.log(body);
+
     const action = event.queryStringParameters['action'];
-    console.log(action);
+
     const params = JSON.parse(body);
     
     if(action === 'send') return generateAndSendOTP(params);
@@ -44,7 +43,6 @@ async function verifyOTP(params){
             }
         })
         const getItemResp = await dynamoClient.send(getItemCMD);
-        console.log(getItemResp.Item);
         
         let actualOTP   = getItemResp.Item.OTP.S;
         let actualRefID = getItemResp.Item.refID.S;
@@ -72,7 +70,6 @@ async function generateAndSendOTP(params){
 
     const dynamoClient = new DynamoDBClient({region: REGION});
     const OTPMessage   = `UBC Harm Reduction: your OTP is ${OTPCode}`
-    console.log(OTPMessage);
 
     try{
         let recipient      = params.recipient;
@@ -90,13 +87,10 @@ async function generateAndSendOTP(params){
             ReturnConsumedCapacity: "TOTAL",
         });
         const putitemResp = await dynamoClient.send(putitemCMD);
-        console.log(putitemResp);
         
-        console.log('sending message')
         let sendMsgResp;
         if(contactbyemail) sendMsgResp = await sendSES(recipient, SUBJECT, OTPMessage);
         else               sendMsgResp = await sendSNS(recipient, SUBJECT, OTPMessage);
-        console.log(sendMsgResp);
 
         const body = {
             recipient: recipient,
@@ -139,7 +133,6 @@ async function sendSES(recipient, subject, message){
 
     try{
         const sendEmailResp = await sesClient.send(sendEmailCMD);
-        console.log(sendEmailResp);
         return true
     }catch(err){
         console.log(err);
@@ -157,7 +150,6 @@ async function sendSNS(recipient, subject, message){
 
     try{
         const verifyNumResp = await snsClient.send(sendTextCMD);
-        console.log(verifyNumResp);
         return true
     }catch(err){
         console.log(err);

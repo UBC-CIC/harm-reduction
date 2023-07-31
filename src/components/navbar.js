@@ -11,7 +11,6 @@ export const NavBar = () => {
             <AppBar position='static'>
                 <div className="navBar">
                     <Link to="/" className='navbutton'>Home</Link>
-                    {/* <Link to="/Resources" className='navbutton'>Resources</Link> */} 
                     <Link to="/Table" className='navbutton'>View All Samples</Link>
                     <Link to="/Track" className='navbutton'>Search via Sample ID</Link>
                 </div>
@@ -61,7 +60,6 @@ export const MobileNavBar = () => {
                         onClose={handleClose}
                         MenuListProps={{'aria-labelledby': 'basic-button'}}
                     >
-                        {/* <MenuItem component={Link} to="/Resources" onClick={handleClose}>Resources</MenuItem> */}
                         <MenuItem component={Link} to='/Table' onClick={handleClose}>View All Samples</MenuItem>
                         <MenuItem component={Link} to='/Track' onClick={handleClose}>Search via SampleID</MenuItem>
                     </Menu>

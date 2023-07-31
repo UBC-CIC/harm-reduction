@@ -7,9 +7,6 @@ import Button from '@mui/material/Button';
 import { authUser } from '../utils/loginworker.js'
 import AdminTable from '../components/admintable.js'
 
-// import { Authenticator } from '@aws-amplify/ui-react';
-// import '@aws-amplify/ui-react/styles.css';
-
 const Admin = () => {
     const [showError, setShowError] = useState(false);
     const [loginStatus, setLoginStatus] = useState(false);
@@ -18,14 +15,12 @@ const Admin = () => {
     let   password;
 
     const adminSignin = async () => {
-        console.log(`username: ${username}`);
         const authResp = await authUser(username, password);
 
         if(!authResp.AccessToken){
             setShowError(true);
             return;
         } 
-        console.log('successfully authenticated');
         setLoginStatus(true);
     }
 

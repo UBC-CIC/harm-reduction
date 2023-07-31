@@ -236,11 +236,6 @@ const TrackSample = () => {
         const INNERWIDTH = isMobile ? 400 : 700;
         const OUTERBOXSHADOW = isMobile ? 0 : 3;
 
-        // const rows = [
-        //     {name: 'Stuff1', percentage: '95'},
-        //     {name: 'Stuff2', percentage: '5'}
-        // ];
-
         const SampleBlock = () => {
             return(
                 <Box
@@ -434,7 +429,6 @@ const TrackSample = () => {
                     alignItems="flex-start"
                 >
                     <TrackOther />
-                    {/* <ResourcesBlock /> */}
                 </Box>}
             </Box>
         )
@@ -463,14 +457,6 @@ const TrackSample = () => {
                 alignItems="center"
             >   
                 <Typography style={{margin: '10px'}}>Submit additional information about this sample</Typography>
-                {/* <TextField 
-                    className="textbox" 
-                    onChange={(event)=>{expectedContentsField=event.target.value}}
-                    id="trackinginput" 
-                    label="Expected contents of this sample" 
-                    variant="outlined" 
-                    sx={{m:1, mb:2, width: WIDTH - 100}}
-                /> */}
                 <Autocomplete
                     freeSolo
                     sx={{width: WIDTH - 100, m:1}}
@@ -653,24 +639,6 @@ const TrackSample = () => {
                         sx={{ m: 1, mb: 2 }}
                     >Confirm
                     </Button>
-                    {/* <Button 
-                        className="outlinedbutton"
-                        variant="outlined" 
-                        onClick={() => {editContact(); setDisableButton(true); setTimeout(() => {setDisableButton(false)}, 60000)}}
-                        sx={{ m: 1, mb: 2 }}
-                        disabled={disableButton}
-                    >Send Another Code
-                    </Button> */}
-                    {/* {displayError && (
-                        <Button
-                            className="outlinedbutton"
-                            variant="outlined" 
-                            onClick={() => {setDisplayContactVerify(false); enteredOTP=''; setDisplayError(false)}}
-                            sx={{m: 1, mb: 2}}
-                            color="error"
-                        >Exit without saving  
-                        </Button>
-                    )} */}
                     <Button
                             className="outlinedbutton"
                             variant="outlined" 
@@ -692,11 +660,8 @@ const TrackSample = () => {
             alignItems="center"
             sx={{mt:2}}
         >
-            {(pageState == 0) && <TrackingIDInput />}
-            {(pageState == 1) && <ShowSample />}
-            {/* {(pageState == 2) && <ContactDisplay />}
-            {(pageState == 3) && <ContactEdit />}
-            {(pageState == 3) && <ContactVerify />} */}
+            {(pageState === 0) && <TrackingIDInput />}
+            {(pageState === 1) && <ShowSample />}
         </Box>
     )
 }

@@ -310,7 +310,7 @@ const SampleTable = () => {
     setSearchQuerySampleId('');
     setSearchQueryExpectedContent('');
     setSearchQueryTestResults('');
-    setSearchQueryDateReceived(''); // Add this line to reset the date filter
+    setSearchQueryDateReceived(''); 
     setFilters({
       status: [],
       location: [],

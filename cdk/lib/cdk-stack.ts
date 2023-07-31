@@ -55,7 +55,7 @@ export class CdkStack extends cdk.Stack {
       functionName: 'DB-api-handler',
     });
 
-    const SendNotification = new lambda.Function(this, 'SendNotification', { //TODO Set env variables for api, region, cogclient
+    const SendNotification = new lambda.Function(this, 'SendNotification', { 
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'sendnotif.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/sendnotif')),
