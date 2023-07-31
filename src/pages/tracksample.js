@@ -55,7 +55,6 @@ const TrackSample = () => {
         try{
             const resp = await axios.get(DB_APIurl + 'samples?tableName=harm-reduction-samples');
             const data = resp.data;
-            console.log(data);
             setContentOptions([...new Set(data.map((sample) => sample['expected-content']))])
         }catch(err){
             setContentOptions(['Cocaine', 'MDMA', 'Methamphetamine', 'Adderall'])
@@ -72,7 +71,6 @@ const TrackSample = () => {
         getOptions();
         try{
             const resp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-samples&sample-id=${sampleID}`);
-            console.log(resp.data);
             setSampleID(resp.data['sample-id']);
             (resp.data['status'] === 'Manual Testing Required') ? setSampleStatus('Pending') : setSampleStatus(resp.data['status']);
             setSampleDate(resp.data['date-received']);
@@ -113,7 +111,6 @@ const TrackSample = () => {
                 "color": item["color"],
                 "testing-method": item["testing-method"],
             })
-            console.log(resp);
             expectedContentsField='';
             setSampleUsed(false);
         }catch(err){
@@ -137,7 +134,6 @@ const TrackSample = () => {
             "contactbyemail": (contactMethod == 'email'),
         });
 
-        console.log(OTPInfo.data);
         setNewContact(contactField);
         setReferenceID(OTPInfo.data.refID);
         
@@ -159,7 +155,6 @@ const TrackSample = () => {
             "userOTP": OTP,
             "userRefID": referenceID
         })
-        console.log(verifyResp.data);
 
         if(!verifyResp.data.valid){
             setDisplayError(true);
@@ -171,7 +166,6 @@ const TrackSample = () => {
                 "sample-id": sampleID,
                 "contact": newContact,
             });
-            console.log(updateContactResp);
 
             setNewContact('');
             setDisplaySavedMsg(true);
@@ -427,7 +421,6 @@ const TrackSample = () => {
 
     const GetMetadata = () => {
         const WIDTH = isMobile ? 400 : 700;
-        console.log(contentOptions);
         return(
             <Box
                 sx={{
