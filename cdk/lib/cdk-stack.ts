@@ -24,18 +24,18 @@ export class CdkStack extends cdk.Stack {
     // DynamoDB
     const OTPTable = new dynamodb.Table(this, 'OTPTable', {
       partitionKey: { name: 'recipient', type: dynamodb.AttributeType.STRING },
-      tableName: 'harm_reduction_otps',
+      tableName: 'harm-reduction-otps',
       timeToLiveAttribute: 'expiry'
     });
 
     const SampleTable = new dynamodb.Table(this, 'SampleTable', {
       partitionKey: {name: 'sample-id', type: dynamodb.AttributeType.STRING},
-      tableName: 'harm_reduction_samples'
+      tableName: 'harm-reduction-samples'
     });
 
     const UserTable = new dynamodb.Table(this, 'UserTable', {
       partitionKey: {name: 'sample-id', type: dynamodb.AttributeType.STRING},
-      tableName: 'harm_reduction_users',
+      tableName: 'harm-reduction-users',
       timeToLiveAttribute: 'purge'
     });
 
@@ -44,7 +44,7 @@ export class CdkStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'otpapihandler.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/otpapihandler')),
-      functionName: 'OTP_api_handler',
+      functionName: 'OTP-api-handler',
       environment: {'EMAIL_ADDRESS': ''}
     });
 
@@ -52,7 +52,7 @@ export class CdkStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'dbapihandler.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/dbapihandler')),
-      functionName: 'DB_api_handler',
+      functionName: 'DB-api-handler',
     });
 
     const SendNotification = new lambda.Function(this, 'SendNotification', { //TODO Set env variables for api, region, cogclient

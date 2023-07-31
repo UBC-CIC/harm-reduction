@@ -16,9 +16,9 @@ exports.handler = async (event) => {
   } else if (httpMethod === 'PUT') {
     return await updateItem(tableName, JSON.parse(body));
   } else if (httpMethod === 'GET') {
-    if (tableName === 'users') {
+    if (tableName === 'harm-reduction-users') {
       return await getUser(tableName, event.queryStringParameters['sample-id']);
-    } else if (tableName === 'samples') {
+    } else if (tableName === 'harm-reduction-samples') {
       const sampleId = event.queryStringParameters['sample-id'];
       if (sampleId) {
         return await getSample(tableName, sampleId);
