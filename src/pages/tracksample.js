@@ -69,7 +69,6 @@ const TrackSample = () => {
             setDisplayError(true);
             return;
         }
-        console.log(`Entered sampleID: ${sampleID}`);
         getOptions();
         try{
             const resp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-samples&sample-id=${sampleID}`);
@@ -96,8 +95,6 @@ const TrackSample = () => {
     }
 
     const saveMetadata = async () => {
-        //console.log('expected-content: ' + expectedContentsField);
-        //console.log('used?: ' + sampleUsed);
         setDisplayGetMetadata(false);
 
         try{
@@ -134,8 +131,6 @@ const TrackSample = () => {
             setDisplayError(true);
             return;
         }
-        //console.log(`contactfield: ${recipient}`);
-        //console.log('email? ' + (contactMethod == 'email'));
 
         const OTPInfo = await axios.post(OTP_APIurl + `otp?action=send`,{
             "recipient": recipient,
@@ -158,8 +153,6 @@ const TrackSample = () => {
             setDisplayError(true);
             return;
         }
-        //console.log(`entered OTP: ${OTP}`);
-        //console.log(`refID: ${referenceID}`);
         
         const verifyResp = await axios.post(OTP_APIurl + `otp?action=verify`, {
             "recipient": newContact,
