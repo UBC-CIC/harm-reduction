@@ -53,7 +53,7 @@ const TrackSample = () => {
 
     const getOptions = async () => {
         try{
-            const resp = await axios.get(DB_APIurl + '/samples?tableName=samples');
+            const resp = await axios.get(DB_APIurl + 'samples?tableName=harm_reduction_samples');
             const data = resp.data;
             console.log(data);
             setContentOptions([...new Set(data.map((sample) => sample['expected-content']))])
@@ -73,7 +73,7 @@ const TrackSample = () => {
         getOptions();
         try{
             console.log('try api')
-            const resp = await axios.get(DB_APIurl + `/samples?tableName=samples&sample-id=${sampleID}`);
+            const resp = await axios.get(DB_APIurl + `samples?tableName=harm_reduction_samples&sample-id=${sampleID}`);
             console.log(resp.data);
             setSampleID(resp.data['sample-id']);
             (resp.data['status'] === 'Manual Testing Required') ? setSampleStatus('Pending') : setSampleStatus(resp.data['status']);
@@ -102,9 +102,9 @@ const TrackSample = () => {
         setDisplayGetMetadata(false);
 
         try{
-            const getresp = await axios.get(DB_APIurl + `/samples?tableName=samples&sample-id=${sampleID}`);
+            const getresp = await axios.get(DB_APIurl + `samples?tableName=harm_reduction_samples&sample-id=${sampleID}`);
             const item = getresp.data;
-            const resp = await axios.put(DB_APIurl + `/samples?tableName=samples`,{
+            const resp = await axios.put(DB_APIurl + `samples?tableName=samples`,{
                 "status": item['status'],
                 "sample-id": item["sample-id"],
                 "vial-id": item["vial-id"],
@@ -138,7 +138,7 @@ const TrackSample = () => {
         console.log(`contactfield: ${recipient}`);
         console.log('email? ' + (contactMethod == 'email'));
 
-        const OTPInfo = await axios.post(OTP_APIurl + `/otp?action=send`,{
+        const OTPInfo = await axios.post(OTP_APIurl + `otp?action=send`,{
             "recipient": recipient,
             "contactbyemail": (contactMethod == 'email'),
         });
@@ -162,7 +162,7 @@ const TrackSample = () => {
         console.log(`entered OTP: ${OTP}`);
         console.log(`refID: ${referenceID}`);
         
-        const verifyResp = await axios.post(OTP_APIurl + `/otp?action=verify`, {
+        const verifyResp = await axios.post(OTP_APIurl + `otp?action=verify`, {
             "recipient": newContact,
             "userOTP": OTP,
             "userRefID": referenceID
@@ -175,7 +175,7 @@ const TrackSample = () => {
         }
 
         try{
-            const updateContactResp = await axios.put(DB_APIurl + `/users?tableName=users`, {
+            const updateContactResp = await axios.put(DB_APIurl + `users?tableName=harm_reduction_users`, {
                 "sample-id": sampleID,
                 "contact": newContact,
             });

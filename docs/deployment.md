@@ -86,15 +86,12 @@ Then, add the following variables
 |Name|Value|
 |----|-----|
 |REACT_APP_AWS_REGION|paste name of your AWS region|
-|REACT_APP_DB_APIURL|paste name of the DB API url here|
-|REACT_APP_OTP_APIURL|paste name of the OTP API url here|
+|REACT_APP_DB_API_URL|paste name of the DB API url here|
+|REACT_APP_OTP_API_URL|paste name of the OTP API url here|
 |REACT_APP_COGCLIENT|paste client ID of cognito userpool app client here|
 
 Once you have added the variables, your screen should look something like the image below, click save to save your changes
 ![alt text](images/envvar.png)
-
-Navigate to the `build settings` section in the left sidebar. In the upper right corner of the box labeled `app build specification`, click edit and add the highlighted lines to the build settings
-![alt text](images/buildsettings.png)
 
 Finally, go back to the tab labled `harm reduction`, under the `hosting environments` tab, select the deployment named `main`. Click the button **Redeploy this version** to allow for your changes to take place.
 
@@ -250,3 +247,11 @@ Production access is necessary to be able to send texts to any phone number and 
 ## Viewing Support Cases
 
 After submitting the requests for production access, the status of these requests can be viewed at the [AWS Support Center](https://support.console.aws.amazon.com/support/). Ensure the region on the top right is the region in which the app is deployed. Go to the section `your support cases` to view your support cases.
+
+## Adding Sample Data to API endpoint
+
+Below is an example cURL command that can be used to create a sample item in the backend. Please use the DB API endpoint you obtained during Deployment. 
+
+```
+curl -X POST -H "Content-Type: application/json" -d '{"sample-id": "ABC123", "color": "White", "date-received": "1234567890", "expected-content": "Cocaine","is-used": "True", "location": "Vancouver, BC", "notes": "N/A", "status": "Manual Testing Required", "test-results": "Cocaine 95%, Uncertain Match 5%", "testing-method": "HPLC"}' <DB_API_URL>/samples?tableName=harm_reduction_samples
+```

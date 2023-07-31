@@ -21,7 +21,6 @@ export class CdkStack extends cdk.Stack {
     //   visibilityTimeout: cdk.Duration.seconds(300)
     // });
 
-
     // DynamoDB
     const OTPTable = new dynamodb.Table(this, 'OTPTable', {
       partitionKey: { name: 'recipient', type: dynamodb.AttributeType.STRING },
@@ -46,10 +45,11 @@ export class CdkStack extends cdk.Stack {
       handler: 'otpapihandler.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/otpapihandler')),
       functionName: 'OTP_api_handler',
+      environment: {'EMAIL_ADDRESS': ''}
     });
 
     const DBApiHandler = new lambda.Function(this, 'DBApiHandler', {
-      runtime: lambda.Runtime.NODEJS_18_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'dbapihandler.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/dbapihandler')),
       functionName: 'DB_api_handler',
@@ -60,30 +60,8 @@ export class CdkStack extends cdk.Stack {
       handler: 'sendnotif.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '../lambdas/sendnotif')),
       functionName: 'SendNotification',
+      environment: {'EMAIL_ADDRESS': ''}
     });
-
-    // API Gateways
-    // const integrationOptions = {
-    //   integrationResponses: [{
-    //     statusCode: '200',
-    //     responseParameters: {
-    //       'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token',
-    //       'Access-Control-Allow-Methods': 'POST',
-    //       'Access-Control-Allow-Origin': '*',
-    //     },
-    //   }],
-    //   passthroughBehavior: apigateway.PassthroughBehavior.WHEN_NO_MATCH,
-    // };
-    // const methodOptions = {
-    //   methodResponses: [{
-    //     statusCode: '200',
-    //     responseParameters: {
-    //       'Access-Control-Allow-Headers': true,
-    //       'Access-Control-Allow-Methods': true,
-    //       'Access-Control-Allow-Origin': true,
-    //     },
-    //   }],
-    // };
 
     const prdLogGroup = new logs.LogGroup(this, "PrdLogs");
 
@@ -99,8 +77,10 @@ export class CdkStack extends cdk.Stack {
         types: [ apigateway.EndpointType.REGIONAL ]
       }
     });
-    OTPapi.root.addMethod('POST', new apigateway.LambdaIntegration(OTPApiHandler, {proxy: true}));
-    // OTPapi.root.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
+
+    const OTPResource = OTPapi.root.addResource('otp');
+    OTPResource.addMethod('POST', new apigateway.LambdaIntegration(OTPApiHandler, {proxy: true}));
+    OTPResource.addMethod('OPTIONS', new apigateway.LambdaIntegration(OTPApiHandler, {proxy: true}));
 
     const DBapi = new apigateway.RestApi(this, 'DBapi', {
       deployOptions: {
@@ -131,10 +111,6 @@ export class CdkStack extends cdk.Stack {
     DBUser.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
     DBUser.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
 
-    
-    // DBSample.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
-    // DBUser.addMethod('OPTIONS', new apigateway.MockIntegration(integrationOptions), methodOptions);
-
     const methodSettingProperty: apigateway.CfnDeployment.MethodSettingProperty = {
       cacheDataEncrypted: false,
       cacheTtlInSeconds: 123,
@@ -148,11 +124,35 @@ export class CdkStack extends cdk.Stack {
       throttlingRateLimit: 123,
     };
 
-    const statement = new iam.PolicyStatement();
-    statement.addActions("execute-api:Invoke");
-    statement.addResources(DBapi.arnForExecuteApi());
+    // Lambda Permissions
+    const invokedbapiStatement = new iam.PolicyStatement();
+    invokedbapiStatement.addActions("execute-api:Invoke");
+    invokedbapiStatement.addResources(DBapi.arnForExecuteApi());
 
-    SendNotification.addToRolePolicy(statement); 
+    const sessnsStatement = new iam.PolicyStatement();
+    sessnsStatement.addActions("ses:SendEmail");
+    sessnsStatement.addActions("sns:Publish");
+    sessnsStatement.addResources("*");
+    
+    OTPApiHandler.addToRolePolicy(sessnsStatement);
+    OTPApiHandler.addToRolePolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["dynamodb:PutItem", "dynamodb:GetItem"],
+      resources: [OTPTable.tableArn, `${OTPTable.tableArn}/*`]
+    }));
+
+    SendNotification.addToRolePolicy(invokedbapiStatement); 
+    SendNotification.addToRolePolicy(sessnsStatement);
+
+    // configure env var
+    SendNotification.addEnvironment('DB_API_URL', DBapi.url);
+    OTPApiHandler.addEnvironment('OTP_TABLE', OTPTable.tableName);
+
+    DBApiHandler.addToRolePolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["dynamodb:PutItem", "dynamodb:GetItem", "dynamodb:Scan", "dynamodb:UpdateItem", "dynamodb:DeleteItem"],
+      resources: [SampleTable.tableArn, UserTable.tableArn, `${SampleTable.tableArn}/*`, `${UserTable.tableArn}/*`]
+    }))
 
     // Cognito
     const adminPool = new cognito.UserPool(this, 'adminuserpool', {
@@ -186,10 +186,8 @@ export class CdkStack extends cdk.Stack {
       description: 'Cognito user pool Client ID'
     });
 
-    // 
     // Store the gateway ARN for use with our WAF stack 
     const apiGatewayARN = `arn:aws:apigateway:${Stack.of(this).region}::/restapis/${DBapi.restApiId}/stages/${DBapi.deploymentStage.stageName}`
-
 
     // Waf Firewall
     const webAcl = new CfnWebACL(this, 'waf', {
