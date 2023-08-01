@@ -48,7 +48,7 @@ We will create a user with the proper authorization to deploy all of our backend
 
 1. Click the button labeled **Add Users**.
 
-2. Name this user `harmreduction-backenddeploy`, then click **next** to proceed. ![alt text]()
+2. Name this user `harmreduction-backenddeploy`, then click **next** to proceed.
 
 3. Select the option **attach policies directly**, then select the policy labeled **AdministratorAccess**. Click next to proceed.
 
