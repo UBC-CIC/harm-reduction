@@ -40,11 +40,36 @@ Congratulations, your front end is now deployed!
 # Step 3: Backend Deployment
 
 ## Configure AWS CLI
-Begin by configuring the AWS credentials by typing the following line in the CLI
+Before deploying your backend, we must configure your command line with the proper credentials to access your AWS account.
+
+Begin by navigating to the [IAM Console](https://us-east-1.console.aws.amazon.com/iamv2/), in the tab labled `Access Management`, select `Users`.
+
+We will create a user with the proper authorization to deploy all of our backend resources. 
+
+1. Click the button labeled **Add Users**.
+
+2. Name this user `harmreduction-backenddeploy`, then click **next** to proceed. ![alt text]()
+
+3. Select the option **attach policies directly**, then select the policy labeled **AdministratorAccess**. Click next to proceed.
+
+4. Finish creating the user by clicking **create user**, you should be taken back to the previous menu where all users are displayed. Click on the user you just created.
+
+5. Select the tab `Security Credentials`, then scroll down to the box `Access Keys`, press the button **Create access key**.
+
+6. For use case, select `Command Line Interface`, check the confirmation box, then click next to proceed. 
+
+7. For the description tag, enter `harmreduction-backenddeploy`, then click **create access key** to proceed.
+
+8. Click the outlined button **download .csv file**, store this file in a secure locations as it contains the credentials that provide admin-level access to your AWS account.
+
+Next, begin configuring the AWS credentials by typing the following line in the CLI
 ```bash
 aws configure
 ```
-Please note that it is expected for your account to have administrator access for the steps in this deployment guide
+
+The command line interface will prompt you to enter your Access Key ID, then your Secret Access Key, both values can be found in the .csv file you downloaded in the section above. 
+
+For your default region name, enter the region in which you are deploying your project. As for the default output format, press enter to leave it as the default value (None).
 
 ## Deploy Backend 
 Once the AWS CLI has been configured with the credentials, navigate to the directory named 'cdk' 
