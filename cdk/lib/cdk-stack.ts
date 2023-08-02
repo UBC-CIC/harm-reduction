@@ -9,6 +9,7 @@ import { aws_lambda as lambda } from 'aws-cdk-lib';
 import { aws_apigateway as apigateway } from 'aws-cdk-lib';
 import { aws_cognito as cognito } from 'aws-cdk-lib';
 import { CfnWebACL, CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
+import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 export class CdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -25,18 +26,22 @@ export class CdkStack extends cdk.Stack {
     const OTPTable = new dynamodb.Table(this, 'OTPTable', {
       partitionKey: { name: 'recipient', type: dynamodb.AttributeType.STRING },
       tableName: 'harm-reduction-otps',
-      timeToLiveAttribute: 'expiry'
+      timeToLiveAttribute: 'expiry',
+      removalPolicy: cdk.RemovalPolicy.DESTROY
     });
 
     const SampleTable = new dynamodb.Table(this, 'SampleTable', {
       partitionKey: {name: 'sample-id', type: dynamodb.AttributeType.STRING},
-      tableName: 'harm-reduction-samples'
+      tableName: 'harm-reduction-samples',
+      stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
+      removalPolicy: cdk.RemovalPolicy.DESTROY
     });
 
     const UserTable = new dynamodb.Table(this, 'UserTable', {
       partitionKey: {name: 'sample-id', type: dynamodb.AttributeType.STRING},
       tableName: 'harm-reduction-users',
-      timeToLiveAttribute: 'purge'
+      timeToLiveAttribute: 'purge',
+      removalPolicy: cdk.RemovalPolicy.DESTROY
     });
 
     // Lambdas
@@ -154,6 +159,12 @@ export class CdkStack extends cdk.Stack {
       resources: [SampleTable.tableArn, UserTable.tableArn, `${SampleTable.tableArn}/*`, `${UserTable.tableArn}/*`]
     }))
 
+    // configure send notification trigger
+    SendNotification.addEventSource(new DynamoEventSource(SampleTable, {
+      startingPosition: lambda.StartingPosition.LATEST,
+      batchSize: 1,
+    }))
+
     // Cognito
     const adminPool = new cognito.UserPool(this, 'adminuserpool', {
       userPoolName: 'harmreduction-adminpool',
@@ -173,6 +184,7 @@ export class CdkStack extends cdk.Stack {
         challengeRequiredOnNewDevice: false,
         deviceOnlyRememberedOnUserPrompt: false
       },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
     const adminPoolClient = adminPool.addClient('adminpoolclient', {

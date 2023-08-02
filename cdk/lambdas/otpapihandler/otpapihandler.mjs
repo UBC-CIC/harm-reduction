@@ -14,10 +14,16 @@ const headers = {
 
 export const handler = async(event) => {
     const { httpMethod, path, body } = event;
-
     const action = event.queryStringParameters['action'];
-
     const params = JSON.parse(body);
+    
+    if(httpMethod === 'OPTIONS'){
+        return {
+            statusCode: 204,
+            headers: headers,
+            body: JSON.stringify({ message: 'No content' }),
+        }
+    }
     
     if(action === 'send') return generateAndSendOTP(params);
     else if(action === 'verify') return verifyOTP(params);
