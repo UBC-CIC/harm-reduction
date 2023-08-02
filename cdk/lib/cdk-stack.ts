@@ -155,9 +155,7 @@ export class CdkStack extends cdk.Stack {
     }))
 
     // configure env var
-    SendNotification.addEnvironment('DB_API_URL', DBapi.url);
     SendNotification.addEnvironment('USERTABLE', UserTable.tableName);
-    SendNotification.addEnvironment('SAMPLETABLE', SampleTable.tableName);
     OTPApiHandler.addEnvironment('OTP_TABLE', OTPTable.tableName);
 
     DBApiHandler.addToRolePolicy(new iam.PolicyStatement({

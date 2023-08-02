@@ -1,13 +1,10 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
-import { DynamoDBClient, GetItemCommand, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
-import axios from 'axios'
+import { DynamoDBClient, GetItemCommand, PutItemCommand } from "@aws-sdk/client-dynamodb";
 
 const REGION      = process.env.AWS_REGION;
-const DB_APIurl   = process.env.DB_API_URL;
 const ADMIN_EMAIL = process.env.EMAIL_ADDRESS;
 const USERTABLE   = process.env.USERTABLE;
-const SAMPLETABLE = process.env.SAMPLETABLE;
 
 export const handler = async(event) => {
     console.log(event.Records[0].dynamodb);
@@ -17,7 +14,7 @@ export const handler = async(event) => {
     const oldImg = event.Records[0].dynamodb.OldImage;
     
     const inconclusiveBodyText = '';
-    const completeBodyText = 'placeholder - the results of your sample are ready';
+    const completeBodyText = 'Harm Reduction - The results of your sample are ready';
 
     const dynamoClient = new DynamoDBClient({region: REGION});
     
@@ -37,8 +34,7 @@ export const handler = async(event) => {
             Key: {"sample-id": newImg['sample-id']},
         });
         const contactResp = await dynamoClient.send(getUserCMD);
-        const userTableResp = await axios.get(DB_APIurl + `users?sample-id=${newImg['sample-id'].S}`);
-        const contact = userTableResp.data.contact;
+        const contact = contactResp.Item['contact'].S;
         
         if(checkEmailOrPhone(contact) == 'neither') {console.log('[ERROR]: invalid contact'); return;}
         let sendMsgResp = 'null';
@@ -51,11 +47,15 @@ export const handler = async(event) => {
             sendMsgResp = await sendSNS(contact, 'Update from UBC Harm Reduction', completeBodyText);
         }
         let expirytime = Math.floor((Date.now()/1000) + 5 * 60).toString();
-        const userTablePurgeResp = await axios.put(DB_APIurl + `users?tableName=harm-reduction-users`, {
-            "sample-id" : userTableResp.data['sample-id'],
-            "contact" : userTableResp.data['contact'],
-            "purge": expirytime
-        });
+        const updatePurgeCMD = new PutItemCommand({
+            TableName: USERTABLE,
+            Item: {
+                "sample-id": newImg['sample-id'],
+                "contact": {S: contact},
+                "purge": {N: expirytime}
+            }
+        })
+        const userTablePurgeResp = await dynamoClient.Send(updatePurgeCMD);
             
         return sendMsgResp;
     }catch(err){
