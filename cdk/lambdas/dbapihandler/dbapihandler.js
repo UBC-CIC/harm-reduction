@@ -9,7 +9,9 @@ const headers = {
 
 exports.handler = async (event) => {
   const { httpMethod, path, body } = event;
-  const tableName = event.queryStringParameters['tableName'];
+  const stage = event.requestContext.stage;
+  let tableName = (stage === 'users') ? 'harm-reduction-users' : 'harm-reduction-samples';
+  
 
   if (httpMethod === 'POST') {
     return await createItem(tableName, JSON.parse(body));
