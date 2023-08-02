@@ -148,9 +148,16 @@ export class CdkStack extends cdk.Stack {
 
     SendNotification.addToRolePolicy(invokedbapiStatement); 
     SendNotification.addToRolePolicy(sessnsStatement);
+    SendNotification.addToRolePolicy(new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ["dynamodb:UpdateItem", "dynamodb:GetItem", "dynamodb:PutItem"],
+      resources: [UserTable.tableArn, `${UserTable.tableArn}/*`, `${SampleTable.tableArn}/*`, `${UserTable.tableArn}/*`]
+    }))
 
     // configure env var
     SendNotification.addEnvironment('DB_API_URL', DBapi.url);
+    SendNotification.addEnvironment('USERTABLE', UserTable.tableName);
+    SendNotification.addEnvironment('SAMPLETABLE', SampleTable.tableName);
     OTPApiHandler.addEnvironment('OTP_TABLE', OTPTable.tableName);
 
     DBApiHandler.addToRolePolicy(new iam.PolicyStatement({

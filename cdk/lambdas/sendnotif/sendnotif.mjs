@@ -1,10 +1,13 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
+import { DynamoDBClient, GetItemCommand, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
 import axios from 'axios'
 
-const REGION = process.env.AWS_REGION;
-const DB_APIurl = process.env.DB_API_URL;
+const REGION      = process.env.AWS_REGION;
+const DB_APIurl   = process.env.DB_API_URL;
 const ADMIN_EMAIL = process.env.EMAIL_ADDRESS;
+const USERTABLE   = process.env.USERTABLE;
+const SAMPLETABLE = process.env.SAMPLETABLE;
 
 export const handler = async(event) => {
     console.log(event.Records[0].dynamodb);
@@ -15,6 +18,8 @@ export const handler = async(event) => {
     
     const inconclusiveBodyText = '';
     const completeBodyText = 'placeholder - the results of your sample are ready';
+
+    const dynamoClient = new DynamoDBClient({region: REGION});
     
     try{
         const newStatus = newImg['status'].S;
@@ -27,6 +32,11 @@ export const handler = async(event) => {
         if(newStatus != 'Complete') {console.log('[ERROR]: invalid status'); return;}
         console.log('checking users table');
         
+        const getUserCMD = new GetItemCommand({
+            TableName: USERTABLE,
+            Key: {"sample-id": newImg['sample-id']},
+        });
+        const contactResp = await dynamoClient.send(getUserCMD);
         const userTableResp = await axios.get(DB_APIurl + `users?sample-id=${newImg['sample-id'].S}`);
         const contact = userTableResp.data.contact;
         
