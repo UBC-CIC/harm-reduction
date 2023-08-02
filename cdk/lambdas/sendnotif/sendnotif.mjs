@@ -22,7 +22,7 @@ export const handler = async(event) => {
         
         if(oldStatus == newStatus) {console.log('[ERROR]: no status change'); return;}
         console.log('statuses are different');
-        if(newStatus == 'Inconclusive') sendSES(ADMIN_EMAIL, 'Alert - Test is Inconclusive', inconclusiveBodyText)
+        if(newStatus == 'Manual Testing Required') sendSES(ADMIN_EMAIL, 'Alert - Action Required', inconclusiveBodyText)
         console.log('status is not inconclusive');
         if(newStatus != 'Complete') {console.log('[ERROR]: invalid status'); return;}
         console.log('checking users table');
