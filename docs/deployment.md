@@ -144,9 +144,9 @@ password must:
     - contain at least one special character
 ```
 
-Copy the `userpool id` found in the box labeled `user pool overview`, this value will be used in the step below. Then, navigate to the AWS [Cloudshell](https://us-west-2.console.aws.amazon.com/cloudshell), ensure that the region displayed in the top right is the region in which your app is deployed.
+Copy the `userpool id` found in the box labeled `user pool overview`, this value will be used in the step below.
 
-Enter the command shown below in the command line to set a permanent password for your user
+Then, in the same command line where you executed `aws configure` during Step 3, enter the command shown below to set a permanent password for your user.
 
 ```bash
 aws cognito-idp admin-set-user-password --user-pool-id "PASTE_USER_POOL_ID_HERE" --username "PASTE_USERNAME_HERE" --password "ENTER_NEW_PASSWORD_HERE" --permanent
