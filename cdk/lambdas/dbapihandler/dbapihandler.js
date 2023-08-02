@@ -9,8 +9,8 @@ const headers = {
 
 exports.handler = async (event) => {
   const { httpMethod, path, body } = event;
-  const stage = event.requestContext.stage;
-  let tableName = (stage === 'users') ? 'harm-reduction-users' : 'harm-reduction-samples';
+  const resource = event.requestContext.resourcePath;
+  let tableName = (resource === '/users') ? 'harm-reduction-users' : 'harm-reduction-samples';
   
 
   if (httpMethod === 'POST') {
