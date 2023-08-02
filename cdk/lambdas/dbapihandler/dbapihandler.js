@@ -2,7 +2,7 @@ const AWS = require('aws-sdk');
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 const headers = {
-  "Access-Control-Allow-Headers" : "Content-Type",
+  "Access-Control-Allow-Headers" : "Origin, X-Requested-With, Content-Type, Accept, Authorization",
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "DELETE,PUT,POST,GET,OPTIONS"
 }
@@ -30,6 +30,12 @@ exports.handler = async (event) => {
     }
   } else if (httpMethod === 'DELETE') {
     return await deleteItem(tableName, event.queryStringParameters['sample-id']);
+  } else if (httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 204,
+      headers: headers,
+      body: JSON.stringify({ message: 'No content' }),
+    }
   }
 
   return {
