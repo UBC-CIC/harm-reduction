@@ -26,19 +26,22 @@ export class CdkStack extends cdk.Stack {
     const OTPTable = new dynamodb.Table(this, 'OTPTable', {
       partitionKey: { name: 'recipient', type: dynamodb.AttributeType.STRING },
       tableName: 'harm-reduction-otps',
-      timeToLiveAttribute: 'expiry'
+      timeToLiveAttribute: 'expiry',
+      removalPolicy: cdk.RemovalPolicy.DESTROY
     });
 
     const SampleTable = new dynamodb.Table(this, 'SampleTable', {
       partitionKey: {name: 'sample-id', type: dynamodb.AttributeType.STRING},
       tableName: 'harm-reduction-samples',
       stream: dynamodb.StreamViewType.NEW_AND_OLD_IMAGES,
+      removalPolicy: cdk.RemovalPolicy.DESTROY
     });
 
     const UserTable = new dynamodb.Table(this, 'UserTable', {
       partitionKey: {name: 'sample-id', type: dynamodb.AttributeType.STRING},
       tableName: 'harm-reduction-users',
-      timeToLiveAttribute: 'purge'
+      timeToLiveAttribute: 'purge',
+      removalPolicy: cdk.RemovalPolicy.DESTROY
     });
 
     // Lambdas
@@ -181,6 +184,7 @@ export class CdkStack extends cdk.Stack {
         challengeRequiredOnNewDevice: false,
         deviceOnlyRememberedOnUserPrompt: false
       },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
     const adminPoolClient = adminPool.addClient('adminpoolclient', {
