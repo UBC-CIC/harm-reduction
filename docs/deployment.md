@@ -9,7 +9,7 @@ Before you deploy, you must have the following in place:
 * [AWS CLI](https://aws.amazon.com/cli/)
 * [Node.js](https://nodejs.org/en)
 
-## Step 1: Clone The Repository
+# Step 1: Clone The Repository
 
 First, clone the github repository onto your machine. To do this:
 
@@ -24,7 +24,7 @@ cd harm-reduction
 git clone https://github.com/UBC-CIC/harm-reduction.git
 ```
 
-## Step 2: Frontend Deployment
+# Step 2: Frontend Deployment
 The **Deploy to Amplify Console** button will take you to your AWS console to deploy the front-end solution.
 
 [![amplifybutton](https://oneclick.amplifyapp.com/button.svg)](https://console.aws.amazon.com/amplify/home#/create)
