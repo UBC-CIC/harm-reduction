@@ -67,13 +67,13 @@ const About = () => {
                         href="https://www.google.ca"
                         sx={{ml:2, mb:1}}
                     >
-                        UBC lab develops new, portable drug-checking device ahead of limited decriminalization
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                         </Link>
                     <Link 
                         href="https://www.google.ca"
                         sx={{ml:2, mb:1}}
                     >
-                        UBC lab testing new portable drug-checking device
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                     </Link>
                 </Box>
         </Box>
@@ -119,13 +119,13 @@ const About = () => {
                     href="https://www.google.ca"
                     sx={{ml:2, mb:1}}
                 >
-                    UBC lab develops new, portable drug-checking device ahead of limited decriminalization
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua
                     </Link>
                 <Link 
                     href="https://www.google.ca"
                     sx={{ml:2, mb:1}}
                 >
-                    UBC lab testing new portable drug-checking device
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </Link>
             </Box>
         </Box>
