@@ -100,7 +100,7 @@ cdk destroy
 ## Output Values
 Once the cdk deployment is complete, you should see four values in the terminal under the line **Outputs**, copy these values into a text file, as they will be important in the next step of the deployment.
 
-# Step 4: Configure Environmental Variables
+# Step 4: Configure Environment Variables
 
 Now that the back end has been deployed, we can configure the environmental variables on amplify in order to point the frontend to the correct resources to access.
 
@@ -120,7 +120,7 @@ Once you have added the variables, your screen should look something like the im
 
 Finally, go back to the tab labled `harm reduction`, under the `hosting environments` tab, select the deployment named `main`. Click the button **Redeploy this version** to allow for your changes to take place.
 
-# Step 5: Configure Admin Profile & Email
+# Step 5: Configure Admin User & Admin Email
 
 Now the web app has been deployed, we will configure the admin user, and the email from which notifications will be sent to the user. The admin user will be provisioned through cognito, and the admin email address will be verified through SES.
 
