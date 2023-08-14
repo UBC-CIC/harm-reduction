@@ -24,7 +24,7 @@ The following architecture diagram illustrates the various AWS components utiliz
 
 ### Home Page
 
-![alt text](./docs/images/home.png)
+![alt text](./docs/images/homepage.png)
 
 ### Public Table of Samples
 
