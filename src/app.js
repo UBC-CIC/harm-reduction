@@ -19,10 +19,10 @@ function App() {
         {isMobile ? <MobileNavBar/> : <NavBar />}
         <Switch>
           <Route path="/Table"><PublicTable /></Route>
-          <Route path="/Track"><TrackSample /></Route>
+          {/* <Route path="/Track"><TrackSample /></Route> */}
           <Route path="/Admin"><Admin /></Route>
-          <Route path="/Resources"><Resources /></Route>
-          <Route path="/"><About /></Route>
+          {/* <Route path="/Resources"><Resources /></Route> */}
+          <Route path="/"><TrackSample /></Route>
         </Switch>
       </Router>
     </Box>
