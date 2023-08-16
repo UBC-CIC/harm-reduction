@@ -103,18 +103,19 @@ export class CdkStack extends cdk.Stack {
     const DBSample = DBapi.root.addResource('samples');
     const DBUser = DBapi.root.addResource('users');
 
-    DBSample.addMethod('POST', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    DBSample.addMethod('GET', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    DBSample.addMethod('PUT', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    DBSample.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    DBSample.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    DBUser.addMethod('POST', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+    DBSample.addMethod('POST', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
+    DBSample.addMethod('GET', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
+    DBSample.addMethod('PUT', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
+    DBSample.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
+    DBSample.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
+    DBUser.addMethod('POST', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
     DBUser.addMethod('GET', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {
       authorizationType: apigateway.AuthorizationType.IAM,
+      apiKeyRequired: true
     });
-    DBUser.addMethod('PUT', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    DBUser.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    DBUser.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+    DBUser.addMethod('PUT', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
+    DBUser.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
+    DBUser.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
 
     const methodSettingProperty: apigateway.CfnDeployment.MethodSettingProperty = {
       cacheDataEncrypted: false,
