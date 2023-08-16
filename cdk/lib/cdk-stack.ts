@@ -129,6 +129,20 @@ export class CdkStack extends cdk.Stack {
       throttlingRateLimit: 123,
     };
 
+    // API Key
+    const apiKey = new apigateway.CfnApiKey(this, 'MyApiKey', {
+      enabled: true,
+      stageKeys: [{
+        restApiId: DBapi.restApiId,
+        stageName: DBapi.deploymentStage.stageName,
+      }],
+    });
+
+    // Output the API key value to the console
+    new cdk.CfnOutput(this, 'ApiKeyOutput', {
+      value: apiKey.ref,
+    });
+
     // Lambda Permissions
     const invokedbapiStatement = new iam.PolicyStatement();
     invokedbapiStatement.addActions("execute-api:Invoke");

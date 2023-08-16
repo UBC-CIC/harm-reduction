@@ -21,6 +21,7 @@ import dayjs from 'dayjs';
 const REGION = process.env.REACT_APP_AWS_REGION;
 const DB_APIurl = process.env.REACT_APP_DB_API_URL;
 const OTP_APIurl = process.env.REACT_APP_OTP_API_URL;
+const API_KEY = process.env.REACT_APP_API_KEY;
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   '&': {
@@ -55,7 +56,12 @@ const SampleTable = () => {
   const fetchSamples = async () => {
     try {
       const response = await axios.get(
-        DB_APIurl + 'samples?tableName=harm-reduction-samples'
+        DB_APIurl + 'samples?tableName=harm-reduction-samples',
+        {
+          headers: {
+            'x-api-key': API_KEY,
+          }
+        }
       );
       const data = response.data;
       setSamples(data);

@@ -5,6 +5,7 @@ import axios from 'axios'
 const REGION = process.env.AWS_REGION;
 const DB_APIurl = process.env.DB_API_URL;
 const ADMIN_EMAIL = process.env.EMAIL_ADDRESS;
+const API_KEY = process.env.REACT_APP_API_KEY;
 
 export const handler = async(event) => {
     console.log(event.Records[0].dynamodb);
@@ -27,7 +28,11 @@ export const handler = async(event) => {
         if(newStatus != 'Complete') {console.log('[ERROR]: invalid status'); return;}
         console.log('checking users table');
         
-        const userTableResp = await axios.get(DB_APIurl + `users?tableName=harm-reduction-users&sample-id=${newImg['sample-id'].S}`);
+        const userTableResp = await axios.get(DB_APIurl + `users?tableName=harm-reduction-users&sample-id=${newImg['sample-id'].S}`, {
+            headers: {
+                'x-api-key': API_KEY,
+            }
+        });
         const contact = userTableResp.data.contact;
         
         if(checkEmailOrPhone(contact) == 'neither') {console.log('[ERROR]: invalid contact'); return;}
@@ -45,6 +50,11 @@ export const handler = async(event) => {
             "sample-id" : userTableResp.data['sample-id'],
             "contact" : userTableResp.data['contact'],
             "purge": expirytime
+        },
+        {
+            headers: {
+                'x-api-key': API_KEY,
+            }
         });
             
         return sendMsgResp;
