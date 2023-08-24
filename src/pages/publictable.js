@@ -23,6 +23,8 @@ const DB_APIurl = process.env.REACT_APP_DB_API_URL;
 const OTP_APIurl = process.env.REACT_APP_OTP_API_URL;
 const API_KEY = process.env.REACT_APP_API_KEY;
 
+axios.defaults.headers['X-API-KEY'] = API_KEY;
+
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   '&': {
     fontSize: 11,
@@ -57,11 +59,11 @@ const SampleTable = () => {
     try {
       const response = await axios.get(
         DB_APIurl + 'samples?tableName=harm-reduction-samples',
-        {
-          headers: {
-            'x-api-key': API_KEY,
-          }
-        }
+        // {
+        //   headers: {
+        //     'x-api-key': API_KEY,
+        //   }
+        // }
       );
       const data = response.data;
       setSamples(data);
