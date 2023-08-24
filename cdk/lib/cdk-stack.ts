@@ -94,6 +94,10 @@ export class CdkStack extends cdk.Stack {
         accessLogDestination: new apigateway.LogGroupLogDestination(prdLogGroup),
         accessLogFormat: apigateway.AccessLogFormat.jsonWithStandardFields(),
       },
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigateway.Cors.ALL_ORIGINS,
+        allowMethods: apigateway.Cors.ALL_METHODS // this is also the default
+      },
       cloudWatchRole: true,
       endpointConfiguration: {
         types: [ apigateway.EndpointType.REGIONAL ]
@@ -107,7 +111,7 @@ export class CdkStack extends cdk.Stack {
     DBSample.addMethod('GET', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
     DBSample.addMethod('PUT', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
     DBSample.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
-    DBSample.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
+    // DBSample.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
     DBUser.addMethod('POST', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
     DBUser.addMethod('GET', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {
       authorizationType: apigateway.AuthorizationType.IAM,
@@ -115,7 +119,7 @@ export class CdkStack extends cdk.Stack {
     });
     DBUser.addMethod('PUT', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
     DBUser.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
-    DBUser.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
+    // DBUser.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
 
     const methodSettingProperty: apigateway.CfnDeployment.MethodSettingProperty = {
       cacheDataEncrypted: false,

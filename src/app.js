@@ -22,7 +22,7 @@ function App() {
           <Route path="/Track"><TrackSample /></Route>
           <Route path="/Admin"><Admin /></Route>
           <Route path="/Resources"><Resources /></Route>
-          <Route path="/"><About /></Route>
+          <Route path="/"><TrackSample /></Route>
         </Switch>
       </Router>
     </Box>

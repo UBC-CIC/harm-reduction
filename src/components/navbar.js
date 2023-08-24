@@ -10,7 +10,6 @@ export const NavBar = () => {
         <Box>
             <AppBar position='static'>
                 <div className="navBar">
-                    <Link to="/" className='navbutton'>Home</Link>
                     <Link to="/Table" className='navbutton'>View All Samples</Link>
                     <Link to="/Track" className='navbutton'>Search via Sample ID</Link>
                 </div>
@@ -29,31 +28,6 @@ export const MobileNavBar = () => {
         <Box>
             <AppBar position="static">
                 <Toolbar sx={{display: 'flex', justifyContent:'space-between'}}>
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ m: 0.5 }}
-                        component={Link}
-                        to='/'
-                    >
-                        <HomeIcon />
-                    </IconButton>
-                    <Typography>UBC Harm Reduction</Typography>
-                    <IconButton
-                        size="large"
-                        edge="end"
-                        color="inherit"
-                        aria-label="menu"
-                        sx={{ m: 0.5 }}
-                        aria-controls={open ? 'basic-menu' : undefined}
-                        aria-haspopup="true"
-                        aria-expanded={open ? 'true' : undefined}
-                        onClick={handleClick}
-                    >
-                        <MenuIcon />
-                    </IconButton>
                     <Menu
                         anchorEl={anchorEl}
                         open={open}
