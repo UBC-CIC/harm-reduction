@@ -1,11 +1,12 @@
 import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
 import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
-import axios from 'axios'
+import { DynamoDBClient, GetItemCommand, PutItemCommand } from "@aws-sdk/client-dynamodb";
 
-const REGION = process.env.AWS_REGION;
-const DB_APIurl = process.env.DB_API_URL;
+const REGION      = process.env.AWS_REGION;
 const ADMIN_EMAIL = process.env.EMAIL_ADDRESS;
+
 const API_KEY = process.env.REACT_APP_API_KEY;
+
 
 export const handler = async(event) => {
     console.log(event.Records[0].dynamodb);
@@ -15,7 +16,9 @@ export const handler = async(event) => {
     const oldImg = event.Records[0].dynamodb.OldImage;
     
     const inconclusiveBodyText = '';
-    const completeBodyText = 'placeholder - the results of your sample are ready';
+    const completeBodyText = 'Harm Reduction - The results of your sample are ready';
+
+    const dynamoClient = new DynamoDBClient({region: REGION});
     
     try{
         const newStatus = newImg['status'].S;
@@ -28,12 +31,14 @@ export const handler = async(event) => {
         if(newStatus != 'Complete') {console.log('[ERROR]: invalid status'); return;}
         console.log('checking users table');
         
+
         const userTableResp = await axios.get(DB_APIurl + `users?tableName=harm-reduction-users&sample-id=${newImg['sample-id'].S}`, {
             headers: {
                 'x-api-key': API_KEY,
             }
         });
         const contact = userTableResp.data.contact;
+
         
         if(checkEmailOrPhone(contact) == 'neither') {console.log('[ERROR]: invalid contact'); return;}
         let sendMsgResp = 'null';
@@ -46,6 +51,7 @@ export const handler = async(event) => {
             sendMsgResp = await sendSNS(contact, 'Update from UBC Harm Reduction', completeBodyText);
         }
         let expirytime = Math.floor((Date.now()/1000) + 5 * 60).toString();
+
         const userTablePurgeResp = await axios.put(DB_APIurl + `users?tableName=harm-reduction-users`, {
             "sample-id" : userTableResp.data['sample-id'],
             "contact" : userTableResp.data['contact'],
@@ -56,6 +62,7 @@ export const handler = async(event) => {
                 'x-api-key': API_KEY,
             }
         });
+
             
         return sendMsgResp;
     }catch(err){

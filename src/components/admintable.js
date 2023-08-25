@@ -88,6 +88,7 @@ const SampleTable = () => {
             'x-api-key': API_KEY,
           }
         }
+
       );
       const data = response.data;
 

@@ -59,6 +59,7 @@ const TrackSample = () => {
                   'x-api-key': API_KEY,
                 }
               });
+
             const data = resp.data;
             setContentOptions([...new Set(data.map((sample) => sample['expected-content']))])
         }catch(err){
@@ -110,6 +111,7 @@ const TrackSample = () => {
                   'x-api-key': API_KEY,
                 }
               });
+
             const item = getresp.data;
             const resp = await axios.put(DB_APIurl + `samples?tableName=samples`,{
                 "status": item['status'],

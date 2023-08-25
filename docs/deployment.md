@@ -7,8 +7,9 @@ Before you deploy, you must have the following in place:
 * [AWS Account](https://aws.amazon.com/account/)
 * [GitHub Account](https://github.com/)
 * [AWS CLI](https://aws.amazon.com/cli/)
+* [Node.js](https://nodejs.org/en)
 
-## Step 1: Clone The Repository
+# Step 1: Clone The Repository
 
 First, clone the github repository onto your machine. To do this:
 
@@ -23,7 +24,7 @@ cd harm-reduction
 git clone https://github.com/UBC-CIC/harm-reduction.git
 ```
 
-## Step 2: Frontend Deployment
+# Step 2: Frontend Deployment
 The **Deploy to Amplify Console** button will take you to your AWS console to deploy the front-end solution.
 
 [![amplifybutton](https://oneclick.amplifyapp.com/button.svg)](https://console.aws.amazon.com/amplify/home#/create)
@@ -99,7 +100,7 @@ cdk destroy
 ## Output Values
 Once the cdk deployment is complete, you should see four values in the terminal under the line **Outputs**, copy these values into a text file, as they will be important in the next step of the deployment.
 
-# Step 4: Configure Environmental Variables
+# Step 4: Configure Environment Variables
 
 Now that the back end has been deployed, we can configure the environmental variables on amplify in order to point the frontend to the correct resources to access.
 
@@ -120,7 +121,7 @@ Once you have added the variables, your screen should look something like the im
 
 Finally, go back to the tab labled `harm reduction`, under the `hosting environments` tab, select the deployment named `main`. Click the button **Redeploy this version** to allow for your changes to take place.
 
-# Step 5: Configure Admin Profile & Email
+# Step 5: Configure Admin User & Admin Email
 
 Now the web app has been deployed, we will configure the admin user, and the email from which notifications will be sent to the user. The admin user will be provisioned through cognito, and the admin email address will be verified through SES.
 
@@ -144,9 +145,9 @@ password must:
     - contain at least one special character
 ```
 
-Copy the `userpool id` found in the box labeled `user pool overview`, this value will be used in the step below. Then, navigate to the AWS [Cloudshell](https://us-west-2.console.aws.amazon.com/cloudshell), ensure that the region displayed in the top right is the region in which your app is deployed.
+Copy the `userpool id` found in the box labeled `user pool overview`, this value will be used in the step below.
 
-Enter the command shown below in the command line to set a permanent password for your user
+Then, in the same command line where you executed `aws configure` during Step 3, enter the command shown below to set a permanent password for your user.
 
 ```bash
 aws cognito-idp admin-set-user-password --user-pool-id "PASTE_USER_POOL_ID_HERE" --username "PASTE_USERNAME_HERE" --password "ENTER_NEW_PASSWORD_HERE" --permanent
