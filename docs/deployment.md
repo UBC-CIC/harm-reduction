@@ -279,5 +279,26 @@ After submitting the requests for production access, the status of these request
 Below is an example cURL command that can be used to create a sample item in the backend. Please use the DB API endpoint you obtained during Deployment. 
 
 ```
-curl -X POST -H "Content-Type: application/json" -d '{"sample-id": "ABC123", "color": "White", "date-received": "1234567890", "expected-content": "Cocaine","is-used": "True", "location": "Vancouver, BC", "notes": "N/A", "status": "Manual Testing Required", "test-results": "Cocaine 95%, Uncertain Match 5%", "testing-method": "HPLC"}' <DB_API_URL>samples?tableName=harm-reduction-samples
+curl -X POST -H "Content-Type: application/json, x-api-key: <API_KEY>" -d '{"sample-id": "ABC123", "color": "White", "date-received": "2023-06-01", "expected-content": "Cocaine","is-used": "True", "location": "Vancouver, BC", "notes": "N/A", "status": "Manual Testing Required", "test-results": "Cocaine 95%, Uncertain Match 5%", "testing-method": "HPLC"}' <DB_API_URL>samples?tableName=harm-reduction-samples
+```
+
+Data sent through the API should be organized using the following database schema: 
+
+![database schema](./images/schema.png)
+
+An example of a JSON object sent via the API is shown below: 
+
+```
+{
+    "sample-id": "A1B2C3",
+    "color": "White",
+    "date-received": "2023-06-01",
+    "expected-content": "Methamphetamine",
+    "is-used": "N/A",
+    "location": "Vancouver, BC",
+    "notes": "N/A",
+    "status": "Pending",
+    "test-results": "Methamphetamine 90-95%, Fentanyl 5-10%",
+    "testing-method": "HPLC"
+},
 ```
