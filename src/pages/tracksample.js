@@ -24,6 +24,7 @@ import '../css/tracksample.css'
 const REGION = process.env.REACT_APP_AWS_REGION;
 const DB_APIurl = process.env.REACT_APP_DB_API_URL;
 const OTP_APIurl = process.env.REACT_APP_OTP_API_URL;
+const API_KEY = process.env.REACT_APP_API_KEY;
 
 const TrackSample = () => {
     const [pageState,     setPageState]     = useState(0); 
@@ -53,7 +54,12 @@ const TrackSample = () => {
 
     const getOptions = async () => {
         try{
-            const resp = await axios.get(DB_APIurl + 'samples?tableName=harm-reduction-samples');
+            const resp = await axios.get(DB_APIurl + 'samples?tableName=harm-reduction-samples', {
+                headers: {
+                  'x-api-key': API_KEY,
+                }
+              });
+
             const data = resp.data;
             setContentOptions([...new Set(data.map((sample) => sample['expected-content']))])
         }catch(err){
@@ -70,7 +76,11 @@ const TrackSample = () => {
         }
         getOptions();
         try{
-            const resp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-samples&sample-id=${sampleID}`);
+            const resp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-samples&sample-id=${sampleID}`, {
+                headers: {
+                  'x-api-key': API_KEY,
+                }
+              });
             setSampleID(resp.data['sample-id']);
             (resp.data['status'] === 'Manual Testing Required') ? setSampleStatus('Pending') : setSampleStatus(resp.data['status']);
             setSampleDate(resp.data['date-received']);
@@ -96,7 +106,12 @@ const TrackSample = () => {
         setDisplayGetMetadata(false);
 
         try{
-            const getresp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-samples&sample-id=${sampleID}`);
+            const getresp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-samples&sample-id=${sampleID}`, {
+                headers: {
+                  'x-api-key': API_KEY,
+                }
+              });
+
             const item = getresp.data;
             const resp = await axios.put(DB_APIurl + `samples?tableName=samples`,{
                 "status": item['status'],
@@ -110,6 +125,11 @@ const TrackSample = () => {
                 "notes": item["notes"],
                 "color": item["color"],
                 "testing-method": item["testing-method"],
+            },
+            {
+                headers: {
+                  'x-api-key': API_KEY,
+                }
             })
             expectedContentsField='';
             setSampleUsed(false);
@@ -132,6 +152,11 @@ const TrackSample = () => {
         const OTPInfo = await axios.post(OTP_APIurl + `otp?action=send`,{
             "recipient": recipient,
             "contactbyemail": (contactMethod == 'email'),
+        },
+        {
+            headers: {
+              'x-api-key': API_KEY,
+            }
         });
 
         setNewContact(contactField);
@@ -154,6 +179,10 @@ const TrackSample = () => {
             "recipient": newContact,
             "userOTP": OTP,
             "userRefID": referenceID
+        }, {
+            headers: {
+              'x-api-key': API_KEY,
+            }
         })
 
         if(!verifyResp.data.valid){
@@ -165,6 +194,11 @@ const TrackSample = () => {
             const updateContactResp = await axios.put(DB_APIurl + `users?tableName=harm-reduction-users`, {
                 "sample-id": sampleID,
                 "contact": newContact,
+            }, 
+            {
+                headers: {
+                  'x-api-key': API_KEY,
+                }
             });
 
             setNewContact('');

@@ -10,7 +10,6 @@ export const NavBar = () => {
         <Box>
             <AppBar position='static'>
                 <div className="navBar">
-                    <Link to="/" className='navbutton'>Home</Link>
                     <Link to="/Table" className='navbutton'>View All Samples</Link>
                     {/* <Link to="/Track" className='navbutton'>Search via Sample ID</Link> */}
                 </div>
@@ -29,6 +28,7 @@ export const MobileNavBar = () => {
         <Box>
             <AppBar position="static">
                 <Toolbar sx={{display: 'flex', justifyContent:'space-between'}}>
+
                     {/* <IconButton
                         size="large"
                         edge="start"

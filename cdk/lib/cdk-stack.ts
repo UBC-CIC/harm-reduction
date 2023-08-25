@@ -8,8 +8,10 @@ import { aws_dynamodb as dynamodb } from 'aws-cdk-lib';
 import { aws_lambda as lambda } from 'aws-cdk-lib';
 import { aws_apigateway as apigateway } from 'aws-cdk-lib';
 import { aws_cognito as cognito } from 'aws-cdk-lib';
+import { aws_secretsmanager as secretsmanager } from 'aws-cdk-lib';
 import { CfnWebACL, CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
 import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import crypto = require('crypto');
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 export class CdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -94,6 +96,10 @@ export class CdkStack extends cdk.Stack {
         accessLogDestination: new apigateway.LogGroupLogDestination(prdLogGroup),
         accessLogFormat: apigateway.AccessLogFormat.jsonWithStandardFields(),
       },
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigateway.Cors.ALL_ORIGINS,
+        allowMethods: apigateway.Cors.ALL_METHODS // this is also the default
+      },
       cloudWatchRole: true,
       endpointConfiguration: {
         types: [ apigateway.EndpointType.REGIONAL ]
@@ -103,18 +109,19 @@ export class CdkStack extends cdk.Stack {
     const DBSample = DBapi.root.addResource('samples');
     const DBUser = DBapi.root.addResource('users');
 
-    DBSample.addMethod('POST', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    DBSample.addMethod('GET', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    DBSample.addMethod('PUT', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    DBSample.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    DBSample.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    DBUser.addMethod('POST', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+    DBSample.addMethod('POST', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
+    DBSample.addMethod('GET', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
+    DBSample.addMethod('PUT', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
+    DBSample.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
+    // DBSample.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+    DBUser.addMethod('POST', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
     DBUser.addMethod('GET', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {
       authorizationType: apigateway.AuthorizationType.IAM,
+      apiKeyRequired: true
     });
-    DBUser.addMethod('PUT', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    DBUser.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
-    DBUser.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+    DBUser.addMethod('PUT', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
+    DBUser.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
+    // DBUser.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
 
     const methodSettingProperty: apigateway.CfnDeployment.MethodSettingProperty = {
       cacheDataEncrypted: false,
@@ -128,6 +135,32 @@ export class CdkStack extends cdk.Stack {
       throttlingBurstLimit: 123,
       throttlingRateLimit: 123,
     };
+
+    const apiKeyVal = crypto.randomBytes(20).toString('base64');
+
+    // API Key
+
+    const DBApiKey = new apigateway.ApiKey(this, 'DBApiKey', {
+      enabled: true,
+      value: apiKeyVal
+    })
+
+    // Output the API key value to the console
+    new cdk.CfnOutput(this, 'ApiKeyOutput', {
+      value: apiKeyVal
+    });
+
+    // API Usage Plan
+    const APIPlan = DBapi.addUsagePlan('DBPlan', {
+      name: 'DBPlan',
+      throttle: {
+        rateLimit: 5,
+        burstLimit: 10,
+      }
+    });
+
+    APIPlan.addApiStage({stage: DBapi.deploymentStage});
+    APIPlan.addApiKey(DBApiKey)
 
     // Lambda Permissions
     const invokedbapiStatement = new iam.PolicyStatement();

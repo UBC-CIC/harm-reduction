@@ -4,7 +4,9 @@ import { DynamoDBClient, GetItemCommand, PutItemCommand } from "@aws-sdk/client-
 
 const REGION      = process.env.AWS_REGION;
 const ADMIN_EMAIL = process.env.EMAIL_ADDRESS;
-const USERTABLE   = process.env.USERTABLE;
+
+const API_KEY = process.env.REACT_APP_API_KEY;
+
 
 export const handler = async(event) => {
     console.log(event.Records[0].dynamodb);
@@ -29,12 +31,14 @@ export const handler = async(event) => {
         if(newStatus != 'Complete') {console.log('[ERROR]: invalid status'); return;}
         console.log('checking users table');
         
-        const getUserCMD = new GetItemCommand({
-            TableName: USERTABLE,
-            Key: {"sample-id": newImg['sample-id']},
+
+        const userTableResp = await axios.get(DB_APIurl + `users?tableName=harm-reduction-users&sample-id=${newImg['sample-id'].S}`, {
+            headers: {
+                'x-api-key': API_KEY,
+            }
         });
-        const contactResp = await dynamoClient.send(getUserCMD);
-        const contact = contactResp.Item['contact'].S;
+        const contact = userTableResp.data.contact;
+
         
         if(checkEmailOrPhone(contact) == 'neither') {console.log('[ERROR]: invalid contact'); return;}
         let sendMsgResp = 'null';
@@ -47,15 +51,18 @@ export const handler = async(event) => {
             sendMsgResp = await sendSNS(contact, 'Update from UBC Harm Reduction', completeBodyText);
         }
         let expirytime = Math.floor((Date.now()/1000) + 5 * 60).toString();
-        const updatePurgeCMD = new PutItemCommand({
-            TableName: USERTABLE,
-            Item: {
-                "sample-id": newImg['sample-id'],
-                "contact": {S: contact},
-                "purge": {N: expirytime}
+
+        const userTablePurgeResp = await axios.put(DB_APIurl + `users?tableName=harm-reduction-users`, {
+            "sample-id" : userTableResp.data['sample-id'],
+            "contact" : userTableResp.data['contact'],
+            "purge": expirytime
+        },
+        {
+            headers: {
+                'x-api-key': API_KEY,
             }
-        })
-        const userTablePurgeResp = await dynamoClient.Send(updatePurgeCMD);
+        });
+
             
         return sendMsgResp;
     }catch(err){
