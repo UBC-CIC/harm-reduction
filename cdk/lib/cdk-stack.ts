@@ -8,8 +8,10 @@ import { aws_dynamodb as dynamodb } from 'aws-cdk-lib';
 import { aws_lambda as lambda } from 'aws-cdk-lib';
 import { aws_apigateway as apigateway } from 'aws-cdk-lib';
 import { aws_cognito as cognito } from 'aws-cdk-lib';
+import { aws_secretsmanager as secretsmanager } from 'aws-cdk-lib';
 import { CfnWebACL, CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
 import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import crypto = require('crypto');
 // import * as sqs from 'aws-cdk-lib/aws-sqs';
 export class CdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -134,18 +136,18 @@ export class CdkStack extends cdk.Stack {
       throttlingRateLimit: 123,
     };
 
+    const apiKeyVal = crypto.randomBytes(20).toString('base64');
+
     // API Key
-    const apiKey = new apigateway.CfnApiKey(this, 'MyApiKey', {
+
+    const DBApiKey = new apigateway.ApiKey(this, 'DBApiKey', {
       enabled: true,
-      stageKeys: [{
-        restApiId: DBapi.restApiId,
-        stageName: DBapi.deploymentStage.stageName,
-      }],
-    });
+      value: apiKeyVal
+    })
 
     // Output the API key value to the console
     new cdk.CfnOutput(this, 'ApiKeyOutput', {
-      value: apiKey.ref,
+      value: apiKeyVal
     });
 
     // API Usage Plan
@@ -158,6 +160,7 @@ export class CdkStack extends cdk.Stack {
     });
 
     APIPlan.addApiStage({stage: DBapi.deploymentStage});
+    APIPlan.addApiKey(DBApiKey)
 
     // Lambda Permissions
     const invokedbapiStatement = new iam.PolicyStatement();
