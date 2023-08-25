@@ -148,6 +148,17 @@ export class CdkStack extends cdk.Stack {
       value: apiKey.ref,
     });
 
+    // API Usage Plan
+    const APIPlan = DBapi.addUsagePlan('DBPlan', {
+      name: 'DBPlan',
+      throttle: {
+        rateLimit: 5,
+        burstLimit: 10,
+      }
+    });
+
+    APIPlan.addApiStage({stage: DBapi.deploymentStage});
+
     // Lambda Permissions
     const invokedbapiStatement = new iam.PolicyStatement();
     invokedbapiStatement.addActions("execute-api:Invoke");
