@@ -57,3 +57,22 @@ This application was architected and developed by Michael O'Keefe and Muhan Li, 
 ## License
 
 This project is distributed under the [MIT License](./LICENSE).
+
+Licenses of libraries and tools used by the system are listed below
+
+| Library | License |
+| :---- | :---------- |
+| [aws-amplify-js](https://github.com/aws-amplify/amplify-js/tree/main) | [Apache-2.0](https://github.com/aws-amplify/amplify-js/blob/main/LICENSE) |
+| [aws-cdk](https://github.com/aws/aws-cdk) | [Apache-2.0](https://github.com/aws/aws-cdk/blob/main/LICENSE) |
+| [aws-constructs](https://github.com/aws/constructs) | [Apache-2.0](https://github.com/aws/constructs/blob/10.x/LICENSE) |
+| [aws-sdk-js](https://github.com/aws/aws-sdk-js/tree/master) | [Apache-2.0](https://github.com/aws/aws-sdk-js/blob/master/LICENSE.txt) |
+| [axios](https://github.com/axios/axios/tree/v1.x) | [MIT](https://github.com/axios/axios/blob/v1.x/LICENSE) |
+| [buffer](https://github.com/feross/buffer/tree/master) | [MIT](https://github.com/sanniassin/react-input-mask/blob/master/LICENSE.md) |
+| [dayjs](https://github.com/iamkun/dayjs) | [MIT](https://github.com/iamkun/dayjs/blob/dev/LICENSE) |
+| [emotion-js](https://github.com/emotion-js/emotion) | [MIT](https://github.com/emotion-js/emotion/blob/main/LICENSE) |
+| [Material UI](https://github.com/mui/material-ui) | [MIT](https://github.com/mui/material-ui/blob/master/LICENSE) |
+| [react](https://github.com/facebook/react) | [MIT](https://github.com/facebook/react/blob/main/LICENSE) |
+| [react-device-detect](https://github.com/duskload/react-device-detect) | [MIT](https://github.com/duskload/react-device-detect/blob/master/LICENSE) |
+| [react-input-mask](https://github.com/sanniassin/react-input-mask) | [MIT](https://github.com/sanniassin/react-input-mask/blob/master/LICENSE.md) |
+| [react-router](https://github.com/remix-run/react-router/tree/main) | [MIT](https://github.com/remix-run/react-router/blob/main/LICENSE.md) |
+| [source-map-support](https://github.com/evanw/node-source-map-support) | [MIT](https://github.com/evanw/node-source-map-support/blob/master/LICENSE.md)
