@@ -302,3 +302,6 @@ An example of a JSON object sent via the API is shown below:
     "testing-method": "HPLC"
 },
 ```
+
+# Optional: Configure Domain Name
+To congifure a custom domain name, please refer to the following [AWS documentation](https://docs.aws.amazon.com/amplify/latest/userguide/custom-domains.html)
