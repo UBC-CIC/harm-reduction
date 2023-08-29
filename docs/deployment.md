@@ -279,7 +279,7 @@ After submitting the requests for production access, the status of these request
 Below is an example cURL command that can be used to create a sample item in the backend. Please use the DB API endpoint you obtained during Deployment. 
 
 ```
-curl -X POST -H "Content-Type: application/json, x-api-key: <API_KEY>" -d '{"sample-id": "ABC123", "color": "White", "date-received": "2023-06-01", "expected-content": "Cocaine","is-used": "True", "location": "Vancouver, BC", "notes": "N/A", "status": "Manual Testing Required", "test-results": "Cocaine 95%, Uncertain Match 5%", "testing-method": "HPLC"}' <DB_API_URL>samples?tableName=harm-reduction-samples
+curl -X POST -H "Content-Type: application/json" -H "x-api-key: <API_KEY>" -d '{"sample-id": "ABC123", "color": "White", "date-received": "2023-06-01", "expected-content": "Cocaine","is-used": "True", "location": "Vancouver, BC", "notes": "N/A", "status": "Manual Testing Required", "test-results": "Cocaine 95%, Uncertain Match 5%", "testing-method": "HPLC"}' <DB_API_URL>samples?tableName=harm-reduction-samples
 ```
 The values for `API_KEY` and `DB_API_URL` can be found [here](#output-values) at the end of step 3.
 
@@ -303,3 +303,6 @@ An example of a JSON object sent via the API is shown below:
     "testing-method": "HPLC"
 },
 ```
+
+# Optional: Configure Domain Name
+To congifure a custom domain name, please refer to the following [AWS documentation](https://docs.aws.amazon.com/amplify/latest/userguide/custom-domains.html)
