@@ -46,6 +46,65 @@ The following architecture diagram illustrates the various AWS components utiliz
 
 To deploy this solution, please follow our [Deployment Guide](./docs/deployment.md).
 
+### Directories
+```
+├── amplify.yml
+├── cdk
+│   ├── bin
+│   │   └── cdk.ts
+│   ├── cdk.json
+│   ├── jest.config.js
+│   ├── lambdas
+│   │   ├── dbapihandler
+│   │   ├── otpapihandler
+│   │   └── sendnotif
+│   ├── lib
+│   │   └── cdk-stack.ts
+│   ├── package-lock.json
+│   ├── package.json
+│   └── tsconfig.json
+├── docs
+│   ├── architecture.md
+│   ├── deployment.md
+│   ├── images
+│   └── userguide.md
+├── package-lock.json
+├── package.json
+├── public
+└── src
+    ├── app.css
+    ├── app.js
+    ├── components
+    │   ├── admintable.js
+    │   └── navbar.js
+    ├── css
+    │   ├── admintable.css
+    │   ├── navbar.css
+    │   └── tracksample.css
+    ├── index.css
+    ├── index.js
+    ├── pages
+    │   ├── about.js
+    │   ├── admin.js
+    │   ├── publictable.js
+    │   ├── resource.js
+    │   └── tracksample.js
+    └── utils
+        └── loginworker.js
+```
+1. `amplify.yml`: The build settings file, amplify automatically applies the configuration described in this file to the frontend deployment
+2. `/cdk`: Contains the cdk app, which is used to deploy all the backend resources used in this project
+    - `/bin`: Contains the `cdk.ts` file, which is a part of the cdk app
+    - `/lambdas`: Contains the 3 lambda functions that are a part of the backend, each subdirectory under `/lambdas` contains one file that contain the code that is a part of its corresponding lambda function
+    - `/lib`: Contains the `cdk-stack.ts` file, which describes all the resource deployed as a part of the app
+3. `/docs`: Contains the various documentation relevant to the project
+4. `/public`: Contains some resources used for the frontend of the app
+5. `/src`: Contains the main source code that make up the frontend
+    - `/components`: Contains various components used as a part of the frontned
+    - `/css`: Contains various css files which help define the appearance of the frontend
+    - `/pages`: Contains one file corresponding to each page of the app, some pages are hidden and made inaccessible in the frontend
+    - `/utils`: Contains files containing utility functions used by the frontend of the app
+
 ## User Guide
 
 For instructions on how to use the web app, refer to the [User Guide](./docs/userguide.md).
