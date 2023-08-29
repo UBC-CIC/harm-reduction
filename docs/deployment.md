@@ -98,7 +98,7 @@ cdk destroy
 ```
 
 ## Output Values
-Once the cdk deployment is complete, you should see four values in the terminal under the line **Outputs**, copy these values into a text file, as they will be important in the next step of the deployment.
+Once the cdk deployment is complete, you should see four values in the terminal under the line **Outputs**, copy these values into a text file, as they will be important in the next step of the deployment. ![alt text](images/cdkout.png)
 
 # Step 4: Configure Environment Variables
 
@@ -281,6 +281,7 @@ Below is an example cURL command that can be used to create a sample item in the
 ```
 curl -X POST -H "Content-Type: application/json, x-api-key: <API_KEY>" -d '{"sample-id": "ABC123", "color": "White", "date-received": "2023-06-01", "expected-content": "Cocaine","is-used": "True", "location": "Vancouver, BC", "notes": "N/A", "status": "Manual Testing Required", "test-results": "Cocaine 95%, Uncertain Match 5%", "testing-method": "HPLC"}' <DB_API_URL>samples?tableName=harm-reduction-samples
 ```
+The values for `API_KEY` and `DB_API_URL` can be found [here](#output-values) at the end of step 3.
 
 Data sent through the API should be organized using the following database schema: 
 
