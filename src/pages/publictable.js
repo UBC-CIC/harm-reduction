@@ -54,9 +54,10 @@ const SampleTable = () => {
   }, []);
 
   const fetchSamples = async () => {
+    const columnsToRetrieve = "date-received,expected-content,test-results";
     try {
       const response = await axios.get(
-        DB_APIurl + 'samples?tableName=harm-reduction-samples',
+        DB_APIurl + 'samples?tableName=harm-reduction-samples&columns=' + columnsToRetrieve,
         {
           headers: {
             'x-api-key': API_KEY,

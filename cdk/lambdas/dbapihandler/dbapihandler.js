@@ -22,8 +22,12 @@ exports.handler = async (event) => {
       return await getUser(tableName, event.queryStringParameters['sample-id']);
     } else if (tableName === 'harm-reduction-samples') {
       const sampleId = event.queryStringParameters['sample-id'];
+      const columns = event.queryStringParameters['columns'];
       if (sampleId) {
         return await getSample(tableName, sampleId);
+      }
+      else if (columns) {
+        return await getAllPublicSampleData(tableName, columns);
       } else {
         return await getAllSamples(tableName);
       }
@@ -152,6 +156,40 @@ async function getSample(tableName, sampleId) {
 async function getAllSamples(tableName) {
   const params = {
     TableName: tableName,
+  };
+
+  try {
+    const { Items } = await dynamodb.scan(params).promise();
+    return {
+      statusCode: 200,
+      headers: headers,
+      body: JSON.stringify(Items),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers: headers,
+      body: JSON.stringify({ message: 'Failed to retrieve items', error }),
+    };
+  }
+}
+
+async function getAllPublicSampleData(tableName, columns) {
+  const columnsOriginal = columns.split(',');
+  
+  const columnsModified = columnsOriginal.map(column => {
+    return `#${column.replace(/-/g, '_')}`; // Replace hyphens with underscores in attribute names
+  });
+  
+  const expressionAttributeNames = {};
+  for (let i = 0; i < columnsOriginal.length; i++) {
+    expressionAttributeNames[columnsModified[i]] = columnsOriginal[i];
+  }
+  
+  const params = {
+    TableName: tableName,
+    ProjectionExpression: columnsModified.join(', '),
+    ExpressionAttributeNames: expressionAttributeNames,
   };
 
   try {
