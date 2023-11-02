@@ -11,7 +11,7 @@ export const NavBar = () => {
             <AppBar position='static'>
                 <div className="navBar">
                     <Link to="/Table" className='navbutton'>View All Samples</Link>
-                    {/* <Link to="/Track" className='navbutton'>Search via Sample ID</Link> */}
+                    <Link to="/" className='navbutton'>Search via Sample ID</Link>
                 </div>
             </AppBar>
         </Box>
