@@ -91,11 +91,6 @@ The next two commands will provision resources required to deploy the full stack
 cdk bootstrap
 cdk deploy
 ```
-## Delete / Cleanup
-In order to delete the stack deployed in the step above, run the following command
-```bash
-cdk destroy
-```
 
 ## Output Values
 Once the cdk deployment is complete, you should see four values in the terminal under the line **Outputs**, copy these values into a text file, as they will be important in the next step of the deployment. ![alt text](images/cdkout.png)
