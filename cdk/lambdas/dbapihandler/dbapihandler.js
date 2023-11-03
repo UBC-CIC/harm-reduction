@@ -23,11 +23,12 @@ exports.handler = async (event) => {
     } else if (tableName === 'harm-reduction-samples') {
       const sampleId = event.queryStringParameters['sample-id'];
       const columns = event.queryStringParameters['columns'];
+      const status = event.queryStringParameters['status'];
       if (sampleId) {
         return await getSample(tableName, sampleId);
       }
       else if (columns) {
-        return await getAllPublicSampleData(tableName, columns);
+        return await getAllPublicSampleData(tableName, columns, status);
       } else {
         return await getAllSamples(tableName);
       }
@@ -174,7 +175,7 @@ async function getAllSamples(tableName) {
   }
 }
 
-async function getAllPublicSampleData(tableName, columns) {
+async function getAllPublicSampleData(tableName, columns, status) {
   const columnsOriginal = columns.split(',');
   
   const columnsModified = columnsOriginal.map(column => {
@@ -190,6 +191,10 @@ async function getAllPublicSampleData(tableName, columns) {
     TableName: tableName,
     ProjectionExpression: columnsModified.join(', '),
     ExpressionAttributeNames: expressionAttributeNames,
+    FilterExpression: '#status = :status', // Use an alias for "status"
+    ExpressionAttributeValues: {
+      ':status': status,
+    },
   };
 
   try {
