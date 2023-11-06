@@ -102,6 +102,7 @@ const SampleTable = () => {
               <DatePicker
                 label="Date Received"
                 inputFormat="YYYY-MM-DD"
+                format="YYYY-MM-DD"
                 value={searchQueryDateReceived}
                 onChange={(newValue) => setSearchQueryDateReceived(dayjs(newValue).format('YYYY-MM-DD'))}
                 slotProps={{
