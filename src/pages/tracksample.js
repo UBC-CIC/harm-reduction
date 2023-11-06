@@ -46,11 +46,11 @@ const TrackSample = () => {
     const [sampleUsed,     setSampleUsed]     = useState(false);
     const [sampleTable,    setSampleTable]    = useState([]);
     const [contentOptions, setContentOptions] = useState([]);
+    const [expectedContentsField, setExpectedContentsField] = useState('');
     
     let   trackingID;
     let   contactField;
     let   enteredOTP;
-    let   expectedContentsField = '';
 
     const getOptions = async () => {
         try{
@@ -130,8 +130,8 @@ const TrackSample = () => {
                 headers: {
                   'x-api-key': API_KEY,
                 }
-            })
-            expectedContentsField='';
+            });
+            setExpectedContentsField('');
             setSampleUsed(false);
         }catch(err){
             console.log(err);
@@ -480,6 +480,8 @@ const TrackSample = () => {
                     sx={{width: WIDTH - 100, m:1}}
                     disableClearable
                     options={Array.from(contentOptions)}
+                    value={expectedContentsField}
+                    onChange={(event, value) => setExpectedContentsField(value)}
                     renderInput={(params) => (
                     <TextField
                         {...params}
@@ -499,7 +501,9 @@ const TrackSample = () => {
                     sx={{width: WIDTH - 100}}
                 >
                     <Typography style={{margin: '10px'}}>Has this sample been used?</Typography>
-                    <Checkbox onClick={(event) => {setSampleUsed(event.target.checked)}}/>
+                    <Checkbox
+                    sampleUsed = {sampleUsed} 
+                    onClick = {(event) => {setSampleUsed(event.target.checked)}}/>
                 </Box>
                 <Box
                     display="flex"
