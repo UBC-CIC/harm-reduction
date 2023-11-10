@@ -30,9 +30,11 @@ const TrackSample = () => {
     const [pageState,     setPageState]     = useState(0); 
     const [referenceID,   setReferenceID]   = useState('');
     const [newContact,    setNewContact]    = useState('');
+    const [newCensoredContact, setNewCensoredContact] = useState('');
     const [contactMethod, setContactMethod] = useState('email')
     
     const [displayError,         setDisplayError]         = useState(false);
+    const [displaySampleIDError,         setDisplaySampleIDError]         = useState(false);
     const [disableButton,        setDisableButton]        = useState(false);
     const [displaySavedMsg,      setDisplaySavedMsg]      = useState(false);
     const [displayContactEdit,   setDisplayContactEdit]   = useState(false);
@@ -46,6 +48,8 @@ const TrackSample = () => {
     const [sampleUsed,     setSampleUsed]     = useState(false);
     const [sampleTable,    setSampleTable]    = useState([]);
     const [contentOptions, setContentOptions] = useState([]);
+    const [sampleContactInfo, setSampleContactInfo]     = useState('');
+    const [sampleContactType, setSampleContactType] = useState('');
     const [expectedContentsField, setExpectedContentsField] = useState('');
     
     let   trackingID;
@@ -68,19 +72,22 @@ const TrackSample = () => {
     }
 
     const trackSample = async () => {
-        let sampleID = trackingID.trim();
-        sampleID = sampleID.toUpperCase();
-        if(!(/^[a-zA-Z0-9\s]{1,12}$/.test(sampleID))){
-            setDisplayError(true);
-            return;
-        }
-        getOptions();
         try{
+            let sampleID = trackingID.trim();
+            sampleID = sampleID.toUpperCase();
+            if(!(/^[a-zA-Z0-9\s]{1,12}$/.test(sampleID))){
+                setDisplaySampleIDError(true);
+                return;
+            }
+            getOptions();
+            getContactInfo(sampleID);
+
             const resp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-samples&sample-id=${sampleID}`, {
                 headers: {
                   'x-api-key': API_KEY,
                 }
               });
+
             setSampleID(resp.data['sample-id']);
             (resp.data['status'] === 'Manual Testing Required') ? setSampleStatus('Pending') : setSampleStatus(resp.data['status']);
             setSampleDate(resp.data['date-received']);
@@ -95,11 +102,73 @@ const TrackSample = () => {
 
             setDisplayContactEdit(false);
             setDisplayContactVerify(false);
-            setDisplayError(false);
+            setDisplaySampleIDError(false);
             setPageState(1);
         }catch(err){
-            setDisplayError(true);
+            setDisplaySampleIDError(true);
+            return;
         }
+    }
+
+    const getContactInfo = async(sampleID) => {
+        try{
+            const columnsToRetrieve = "censoredContact";
+            setSampleContactInfo('');
+            setSampleContactType('');
+
+            const contactResp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-users&sample-id=${sampleID}&columns=` + columnsToRetrieve, {
+                headers: {
+                'x-api-key': API_KEY,
+                }
+            });
+
+            setSampleContactInfo(contactResp.data['censoredContact']);
+            setSampleContactType(checkCensoredEmailOrPhone(contactResp.data['censoredContact']));
+        }   
+        catch(err){
+            if(err.response && err.response.status === 404){
+                // No contact info available
+            }
+            else{
+                setDisplayError(true);
+            }
+        }
+    }
+
+    function checkEmailOrPhone(string) {
+        const emailPattern = /^[\w\.-]+@[\w\.-]+\.\w+$/;
+        const phonePattern = /^(\+\d{1,3}\s?)?(\(\d{1,4}\)|\d{1,4})[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
+    
+        if(emailPattern.test(string)) return 'email';
+        if(phonePattern.test(string)) return 'phone';
+        return 'neither'
+    }
+
+    function checkCensoredEmailOrPhone(string) {
+        const emailPattern = /^[\w\.-]+@[\w\.-]+\.\w+$/;
+        const phonePattern = /^(\+\d{1,3}\s?)?(\(\d{1,4}\)|\d{1,4})[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
+    
+        if(string.length > 0 && string.includes('@')) return 'email';
+        else if(string.length > 0) return 'phone';
+        return 'neither'
+    }
+
+    function censorContactInfo(string){
+        const contactType = checkEmailOrPhone(string);
+        if (contactType === 'email') {
+            const parts = string.split('@');
+            const username = parts[0];
+            const domain = parts[1];
+            const censoredUsername = username.substring(0, 1) + '*'.repeat(username.length - 2) + username.substring(username.length - 1);
+            const censoredDomain = domain.substring(0, 1) + '*'.repeat(domain.length - 1);
+            return censoredUsername + '@' + censoredDomain;
+        } else if (contactType === 'phone') {
+            const allCensored = string.replace(/./g, '*');
+            const partialCensored = allCensored.substr(0,allCensored.length-2)
+            const lastTwoDigits = string.substr(-2);
+            return partialCensored + lastTwoDigits;
+          }
+        return 'Invalid contact information';
     }
 
     const saveMetadata = async () => {
@@ -113,7 +182,7 @@ const TrackSample = () => {
               });
 
             const item = getresp.data;
-            const resp = await axios.put(DB_APIurl + `samples?tableName=samples`,{
+            const resp = await axios.put(DB_APIurl + `samples?tableName=harm-reduction-samples`,{
                 "status": item['status'],
                 "sample-id": item["sample-id"],
                 "vial-id": item["vial-id"],
@@ -140,32 +209,39 @@ const TrackSample = () => {
     }
 
     const editContact = async () => {
-        let recipient = contactField.trim();
-        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-        const phoneRegex = /^\+?[0-9]{1,3}[-.\s]?\(?[0-9]{1,3}\)?[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,4}$/;
-        const valid = (contactMethod === 'email') ? emailRegex.test(recipient) : phoneRegex.test(recipient);
-        if(!valid){
+        try{
+            let recipient = contactField.trim();
+            const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+            const phoneRegex = /^\+?[0-9]{1,3}[-.\s]?\(?[0-9]{1,3}\)?[-.\s]?[0-9]{1,4}[-.\s]?[0-9]{1,4}$/;
+            const valid = (contactMethod === 'email') ? emailRegex.test(recipient) : phoneRegex.test(recipient);
+            if(!valid){
+                setDisplayError(true);
+                return;
+            }
+
+            const OTPInfo = await axios.post(OTP_APIurl + `otp?action=send`,{
+                "recipient": recipient,
+                "contactbyemail": (contactMethod == 'email'),
+            },
+            {
+                headers: {
+                'x-api-key': API_KEY,
+                }
+            });
+
+            setNewContact(contactField);
+            setNewCensoredContact(censorContactInfo(contactField))
+            setReferenceID(OTPInfo.data.refID);
+            
+            setDisplayError(false);
+            contactField = '';
+            setDisplayContactEdit(false);
+            setDisplayContactVerify(true);
+        }
+        catch(err){
             setDisplayError(true);
             return;
         }
-
-        const OTPInfo = await axios.post(OTP_APIurl + `otp?action=send`,{
-            "recipient": recipient,
-            "contactbyemail": (contactMethod == 'email'),
-        },
-        {
-            headers: {
-              'x-api-key': API_KEY,
-            }
-        });
-
-        setNewContact(contactField);
-        setReferenceID(OTPInfo.data.refID);
-        
-        setDisplayError(false);
-        contactField = '';
-        setDisplayContactEdit(false);
-        setDisplayContactVerify(true);
     }
 
     const verifyContact = async () => {
@@ -194,6 +270,7 @@ const TrackSample = () => {
             const updateContactResp = await axios.put(DB_APIurl + `users?tableName=harm-reduction-users`, {
                 "sample-id": sampleID,
                 "contact": newContact,
+                "censoredContact": newCensoredContact
             }, 
             {
                 headers: {
@@ -231,7 +308,7 @@ const TrackSample = () => {
             sx={{mt:4}}
         >
             <Typography variant='h6' align='center' sx={{m:1, width: WIDTH}}>Enter the sample ID provided on the package in the box below</Typography>
-            {displayError && <Alert sx={{m:1}}severity='error'> The sample ID you entered is invalid</Alert>}
+            {displaySampleIDError && <Alert sx={{m:1}}severity='error'> The sample ID you entered is invalid</Alert>}
             <TextField 
                 className="textbox" 
                 onChange={(event)=>{trackingID=event.target.value}}
@@ -285,6 +362,8 @@ const TrackSample = () => {
                         <Typography sx={{m: 1}} style={{textAlign: "left"}}> Sample ID: {`${sampleID}`} </Typography>                    
                         <Typography sx={{m: 1}} style={{textAlign: "right"}}> Status: {`${sampleStatus}`}</Typography>
                         <Typography sx={{m: 1}} style={{textAlign: "right"}}> Date Received: {`${sampleDate}`} </Typography>   
+                        <Typography sx={{m: 1}} style={{textAlign: "right"}}> Contact Info: {sampleContactInfo ? sampleContactInfo : 'N/A'} </Typography> 
+                        <Typography sx={{m: 1}} style={{textAlign: "right"}}> Contact Type: {sampleContactType ? sampleContactType.charAt(0).toUpperCase() + sampleContactType.slice(1) : 'N/A'} </Typography> 
                     </Box>
                     {displaySavedMsg && (
                         <Alert severity="success">Your contact information has been saved successfully</Alert>
@@ -532,89 +611,175 @@ const TrackSample = () => {
     }
 
     const ContactDisplay = () => {
+        const [isEditable, setIsEditable] = useState(false);
+        const [buttonText, setButtonText] = useState('Edit');
         const WIDTH = isMobile ? 400 : 700;
         const { value, onChange, ...otherProps } = [];
-        return(
+
+        const handleEditClick = () => {
+            if (isEditable) {
+              setIsEditable(false);
+              setButtonText('Edit');
+            } else {
+              setIsEditable(true);
+              setButtonText('Cancel');
+            }
+          };
+
+        return (
             <Box
-                sx={{
-                    boxShadow: 3,
-                    width: WIDTH,
-                    height: 'auto',
-                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
-                    color: (theme) =>
-                        theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
-                    p: 1,
-                    m: 2,
-                    borderRadius: 2,
-                    textAlign: 'center',
-                }}
-                display="flex"
-                flexDirection="column"
-                justifyContent="flex-start"
-                alignItems="center"
+              sx={{
+                boxShadow: 3,
+                width: WIDTH,
+                height: 'auto',
+                bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
+                color: (theme) => (theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800'),
+                p: 1,
+                m: 2,
+                borderRadius: 2,
+                textAlign: 'center',
+              }}
+              display="flex"
+              flexDirection="column"
+              justifyContent="flex-start"
+              alignItems="center"
             >
-                <Typography sx={{m:2}}>Enter your contact info below and receive notifications on the status of this sample</Typography>
-                <ToggleButtonGroup
-                    value={contactMethod}
-                    exclusive
-                    onChange={(event, newContactMethod) => {setContactMethod(newContactMethod)}}
-                    aria-label="text alignment"
-                    sx={{m:2, mt: 0}}
-                    >
-                    <ToggleButton value="email" aria-label="email">
-                        Email <EmailIcon sx={{ml:1}}/>
-                    </ToggleButton>
-                    <ToggleButton value="sms" aria-label="sms">
-                        <SmsIcon sx={{mr:1}}/> SMS
-                    </ToggleButton>
-                </ToggleButtonGroup>
-                {displayError && <Alert severity="error" sx={{m:1, mt:0}}>The contact info you entered is invalid</Alert>}
-                {(contactMethod == 'email') && <TextField 
-                    className="textbox" 
-                    onChange={(event)=>{contactField=event.target.value}}
-                    id="trackinginput" 
-                    label="Enter your email here" 
-                    variant="outlined" 
-                    sx={{ mb:2, width: WIDTH - 100}}
-                />}
-                {(contactMethod == 'sms') && <InputMask
-                    mask="+1 (999) 999-9999"
-                    onChange={(event) => contactField=event.target.value}
-                    maskChar=''
+              <Typography sx={{ m: 2 }}>
+                Enter your contact info below and receive notifications on the status of this sample
+              </Typography>
+              <ToggleButtonGroup
+                value={contactMethod}
+                exclusive
+                onChange={(event, newContactMethod) => {
+                  setContactMethod(newContactMethod);
+                }}
+                aria-label="text alignment"
+                sx={{ m: 2, mt: 0 }}
+              >
+                <ToggleButton value="email" aria-label="email">
+                  Email <EmailIcon sx={{ ml: 1 }} />
+                </ToggleButton>
+                <ToggleButton value="sms" aria-label="sms">
+                  <SmsIcon sx={{ mr: 1 }} /> SMS
+                </ToggleButton>
+              </ToggleButtonGroup>
+              {displayError && (
+                <Alert severity="error" sx={{ m: 1, mt: 0 }}>
+                  The contact info you entered is invalid
+                </Alert>
+              )}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '10px' }}>
+                {(sampleContactInfo && contactMethod == 'email' && sampleContactType == 'email') ? (
+                  <TextField
+                    className="textbox"
+                    onChange={(event) => {
+                      contactField = event.target.value;
+                    }}
                     id="trackinginput"
-                    >
-                    {() => (
-                        <TextField
-                        sx={{mb:2, width: WIDTH - 100}}
+                    label="Enter your email here"
+                    defaultValue={sampleContactInfo}
+                    variant="outlined"
+                    sx={{ width: WIDTH - 100 }}
+                    disabled={!isEditable}
+                  />
+                ) :
+                (contactMethod == 'email') && (
+                    <TextField
+                      className="textbox"
+                      onChange={(event) => {
+                        contactField = event.target.value;
+                      }}
+                      id="trackinginput"
+                      label="Enter your email here"
+                      variant="outlined"
+                      sx={{ width: WIDTH - 100 }}
+                    />
+                  )}
+                {(sampleContactInfo && contactMethod == 'sms' && sampleContactType == 'phone') ? (
+                  <InputMask
+                    mask="+1 (999) 999-9999"
+                    onChange={(event) => (contactField = event.target.value)}
+                    maskChar=""
+                    id="trackinginput"
+                  >
+                    {(inputProps) => (
+                      <TextField
+                        {...inputProps} 
+                        sx={{ width: WIDTH - 100 }}
                         variant="outlined"
-                        label="Enter your phone number here"
-                        />
+                        label={sampleContactInfo}
+                      />
                     )}
-                </InputMask>}
-                <Box
-                    display="flex"
-                    flexDirection="row"
-                    justifyContent="center"
-                    alignItems="center"
-                    sx={{mb:2}}
+                  </InputMask>
+                ) :
+                (contactMethod == 'sms') && (
+                    <InputMask
+                      mask="+1 (999) 999-9999"
+                      onChange={(event) => (contactField = event.target.value)}
+                      maskChar=""
+                      id="trackinginput"
+                    >
+                      {() => (
+                        <TextField
+                          sx={{ width: WIDTH - 100 }}
+                          variant="outlined"
+                          label="Enter your phone number here"
+                        />
+                      )}
+                    </InputMask>
+                  )}
+                {(sampleContactInfo && contactMethod == 'sms' && sampleContactType == 'phone') && ( // Check if sampleContactInfo is not empty
+                  <Button
+                    className="outlinedbutton"
+                    variant="outlined"
+                    onClick={handleEditClick}
+                    style={{ marginLeft: "10px" }}
+                  >
+                    {buttonText}
+                  </Button>
+                )}
+                {(sampleContactInfo && contactMethod == 'email' && sampleContactType == 'email') && ( // Check if sampleContactInfo is not empty
+                  <Button
+                    className="outlinedbutton"
+                    variant="outlined"
+                    onClick={handleEditClick}
+                    style={{ marginLeft: "10px" }}
+                  >
+                    {buttonText}
+                  </Button>
+                )}
+              </div>
+              <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mb: 2 }}
+              >
+                <Button
+                  className="containedbutton"
+                  variant="contained"
+                  onClick={() => {
+                    editContact();
+                  }}
+                  style={{ marginLeft: "10px", marginRight: "10px" }}
                 >
-                    <Button 
-                        className="containedbutton"
-                        variant="contained" 
-                        onClick={() => {editContact()}}
-                        style={{ marginLeft: "10px" , marginRight: "10px" }}
-                    >Save
-                    </Button>
-                    <Button 
-                        className="outlinedbutton"
-                        variant="outlined" 
-                        onClick={() => {setDisplayContactEdit(false); setDisplayError(false)}}
-                        style={{ marginLeft: "10px" , marginRight: "10px" }}
-                    >Close without saving
-                    </Button>
-                </Box>
+                  Save
+                </Button>
+                <Button
+                  className="outlinedbutton"
+                  variant="outlined"
+                  onClick={() => {
+                    setDisplayContactEdit(false);
+                    setDisplayError(false);
+                  }}
+                  style={{ marginLeft: "10px", marginRight: "10px" }}
+                >
+                  Close without saving
+                </Button>
+              </Box>
             </Box>
-        )
+          );                 
     }
 
     const ContactVerify = () => {

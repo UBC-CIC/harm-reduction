@@ -10,7 +10,8 @@ const headers = {
 exports.handler = async (event) => {
   const { httpMethod, path, body } = event;
   const resource = event.requestContext.resourcePath;
-  let tableName = (resource === '/users') ? 'harm-reduction-users' : 'harm-reduction-samples';
+  const tableName = event.queryStringParameters['tableName']
+  //let tableName = (resource === '/users') ? 'harm-reduction-users' : 'harm-reduction-samples';
   
 
   if (httpMethod === 'POST') {
@@ -19,7 +20,14 @@ exports.handler = async (event) => {
     return await updateItem(tableName, JSON.parse(body));
   } else if (httpMethod === 'GET') {
     if (tableName === 'harm-reduction-users') {
-      return await getUser(tableName, event.queryStringParameters['sample-id']);
+      const userColumns = event.queryStringParameters['columns'];
+      const userSampleId = event.queryStringParameters['sample-id'];
+      if (userColumns){
+        return getCensoredUser(tableName, userSampleId, userColumns)
+      }
+      else{
+        return await getUser(tableName, userSampleId);
+      }
     } else if (tableName === 'harm-reduction-samples') {
       const sampleId = event.queryStringParameters['sample-id'];
       const columns = event.queryStringParameters['columns'];
@@ -97,6 +105,37 @@ async function updateItem(tableName, item) {
 async function getUser(tableName, sampleId) {
   const params = {
     TableName: tableName,
+    Key: { 'sample-id': sampleId },
+  };
+
+  try {
+    const { Item } = await dynamodb.get(params).promise();
+    if (Item) {
+      return {
+        statusCode: 200,
+        headers: headers,
+        body: JSON.stringify(Item),
+      };
+    } else {
+      return {
+        statusCode: 404,
+        headers: headers,
+        body: JSON.stringify({ message: 'Item not found' }),
+      };
+    }
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers: headers, 
+      body: JSON.stringify({ message: 'Failed to retrieve item', error }),
+    };
+  }
+}
+
+async function getCensoredUser(tableName, sampleId, columns) {
+  const params = {
+    TableName: tableName,
+    ProjectionExpression: columns,
     Key: { 'sample-id': sampleId },
   };
 
