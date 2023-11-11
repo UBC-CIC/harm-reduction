@@ -227,13 +227,19 @@ export class CdkStack extends cdk.Stack {
 
     const adminPoolClient = adminPool.addClient('adminpoolclient', {
       authFlows: {
-        userPassword: true
+        userPassword: true,
+        userSrp: true,
       }
     });
 
     new cdk.CfnOutput(this, 'CognitoClientID', {
       value: adminPoolClient.userPoolClientId,
       description: 'Cognito user pool Client ID'
+    });
+
+    new cdk.CfnOutput(this, 'CognitoUserPoolID', {
+      value: adminPool.userPoolId,
+      description: 'Cognito user pool ID'
     });
 
     // Store the gateway ARN for use with our WAF stack 
