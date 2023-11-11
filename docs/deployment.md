@@ -109,6 +109,7 @@ Then, add the following variables
 |REACT_APP_DB_API_URL|paste name of the DB API url here|
 |REACT_APP_OTP_API_URL|paste name of the OTP API url here|
 |REACT_APP_COGCLIENT|paste CognitoClientID here|
+|REACT_APP_USERPOOLID|paste CognitoUserPoolID here|
 |REACT_APP_API_KEY|paste ApiKeyOutput here|
 
 Once you have added the variables, your screen should look something like the image below, click save to save your changes
