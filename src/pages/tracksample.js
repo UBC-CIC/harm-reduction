@@ -34,7 +34,8 @@ const TrackSample = () => {
     const [contactMethod, setContactMethod] = useState('email')
     
     const [displayError,         setDisplayError]         = useState(false);
-    const [displaySampleIDError,         setDisplaySampleIDError]         = useState(false);
+    const [displaySampleIDError, setDisplaySampleIDError] = useState(false);
+    const [displayExpectedContentsError, setDisplayExpectedContentsError] = useState(false);
     const [disableButton,        setDisableButton]        = useState(false);
     const [displaySavedMsg,      setDisplaySavedMsg]      = useState(false);
     const [displayContactEdit,   setDisplayContactEdit]   = useState(false);
@@ -175,6 +176,13 @@ const TrackSample = () => {
     }
 
     const saveMetadata = async () => {
+        // Check if expectedContentsField is empty
+        if (!expectedContentsField) {
+            setDisplayExpectedContentsError(true);
+            console.log('expectedContentsField is empty. Aborting the function.');
+            return;
+        }
+        
         setDisplayGetMetadata(false);
 
         try{
@@ -205,6 +213,7 @@ const TrackSample = () => {
             });
             setExpectedContentsField('');
             setSampleUsed(false);
+            setDisplayExpectedContentsError(false);
         }catch(err){
             console.log(err);
         }
@@ -557,6 +566,7 @@ const TrackSample = () => {
                 alignItems="center"
             >   
                 <Typography style={{margin: '10px'}}>Submit additional information about this sample</Typography>
+                {displayExpectedContentsError && <Alert sx={{m:1}}severity='error'> Please enter a value for Expected Contents</Alert>}
                 <Autocomplete
                     freeSolo
                     sx={{width: WIDTH - 100, m:1}}
@@ -568,6 +578,7 @@ const TrackSample = () => {
                     <TextField
                         {...params}
                         label="Expected contents of the sample"
+                        helperText="Select an option from the menu or type your own value and press the Enter key to save it"
                         InputProps={{
                         ...params.InputProps,
                         type: 'search',
@@ -604,7 +615,10 @@ const TrackSample = () => {
                     <Button
                         className="outlinedbutton" 
                         variant="outlined" 
-                        onClick={() => {setDisplayGetMetadata(false)}}
+                        onClick={() => {
+                            setDisplayGetMetadata(false)
+                            setDisplayExpectedContentsError(false);
+                        }}
                         sx={{m:1,mb:2}}
                     >Close without saving
                     </Button>
