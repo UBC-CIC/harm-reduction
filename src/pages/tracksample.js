@@ -80,13 +80,17 @@ const TrackSample = () => {
                 return;
             }
             getOptions();
-            getContactInfo(sampleID);
 
             const resp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-samples&sample-id=${sampleID}`, {
                 headers: {
                   'x-api-key': API_KEY,
                 }
               });
+
+            if (resp && !resp.error) {
+                // Call getContactInfo only if resp exists and there are no errors
+                getContactInfo(sampleID);
+            }
 
             setSampleID(resp.data['sample-id']);
             (resp.data['status'] === 'Manual Testing Required') ? setSampleStatus('Pending') : setSampleStatus(resp.data['status']);
@@ -106,7 +110,6 @@ const TrackSample = () => {
             setPageState(1);
         }catch(err){
             setDisplaySampleIDError(true);
-            return;
         }
     }
 
@@ -414,7 +417,6 @@ const TrackSample = () => {
                     sx={{
                         boxShadow: 3,
                         width: 400,
-                        height: 200,
                         bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#101010' : '#fff'),
                         color: (theme) =>
                             theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
@@ -429,6 +431,7 @@ const TrackSample = () => {
                     alignItems="flex-start"
                 >
                     <Typography style={{ margin: '10px' }}>Search for another sample</Typography>
+                    {displaySampleIDError && <Alert sx={{m:1}}severity='error'> The sample ID you entered is invalid</Alert>}
                     <Box
                         sx={{width: 400}}
                         display="flex"
