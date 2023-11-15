@@ -59,7 +59,9 @@ const TrackSample = () => {
 
     const getOptions = async () => {
         try{
-            const resp = await axios.get(DB_APIurl + 'samples?tableName=harm-reduction-samples', {
+            const columnsToRetrieve = "expected-content";
+
+            const resp = await axios.get(DB_APIurl + 'samples?tableName=harm-reduction-samples&columns=' + columnsToRetrieve, {
                 headers: {
                   'x-api-key': API_KEY,
                 }
@@ -120,7 +122,7 @@ const TrackSample = () => {
             setSampleContactInfo('');
             setSampleContactType('');
 
-            const contactResp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-users&sample-id=${sampleID}&columns=` + columnsToRetrieve, {
+            const contactResp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-samples&sample-id=${sampleID}&columns=` + columnsToRetrieve, {
                 headers: {
                 'x-api-key': API_KEY,
                 }
@@ -179,7 +181,6 @@ const TrackSample = () => {
         // Check if expectedContentsField is empty
         if (!expectedContentsField) {
             setDisplayExpectedContentsError(true);
-            console.log('expectedContentsField is empty. Aborting the function.');
             return;
         }
         
@@ -205,6 +206,7 @@ const TrackSample = () => {
                 "notes": item["notes"],
                 "color": item["color"],
                 "testing-method": item["testing-method"],
+                "censoredContact": item["censoredContact"],
             },
             {
                 headers: {
@@ -282,8 +284,34 @@ const TrackSample = () => {
             const updateContactResp = await axios.put(DB_APIurl + `users?tableName=harm-reduction-users`, {
                 "sample-id": sampleID,
                 "contact": newContact,
-                "censoredContact": newCensoredContact
             }, 
+            {
+                headers: {
+                  'x-api-key': API_KEY,
+                }
+            });
+
+            const getresp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-samples&sample-id=${sampleID}`, {
+                headers: {
+                  'x-api-key': API_KEY,
+                }
+              });
+
+            const item = getresp.data;
+            const updatedCensoredContactResp = await axios.put(DB_APIurl + `samples?tableName=harm-reduction-samples`,{
+                "status": item['status'],
+                "sample-id": item["sample-id"],
+                "vial-id": item["vial-id"],
+                "date-received": item["date-received"],
+                "expected-content": expectedContentsField,
+                "is-used": String(sampleUsed),
+                "test-results": item["test-results"],
+                "location": item["location"],
+                "notes": item["notes"],
+                "color": item["color"],
+                "testing-method": item["testing-method"],
+                "censoredContact": newCensoredContact,
+            },
             {
                 headers: {
                   'x-api-key': API_KEY,

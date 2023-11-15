@@ -45,7 +45,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-const SampleTable = () => {
+const SampleTable = ({ jwtToken }) => {
   const [samples, setSamples] = useState([]);
   const [initialSamples, setInitialSamples] = useState([]);
   const [editableRows, setEditableRows] = useState([]);
@@ -82,10 +82,11 @@ const SampleTable = () => {
   const fetchSamples = async () => {
     try {
       const response = await axios.get(
-        DB_APIurl + 'samples?tableName=harm-reduction-samples',
+        DB_APIurl + 'admin?tableName=harm-reduction-samples',
         {
           headers: {
             'x-api-key': API_KEY,
+            'Authorization': jwtToken, 
           }
         }
 
@@ -147,7 +148,15 @@ const SampleTable = () => {
     newTestingMethod
   ) => {
     try {
-      await axios.put(
+      const getresp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-samples&sample-id=${sampleId}`, {
+        headers: {
+          'x-api-key': API_KEY,
+        }
+      });
+
+      const item = getresp.data;
+
+      const updateSampleInfo = await axios.put(
         DB_APIurl + `samples?tableName=harm-reduction-samples`,
         {
           'sample-id': sampleId,
@@ -160,6 +169,7 @@ const SampleTable = () => {
           location: newLocation,
           color: newColor,
           'testing-method': newTestingMethod,
+          "censoredContact": item["censoredContact"],
         },
         {
           headers: {

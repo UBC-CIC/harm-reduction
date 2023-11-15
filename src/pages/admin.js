@@ -11,6 +11,7 @@ const Admin = () => {
     const [showError, setShowError] = useState(false);
     const [loginStatus, setLoginStatus] = useState(false);
     const [pageState, setPageState] = useState(0);
+    const [jwtToken, setJwtToken] = useState('');
     let   username;
     let   password;
 
@@ -30,6 +31,8 @@ const Admin = () => {
             if (err) {
               setLoginStatus(false);
             } else {
+              const jwtToken = session.getIdToken().getJwtToken();
+              setJwtToken(jwtToken); 
               setLoginStatus(true);
             }
           });
@@ -57,6 +60,8 @@ const Admin = () => {
         
           cognitoUser.authenticateUser(authenticationDetails, {
             onSuccess: (session) => {
+              const jwtToken = session.getIdToken().getJwtToken();
+              setJwtToken(jwtToken); // Add this state to store the JWT token
               setLoginStatus(true);
             },
             onFailure: (err) => {
@@ -144,7 +149,7 @@ const Admin = () => {
                     <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "8px" }}>
                         <LogoutButton />
                     </div>
-                    <AdminTable />
+                    <AdminTable jwtToken={jwtToken}/>
                 </div>
             )}
         </Box>
