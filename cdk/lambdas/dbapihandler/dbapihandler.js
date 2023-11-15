@@ -19,28 +19,31 @@ exports.handler = async (event) => {
   } else if (httpMethod === 'PUT') {
     return await updateItem(tableName, JSON.parse(body));
   } else if (httpMethod === 'GET') {
-    if (tableName === 'harm-reduction-users') {
-      const userColumns = event.queryStringParameters['columns'];
-      const userSampleId = event.queryStringParameters['sample-id'];
-      if (userColumns){
-        return getCensoredUser(tableName, userSampleId, userColumns)
+      if (resource === '/users') {
+        return await getUser(tableName, event.queryStringParameters['sample-id']);
       }
-      else{
-        return await getUser(tableName, userSampleId);
+      else if (resource === '/samples') {
+        const sampleId = event.queryStringParameters['sample-id'];
+        const columns = event.queryStringParameters['columns'];
+        const status = event.queryStringParameters['status'];
+        
+        if (columns && sampleId){
+          return getCensoredUser(tableName, sampleId, columns)
+        }
+        
+        else if (sampleId && !columns) {
+          return await getSample(tableName, sampleId);
+        }
+        else if (!sampleId && columns && !status){
+          return await getContentOptions(tableName, columns);
+        }
+        else if (status) {
+          return await getAllPublicSampleData(tableName, columns, status);
+        }
       }
-    } else if (tableName === 'harm-reduction-samples') {
-      const sampleId = event.queryStringParameters['sample-id'];
-      const columns = event.queryStringParameters['columns'];
-      const status = event.queryStringParameters['status'];
-      if (sampleId) {
-        return await getSample(tableName, sampleId);
+      else if (resource === '/admin') {
+          return await getAllSamples(tableName);
       }
-      else if (columns) {
-        return await getAllPublicSampleData(tableName, columns, status);
-      } else {
-        return await getAllSamples(tableName);
-      }
-    }
   } else if (httpMethod === 'DELETE') {
     return await deleteItem(tableName, event.queryStringParameters['sample-id']);
   } else if (httpMethod === 'OPTIONS') {
@@ -135,7 +138,7 @@ async function getUser(tableName, sampleId) {
 async function getCensoredUser(tableName, sampleId, columns) {
   const params = {
     TableName: tableName,
-    ProjectionExpression: columns,
+    ProjectionExpression: 'censoredContact',
     Key: { 'sample-id': sampleId },
   };
 
@@ -217,13 +220,20 @@ async function getAllSamples(tableName) {
 async function getAllPublicSampleData(tableName, columns, status) {
   const columnsOriginal = columns.split(',');
   
-  const columnsModified = columnsOriginal.map(column => {
-    return `#${column.replace(/-/g, '_')}`; // Replace hyphens with underscores in attribute names
-  });
-  
+  // List of columns to retrieve
+  const columnsToRetrieve = ["date-received", "expected-content", "test-results", "status"];
+
+  // Filter columnsOriginal to include only the columns to retrieve
+  const columnsModified = columnsOriginal
+    .filter(column => columnsToRetrieve.includes(column))
+    .map(column => `#${column.replace(/-/g, '_')}`); // Replace hyphens with underscores in attribute names
+
   const expressionAttributeNames = {};
   for (let i = 0; i < columnsOriginal.length; i++) {
-    expressionAttributeNames[columnsModified[i]] = columnsOriginal[i];
+    // Include only the columns to retrieve in expressionAttributeNames
+    if (columnsToRetrieve.includes(columnsOriginal[i])) {
+      expressionAttributeNames[columnsModified[i]] = columnsOriginal[i];
+    }
   }
   
   const params = {
@@ -234,6 +244,40 @@ async function getAllPublicSampleData(tableName, columns, status) {
     ExpressionAttributeValues: {
       ':status': status,
     },
+  };
+
+  try {
+    const { Items } = await dynamodb.scan(params).promise();
+    return {
+      statusCode: 200,
+      headers: headers,
+      body: JSON.stringify(Items),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers: headers,
+      body: JSON.stringify({ message: 'Failed to retrieve items', error }),
+    };
+  }
+}
+
+async function getContentOptions(tableName, columns) {
+  // Check if 'expected-content' is in the list of columns
+  const hasExpectedContent = columns.includes('expected-content');
+
+  const columnsModified = hasExpectedContent
+    ? ['#expected_content'] // Replace hyphens with underscores in attribute names
+    : [];
+
+  const expressionAttributeNames = {
+    '#expected_content': 'expected-content',
+  };
+  
+  const params = {
+    TableName: tableName,
+    ProjectionExpression: columnsModified.join(', '),
+    ExpressionAttributeNames: expressionAttributeNames,
   };
 
   try {
