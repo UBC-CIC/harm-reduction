@@ -75,6 +75,10 @@ const TrackSample = () => {
     }
 
     const trackSample = async () => {
+        setDisplayError(false);
+        setDisplayExpectedContentsError(false);
+        setDisplaySampleIDError(false);
+        setDisplaySavedMsg(false);
         try{
             let sampleID = trackingID.trim();
             sampleID = sampleID.toUpperCase();
@@ -254,23 +258,29 @@ const TrackSample = () => {
     }
 
     const verifyContact = async () => {
-        let OTP = enteredOTP.trim();
-        if(!(/^.{6}$/.test(enteredOTP))){
-            setDisplayError(true);
-            return;
-        }
-        
-        const verifyResp = await axios.post(OTP_APIurl + `otp?action=verify`, {
-            "recipient": newContact,
-            "userOTP": OTP,
-            "userRefID": referenceID
-        }, {
-            headers: {
-              'x-api-key': API_KEY,
+        try{
+            let OTP = enteredOTP.trim();
+            if(!(/^.{6}$/.test(enteredOTP))){
+                setDisplayError(true);
+                return;
             }
-        })
+            
+            const verifyResp = await axios.post(OTP_APIurl + `otp?action=verify`, {
+                "recipient": newContact,
+                "userOTP": OTP,
+                "userRefID": referenceID
+            }, {
+                headers: {
+                'x-api-key': API_KEY,
+                }
+            })
 
-        if(!verifyResp.data.valid){
+            if(!verifyResp.data.valid){
+                setDisplayError(true);
+                return;
+            }
+        }
+        catch(err){
             setDisplayError(true);
             return;
         }
