@@ -27,8 +27,8 @@ exports.handler = async (event) => {
         const columns = event.queryStringParameters['columns'];
         const status = event.queryStringParameters['status'];
         
-        if (columns && sampleId){
-          return getCensoredUser(tableName, sampleId, columns)
+        if (tableName === 'harm-reduction-users'){
+          return getCensoredUser(tableName, sampleId)
         }
         
         else if (sampleId && !columns) {
@@ -135,7 +135,7 @@ async function getUser(tableName, sampleId) {
   }
 }
 
-async function getCensoredUser(tableName, sampleId, columns) {
+async function getCensoredUser(tableName, sampleId) {
   const params = {
     TableName: tableName,
     ProjectionExpression: 'censoredContact',
