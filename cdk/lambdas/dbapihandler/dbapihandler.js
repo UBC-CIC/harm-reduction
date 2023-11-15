@@ -11,8 +11,7 @@ exports.handler = async (event) => {
   const { httpMethod, path, body } = event;
   const resource = event.requestContext.resourcePath;
   const tableName = event.queryStringParameters['tableName']
-  //let tableName = (resource === '/users') ? 'harm-reduction-users' : 'harm-reduction-samples';
-  
+
 
   if (httpMethod === 'POST') {
     return await createItem(tableName, JSON.parse(body));
@@ -24,21 +23,20 @@ exports.handler = async (event) => {
       }
       else if (resource === '/samples') {
         const sampleId = event.queryStringParameters['sample-id'];
-        const columns = event.queryStringParameters['columns'];
-        const status = event.queryStringParameters['status'];
+        const query = event.queryStringParameters['query'];
         
-        if (tableName === 'harm-reduction-users'){
-          return getCensoredUser(tableName, sampleId)
+        if (query === 'getCensoredUser'){
+          return await getCensoredUser(tableName, sampleId)
         }
         
-        else if (sampleId && !columns) {
+        else if (query === 'getSample') {
           return await getSample(tableName, sampleId);
         }
-        else if (!sampleId && columns && !status){
-          return await getContentOptions(tableName, columns);
+        else if (query === 'getContentOptions'){
+          return await getContentOptions(tableName);
         }
-        else if (status) {
-          return await getAllPublicSampleData(tableName, columns, status);
+        else if (query === 'getAllPublicSampleData') {
+          return await getAllPublicSampleData(tableName);
         }
       }
       else if (resource === '/admin') {
@@ -217,23 +215,17 @@ async function getAllSamples(tableName) {
   }
 }
 
-async function getAllPublicSampleData(tableName, columns, status) {
-  const columnsOriginal = columns.split(',');
-  
-  // List of columns to retrieve
-  const columnsToRetrieve = ["date-received", "expected-content", "test-results", "status"];
+async function getAllPublicSampleData(tableName) {
+  const columns = ['date-received', 'expected-content', 'test-results', 'status'];
+  const status = 'Complete';
 
-  // Filter columnsOriginal to include only the columns to retrieve
-  const columnsModified = columnsOriginal
-    .filter(column => columnsToRetrieve.includes(column))
-    .map(column => `#${column.replace(/-/g, '_')}`); // Replace hyphens with underscores in attribute names
+  const columnsModified = columns.map(column => {
+    return `#${column.replace(/-/g, '_')}`;
+  });
 
   const expressionAttributeNames = {};
-  for (let i = 0; i < columnsOriginal.length; i++) {
-    // Include only the columns to retrieve in expressionAttributeNames
-    if (columnsToRetrieve.includes(columnsOriginal[i])) {
-      expressionAttributeNames[columnsModified[i]] = columnsOriginal[i];
-    }
+  for (let i = 0; i < columns.length; i++) {
+    expressionAttributeNames[columnsModified[i]] = columns[i];
   }
   
   const params = {
@@ -262,21 +254,14 @@ async function getAllPublicSampleData(tableName, columns, status) {
   }
 }
 
-async function getContentOptions(tableName, columns) {
-  // Check if 'expected-content' is in the list of columns
-  const hasExpectedContent = columns.includes('expected-content');
-
-  const columnsModified = hasExpectedContent
-    ? ['#expected_content'] // Replace hyphens with underscores in attribute names
-    : [];
-
+async function getContentOptions(tableName) {
   const expressionAttributeNames = {
     '#expected_content': 'expected-content',
   };
   
   const params = {
     TableName: tableName,
-    ProjectionExpression: columnsModified.join(', '),
+    ProjectionExpression: '#expected_content',
     ExpressionAttributeNames: expressionAttributeNames,
   };
 

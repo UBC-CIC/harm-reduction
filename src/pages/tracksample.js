@@ -59,9 +59,7 @@ const TrackSample = () => {
 
     const getOptions = async () => {
         try{
-            const columnsToRetrieve = "expected-content";
-
-            const resp = await axios.get(DB_APIurl + 'samples?tableName=harm-reduction-samples&columns=' + columnsToRetrieve, {
+            const resp = await axios.get(DB_APIurl + 'samples?query=getContentOptions&tableName=harm-reduction-samples', {
                 headers: {
                   'x-api-key': API_KEY,
                 }
@@ -88,7 +86,7 @@ const TrackSample = () => {
             }
             getOptions();
 
-            const resp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-samples&sample-id=${sampleID}`, {
+            const resp = await axios.get(DB_APIurl + `samples?query=getSample&tableName=harm-reduction-samples&sample-id=${sampleID}`, {
                 headers: {
                   'x-api-key': API_KEY,
                 }
@@ -125,7 +123,7 @@ const TrackSample = () => {
             setSampleContactInfo('');
             setSampleContactType('');
 
-            const contactResp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-users&sample-id=${sampleID}`, {
+            const contactResp = await axios.get(DB_APIurl + `samples?query=getCensoredUser&tableName=harm-reduction-users&sample-id=${sampleID}`, {
                 headers: {
                 'x-api-key': API_KEY,
                 }
@@ -187,7 +185,7 @@ const TrackSample = () => {
         setDisplayGetMetadata(false);
 
         try{
-            const getresp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-samples&sample-id=${sampleID}`, {
+            const getresp = await axios.get(DB_APIurl + `samples?query=getSample&tableName=harm-reduction-samples&sample-id=${sampleID}`, {
                 headers: {
                   'x-api-key': API_KEY,
                 }
