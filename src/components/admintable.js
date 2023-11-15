@@ -148,14 +148,6 @@ const SampleTable = ({ jwtToken }) => {
     newTestingMethod
   ) => {
     try {
-      const getresp = await axios.get(DB_APIurl + `samples?tableName=harm-reduction-samples&sample-id=${sampleId}`, {
-        headers: {
-          'x-api-key': API_KEY,
-        }
-      });
-
-      const item = getresp.data;
-
       const updateSampleInfo = await axios.put(
         DB_APIurl + `samples?tableName=harm-reduction-samples`,
         {
@@ -169,7 +161,6 @@ const SampleTable = ({ jwtToken }) => {
           location: newLocation,
           color: newColor,
           'testing-method': newTestingMethod,
-          "censoredContact": item["censoredContact"],
         },
         {
           headers: {
