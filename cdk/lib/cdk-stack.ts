@@ -70,6 +70,45 @@ export class CdkStack extends cdk.Stack {
       environment: {'EMAIL_ADDRESS': ''}
     });
 
+    // Cognito
+    const adminPool = new cognito.UserPool(this, 'adminuserpool', {
+      userPoolName: 'harmreduction-adminpool',
+      signInCaseSensitive: false,
+      selfSignUpEnabled: false,
+      mfa: cognito.Mfa.OFF,
+      passwordPolicy: {
+        minLength: 8,
+        requireLowercase: true,
+        requireUppercase: true,
+        requireDigits: true,
+        requireSymbols: true,
+        tempPasswordValidity: cdk.Duration.days(3),
+      },
+      accountRecovery: cognito.AccountRecovery.NONE,
+      deviceTracking: {
+        challengeRequiredOnNewDevice: false,
+        deviceOnlyRememberedOnUserPrompt: false
+      },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    const adminPoolClient = adminPool.addClient('adminpoolclient', {
+      authFlows: {
+        userPassword: true,
+        userSrp: true,
+      }
+    });
+
+    new cdk.CfnOutput(this, 'CognitoClientID', {
+      value: adminPoolClient.userPoolClientId,
+      description: 'Cognito user pool Client ID'
+    });
+
+    new cdk.CfnOutput(this, 'CognitoUserPoolID', {
+      value: adminPool.userPoolId,
+      description: 'Cognito user pool ID'
+    });
+    
     const prdLogGroup = new logs.LogGroup(this, "PrdLogs");
 
     const OTPapi = new apigateway.RestApi(this, 'OTPapi', {
@@ -106,8 +145,14 @@ export class CdkStack extends cdk.Stack {
       },
     });
 
+    const cognitoAuthorizer = new apigateway.CognitoUserPoolsAuthorizer(this, 'CognitoAuthorizer', {
+      cognitoUserPools: [adminPool],
+      identitySource: 'method.request.header.Authorization',
+    });
+
     const DBSample = DBapi.root.addResource('samples');
     const DBUser = DBapi.root.addResource('users');
+    const DBAdmin = DBapi.root.addResource('admin');
 
     DBSample.addMethod('POST', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
     DBSample.addMethod('GET', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
@@ -122,6 +167,11 @@ export class CdkStack extends cdk.Stack {
     DBUser.addMethod('PUT', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
     DBUser.addMethod('DELETE', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {apiKeyRequired: true});
     // DBUser.addMethod('OPTIONS', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}));
+    DBAdmin.addMethod('GET', new apigateway.LambdaIntegration(DBApiHandler, {proxy: true}), {
+      authorizationType: apigateway.AuthorizationType.COGNITO,
+      authorizer: cognitoAuthorizer,
+      apiKeyRequired: true
+    });
 
     const methodSettingProperty: apigateway.CfnDeployment.MethodSettingProperty = {
       cacheDataEncrypted: false,
@@ -202,39 +252,6 @@ export class CdkStack extends cdk.Stack {
       startingPosition: lambda.StartingPosition.LATEST,
       batchSize: 1,
     }))
-
-    // Cognito
-    const adminPool = new cognito.UserPool(this, 'adminuserpool', {
-      userPoolName: 'harmreduction-adminpool',
-      signInCaseSensitive: false,
-      selfSignUpEnabled: false,
-      mfa: cognito.Mfa.OFF,
-      passwordPolicy: {
-        minLength: 8,
-        requireLowercase: true,
-        requireUppercase: true,
-        requireDigits: true,
-        requireSymbols: true,
-        tempPasswordValidity: cdk.Duration.days(3),
-      },
-      accountRecovery: cognito.AccountRecovery.NONE,
-      deviceTracking: {
-        challengeRequiredOnNewDevice: false,
-        deviceOnlyRememberedOnUserPrompt: false
-      },
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
-    });
-
-    const adminPoolClient = adminPool.addClient('adminpoolclient', {
-      authFlows: {
-        userPassword: true
-      }
-    });
-
-    new cdk.CfnOutput(this, 'CognitoClientID', {
-      value: adminPoolClient.userPoolClientId,
-      description: 'Cognito user pool Client ID'
-    });
 
     // Store the gateway ARN for use with our WAF stack 
     const apiGatewayARN = `arn:aws:apigateway:${Stack.of(this).region}::/restapis/${DBapi.restApiId}/stages/${DBapi.deploymentStage.stageName}`

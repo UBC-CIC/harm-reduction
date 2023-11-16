@@ -10,24 +10,38 @@ const headers = {
 exports.handler = async (event) => {
   const { httpMethod, path, body } = event;
   const resource = event.requestContext.resourcePath;
-  let tableName = (resource === '/users') ? 'harm-reduction-users' : 'harm-reduction-samples';
-  
+  const tableName = event.queryStringParameters['tableName']
+
 
   if (httpMethod === 'POST') {
     return await createItem(tableName, JSON.parse(body));
   } else if (httpMethod === 'PUT') {
     return await updateItem(tableName, JSON.parse(body));
   } else if (httpMethod === 'GET') {
-    if (tableName === 'harm-reduction-users') {
-      return await getUser(tableName, event.queryStringParameters['sample-id']);
-    } else if (tableName === 'harm-reduction-samples') {
-      const sampleId = event.queryStringParameters['sample-id'];
-      if (sampleId) {
-        return await getSample(tableName, sampleId);
-      } else {
-        return await getAllSamples(tableName);
+      if (resource === '/users') {
+        return await getUser(tableName, event.queryStringParameters['sample-id']);
       }
-    }
+      else if (resource === '/samples') {
+        const sampleId = event.queryStringParameters['sample-id'];
+        const query = event.queryStringParameters['query'];
+        
+        if (query === 'getCensoredUser'){
+          return await getCensoredUser(tableName, sampleId)
+        }
+        
+        else if (query === 'getSample') {
+          return await getSample(tableName, sampleId);
+        }
+        else if (query === 'getContentOptions'){
+          return await getContentOptions(tableName);
+        }
+        else if (query === 'getAllPublicSampleData') {
+          return await getAllPublicSampleData(tableName);
+        }
+      }
+      else if (resource === '/admin') {
+          return await getAllSamples(tableName);
+      }
   } else if (httpMethod === 'DELETE') {
     return await deleteItem(tableName, event.queryStringParameters['sample-id']);
   } else if (httpMethod === 'OPTIONS') {
@@ -119,6 +133,37 @@ async function getUser(tableName, sampleId) {
   }
 }
 
+async function getCensoredUser(tableName, sampleId) {
+  const params = {
+    TableName: tableName,
+    ProjectionExpression: 'censoredContact',
+    Key: { 'sample-id': sampleId },
+  };
+
+  try {
+    const { Item } = await dynamodb.get(params).promise();
+    if (Item) {
+      return {
+        statusCode: 200,
+        headers: headers,
+        body: JSON.stringify(Item),
+      };
+    } else {
+      return {
+        statusCode: 404,
+        headers: headers,
+        body: JSON.stringify({ message: 'Item not found' }),
+      };
+    }
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers: headers, 
+      body: JSON.stringify({ message: 'Failed to retrieve item', error }),
+    };
+  }
+}
+
 async function getSample(tableName, sampleId) {
   const params = {
     TableName: tableName,
@@ -152,6 +197,72 @@ async function getSample(tableName, sampleId) {
 async function getAllSamples(tableName) {
   const params = {
     TableName: tableName,
+  };
+
+  try {
+    const { Items } = await dynamodb.scan(params).promise();
+    return {
+      statusCode: 200,
+      headers: headers,
+      body: JSON.stringify(Items),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers: headers,
+      body: JSON.stringify({ message: 'Failed to retrieve items', error }),
+    };
+  }
+}
+
+async function getAllPublicSampleData(tableName) {
+  const columns = ['date-received', 'expected-content', 'test-results', 'status'];
+  const status = 'Complete';
+
+  const columnsModified = columns.map(column => {
+    return `#${column.replace(/-/g, '_')}`;
+  });
+
+  const expressionAttributeNames = {};
+  for (let i = 0; i < columns.length; i++) {
+    expressionAttributeNames[columnsModified[i]] = columns[i];
+  }
+  
+  const params = {
+    TableName: tableName,
+    ProjectionExpression: columnsModified.join(', '),
+    ExpressionAttributeNames: expressionAttributeNames,
+    FilterExpression: '#status = :status', // Use an alias for "status"
+    ExpressionAttributeValues: {
+      ':status': status,
+    },
+  };
+
+  try {
+    const { Items } = await dynamodb.scan(params).promise();
+    return {
+      statusCode: 200,
+      headers: headers,
+      body: JSON.stringify(Items),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      headers: headers,
+      body: JSON.stringify({ message: 'Failed to retrieve items', error }),
+    };
+  }
+}
+
+async function getContentOptions(tableName) {
+  const expressionAttributeNames = {
+    '#expected_content': 'expected-content',
+  };
+  
+  const params = {
+    TableName: tableName,
+    ProjectionExpression: '#expected_content',
+    ExpressionAttributeNames: expressionAttributeNames,
   };
 
   try {

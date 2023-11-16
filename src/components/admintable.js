@@ -45,7 +45,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-const SampleTable = () => {
+const SampleTable = ({ jwtToken }) => {
   const [samples, setSamples] = useState([]);
   const [initialSamples, setInitialSamples] = useState([]);
   const [editableRows, setEditableRows] = useState([]);
@@ -82,10 +82,11 @@ const SampleTable = () => {
   const fetchSamples = async () => {
     try {
       const response = await axios.get(
-        DB_APIurl + 'samples?tableName=harm-reduction-samples',
+        DB_APIurl + 'admin?tableName=harm-reduction-samples',
         {
           headers: {
             'x-api-key': API_KEY,
+            'Authorization': jwtToken, 
           }
         }
 
@@ -147,7 +148,7 @@ const SampleTable = () => {
     newTestingMethod
   ) => {
     try {
-      await axios.put(
+      const updateSampleInfo = await axios.put(
         DB_APIurl + `samples?tableName=harm-reduction-samples`,
         {
           'sample-id': sampleId,
@@ -465,6 +466,7 @@ const SampleTable = () => {
           <DatePicker
             label="Date Received"
             inputFormat="YYYY-MM-DD"
+            format="YYYY-MM-DD"
             value={searchQueryDateReceived}
             onChange={(newValue) => setSearchQueryDateReceived(dayjs(newValue).format('YYYY-MM-DD'))}
             slotProps={{

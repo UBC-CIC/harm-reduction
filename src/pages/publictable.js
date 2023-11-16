@@ -56,7 +56,7 @@ const SampleTable = () => {
   const fetchSamples = async () => {
     try {
       const response = await axios.get(
-        DB_APIurl + 'samples?tableName=harm-reduction-samples',
+        DB_APIurl + 'samples?query=getAllPublicSampleData&tableName=harm-reduction-samples',
         {
           headers: {
             'x-api-key': API_KEY,
@@ -101,6 +101,7 @@ const SampleTable = () => {
               <DatePicker
                 label="Date Received"
                 inputFormat="YYYY-MM-DD"
+                format="YYYY-MM-DD"
                 value={searchQueryDateReceived}
                 onChange={(newValue) => setSearchQueryDateReceived(dayjs(newValue).format('YYYY-MM-DD'))}
                 slotProps={{

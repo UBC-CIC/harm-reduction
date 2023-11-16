@@ -7,7 +7,7 @@ const SENDER = process.env.EMAIL_ADDRESS;
 const TABLE  = process.env.OTP_TABLE;
 
 const headers = {
-  "Access-Control-Allow-Headers" : "Content-Type",
+  "Access-Control-Allow-Headers" : "Content-Type, x-api-key",
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "POST, OPTIONS"
 }
