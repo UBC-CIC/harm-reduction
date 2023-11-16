@@ -41,7 +41,7 @@
     "@mui/x-date-pickers": "^6.9.2",
     "amazon-cognito-identity-js": "^6.3.7",
     "aws-amplify": "^5.3.3",
-    "axios": "^1.4.0",
+    "axios": "^1.6.0",
     "buffer": "^6.0.3",
     "dayjs": "^1.11.9",
     "react": "^18.2.0",
