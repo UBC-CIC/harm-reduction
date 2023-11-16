@@ -16,7 +16,7 @@ const Admin = () => {
     let   password;
 
     const poolData = {
-        UserPoolId: process.env.REACT_APP_USERPOOLID,
+        UserPoolId: process.env.REACT_APP_USER_POOL_ID,
         ClientId: process.env.REACT_APP_COGCLIENT,
     };
 
