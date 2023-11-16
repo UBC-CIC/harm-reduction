@@ -6,22 +6,11 @@
 
 | Index | Description |
 | :---- | :---------- |
-| [Home Page](#home-page) | Landing page for users |
 | [Public Table Page](#public-table-page) | Viewing all sample available to the public |
 | [Individual Sample Page](#individual-sample-page) | Viewing a sample specified by sample ID |
 | [Admin Login Page](#admin-login-page) | Login page for lab admin |
 | [Admin Table Page](#admin-table-page) | Table with info privy only to the admin |
 |||
-
-## Home Page
-
-The home page serves as a landing page for users. It consists of a static section and a navbar with three links: home page, public samples page, specific sample page. A throuhgout description of the other two pages are available below.
-
-![alt text](./images/home.png)
-
-### 1. Contents
-
-The contents of the page can be edited in the github repo. However, there is no text editor available to manage this content, it is recommended to have some react/html experience if you intend to make edits to this section.
 
 ## Public Table Page
 
