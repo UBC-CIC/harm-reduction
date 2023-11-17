@@ -83,9 +83,9 @@ The 'cdk' directory contains the python files that describe how the AWS resource
 
 Subdirectories under the directory '/cdk/lambda' each contain the code for the lambda functions that make up the majority of the backend
 
-Run the following commands in the CLI to install the dependencies required for the CDK deployment
+Run the following command in the CLI to install the dependencies required for the CDK deployment
 ```bash
-npm install -g aws-cdk
+npm install
 ```
 
 The next two commands will provision resources required to deploy the full stack (backend), and begin the deployment process.
