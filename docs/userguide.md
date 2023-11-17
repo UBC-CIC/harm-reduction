@@ -38,7 +38,7 @@ A user will enter their sample ID, then the search button is available to kickst
 
 ### 2. Opt in for Email/SMS Notification
 
-A button is available, which opens a box upon click to collect a user's contact information. The button toggles whether the entered contact info is an email address or phone number. After clicking the save button, invalid contact info will cause an error message to display, valid contact details will cause an OTP (One Time Password) to be sent to the contact. This OTP then must be entered in the text field to verify the user has entered the correct and desired contact info.
+A button is available, which opens a box upon click to collect a user's contact information. The button toggles whether the entered contact info is an email address or phone number. If contact info already exists for the sample, a censored version of the info will be displayed. The existing contact info can be edited by pressing the edit button, entering different info, and then clicking save. After clicking the save button, invalid contact info will cause an error message to display, valid contact details will cause an OTP (One Time Password) to be sent to the contact. This OTP then must be entered in the text field to verify the user has entered the correct and desired contact info.
 
 ![alt text](./images/contactentry.png)
 
@@ -57,7 +57,7 @@ If the status of the sample is 'Complete', a table will show, displaying the tes
 
 ## Admin Login Page
 
-The admin login page is an unlisted link which is available only to the lab admins, this page leads to the admin table.
+The admin login page is an unlisted link which is available only to the lab admins, this page leads to the admin table. To access the Admin Login Page edit the URL to be ```<Base URL>/admin```
 
 ### 1. Login Field
 
