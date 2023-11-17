@@ -25,16 +25,18 @@ git clone https://github.com/UBC-CIC/harm-reduction.git
 ```
 
 # Step 2: Frontend Deployment
-The **Deploy to Amplify Console** button will take you to your AWS console to deploy the front-end solution.
+1. Fork this repository into your GitHub account. ![alt text](images/fork.png)
+
+2. The **Deploy to Amplify Console** button will take you to your AWS console to deploy the front-end solution.
 
 [![amplifybutton](https://oneclick.amplifyapp.com/button.svg)](https://console.aws.amazon.com/amplify/home#/create)
 
-1. On the AWS console. select your region on the top right, then select Github as your code source ![alt text](images/deploy1.png)
-2. Select the repository named `harm-reduction`, then select the branch `main`, you may be prompted to authorize amplify to access your github account![alt text](images/deploy2.png)
+3. On the AWS console. select your region on the top right, then select Github as your code source ![alt text](images/deploy1.png)
+4. Select the repository named `harm-reduction`, then select the branch `main`, you may be prompted to authorize amplify to access your github account![alt text](images/deploy2.png)
 
 <!-- 3. In the box 'Build and test settings', make the following edits as pointed out below. ![alt text](images/deploy3-1.png) ![alt text](images/deploy3.png) -->
 
-3. Finally, click save and deploy to deploy the front end.![alt text](images/deploy4.png)
+5. Finally, click save and deploy to deploy the front end.![alt text](images/deploy4.png)
 
 Congratulations, your front end is now deployed!
 
