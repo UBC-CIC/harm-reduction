@@ -93,7 +93,7 @@ cdk deploy
 ```
 
 ## Output Values
-Once the cdk deployment is complete, you should see four values in the terminal under the line **Outputs**, copy these values into a text file, as they will be important in the next step of the deployment. ![alt text](images/cdkout.png)
+Once the cdk deployment is complete, you should see five values in the terminal under the line **Outputs**, copy these values into a text file, as they will be important in the next step of the deployment. ![alt text](images/cdkout.png)
 
 # Step 4: Configure Environment Variables
 
@@ -105,12 +105,12 @@ Then, add the following variables
 
 |Name|Value|
 |----|-----|
+|REACT_APP_API_KEY|paste ApiKeyOutput here|
 |REACT_APP_AWS_REGION|paste name of your AWS region|
+|REACT_APP_COGCLIENT|paste CognitoClientID here|
 |REACT_APP_DB_API_URL|paste name of the DB API url here|
 |REACT_APP_OTP_API_URL|paste name of the OTP API url here|
-|REACT_APP_COGCLIENT|paste CognitoClientID here|
-|REACT_APP_USERPOOLID|paste CognitoUserPoolID here|
-|REACT_APP_API_KEY|paste ApiKeyOutput here|
+|REACT_APP_USER_POOL_ID|paste CognitoUserPoolID here|
 
 Once you have added the variables, your screen should look something like the image below, click save to save your changes
 ![alt text](images/envvar.png)
@@ -272,7 +272,7 @@ After submitting the requests for production access, the status of these request
 
 ## Adding Sample Data to API endpoint
 
-Below is an example cURL command that can be used to create a sample item in the backend. Please use the DB API endpoint you obtained during Deployment. 
+Below is an example cURL command that can be used to create a sample item in the backend. Please use the DB API endpoint and API key you obtained during Deployment. 
 
 ```
 curl -X POST -H "Content-Type: application/json" -H "x-api-key: <API_KEY>" -d '{"sample-id": "ABC123", "color": "White", "date-received": "2023-06-01", "expected-content": "Cocaine","is-used": "True", "location": "Vancouver, BC", "notes": "N/A", "status": "Manual Testing Required", "test-results": "Cocaine 95%, Uncertain Match 5%", "testing-method": "HPLC"}' <DB_API_URL>samples?tableName=harm-reduction-samples
