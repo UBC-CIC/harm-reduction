@@ -12,6 +12,7 @@ frontend:
         - REACT_APP_OTP_API_URL=${REACT_APP_OTP_API_URL}
         - REACT_APP_AWS_REGION=${REACT_APP_AWS_REGION}
         - REACT_APP_API_KEY=${REACT_APP_API_KEY}
+        - REACT_APP_USER_POOL_ID=${REACT_APP_USER_POOL_ID}
         - npm run build
   artifacts:
     baseDirectory: build
